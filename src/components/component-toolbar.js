@@ -67,7 +67,7 @@ class ComponentToolbar extends Component {
             cursor:'pointer'
         }}
       >
-        <img src={chrome.extension.getURL("icon-off.png")}
+        <img src={chrome.extension.getURL("icon-white.png")}
             style={{
                 marginLeft: '16px',
                 width:'32px',
