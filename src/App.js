@@ -26,7 +26,7 @@ export default class App extends Component {
 
             const elementClickedOn = event.toElement;
 
-            //Check if we already injected
+            //First we check if there is already a widget connected to the element that was clicked on
             let isAlreadyInjected;
 
             this.state.textElements.forEach((el) => isAlreadyInjected = el[0]===elementClickedOn)

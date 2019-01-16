@@ -2,6 +2,15 @@
 
 ### Widget placing
 
+Single-tab web apps
+
+|              |           |
+|--------------|:---------:|
+| Facebook     | ![badge0] |
+| Twitter      | ![badge0] |
+
+Multi-tab web apps
+
 |              |           |           |
 |--------------|:---------:|----------:|
 | Google Mail  | ![badge1] | ![badge3] |
