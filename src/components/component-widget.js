@@ -1,4 +1,5 @@
-const STRING_GRADIENT = 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)'
+
+import config from '../../config';
 
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
@@ -9,6 +10,8 @@ import { connect } from 'react-redux';
 import * as actionsText from '../actions/actions-text';
 
 import log from '../helpers/helper-logger'
+
+const STRING_GRADIENT = config.colors.gradient;
 
 const URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
 const URL_ICON_OFF = 'https://a.icons8.com/MVhZihaX/0yohoZ/oval.png';
@@ -71,17 +74,21 @@ class ComponentWidget extends Component {
 
     const keyUp = (event) => {
 
-      const text1 = this.props.textElement.childNodes[0].innerHTML;
+      let text;
+
+      //const text1 = this.props.textElement.childNodes?this.props.textElement.childNodes[0].innerHTML:'';
       const text2 = this.props.textElement.innerHTML;
       const text3 = this.props.textElement.textContent;
       const text4 = this.props.textElement.value;
 
-      log(text1)
+      //log(text1)
       log(text2)
       log(text3)
       log(text4)
 
-      this.props.checkText(text3, this.state.id);
+      text = text3;
+
+      this.props.checkText(text, this.state.id);
 
     }; 
    
@@ -117,6 +124,8 @@ class ComponentWidget extends Component {
 
     return ReactDOM.createPortal(
       <div
+        id={'fairlanguage-widget-'+this.state.id}
+        fl={this.state.id}
         style={{
           display: 'flex',
 

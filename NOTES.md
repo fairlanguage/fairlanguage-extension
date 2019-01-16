@@ -1,4 +1,12 @@
-# 1/115/19
+# 1/16/19
+
+- TODO: TOOLBAR: logo without transparency!
+- TODO: REMOVE DETECTED ELEMENTS from store when mail is closed or sent
+
+- added toolbar component
+- fixed google mail multi tabs
+
+# 1/15/19
 
 (x) - state management for multiple tabs
 !!! ALWAYS KEEP IMMUTIBILITY IN REDUX REDUCERS !!!

@@ -15,6 +15,16 @@ const checkText = (text, id) => {
   return (dispatch) => {
 
     dispatch({type: "SUBMITTED_TEXT", payload: {id: id, text: text}})
+
+    const payload = {
+      id: id,
+      suggestion: []
+    }
+
+    //If text is empty dispatch suggestions anyway to reset the counter
+    if(text==='')
+    dispatch({type: "RECEIVED_SUGGESTIONS", payload:payload})
+
  
     let url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(text)}`;
     //console.log(url)
@@ -22,10 +32,7 @@ const checkText = (text, id) => {
     axios.get(`${url}`)
       .then((response) => {
 
-        const payload = {
-          id: id,
-          suggestion: response.data
-        }
+        payload.suggestion = response.data
         
         if(response.data.length>0)        
         dispatch({type: "RECEIVED_SUGGESTIONS", payload:payload})

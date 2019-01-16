@@ -1,4 +1,12 @@
-## Compatibility Status (Updated 1/16/19)
+## (Updated 1/16/19)
+
+# Status
+
+|                                      |           |
+|--------------------------------------|:---------:|
+| [![badge4]](https://mail.google.com) |           |
+
+# Compatibility 
 
 ### Widget placing
 
@@ -24,6 +32,8 @@ Multi-tab web apps
 [badge2]: https://img.shields.io/badge/multi--tabs-in--progress-red.svg
 
 [badge3]: https://img.shields.io/badge/multi--tabs-supported-green.svg
+
+[badge4]: https://img.shields.io/badge/mail.google.com-active-brightgreen.svg
 
 ### Word marking
 
