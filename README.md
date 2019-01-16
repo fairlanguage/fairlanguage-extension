@@ -31,26 +31,7 @@ chrome://extension
 
 # Usage
 
-## Compatibility (Updated 1/11/19)
+# Compatibility
 
-### Widget placing
-
-|              |           |           |
-|--------------|:---------:|----------:|
-| Google Mail  | ![badge1] | ![badge3] |
-| Outlook Live | ![badge1] | ![badge2] |
-| Yahoo Mail   | ![badge1] | ![badge2] |
-
-[badge0]: https://img.shields.io/badge/single--tab-in%20progress-red.svg
-
-[badge1]: https://img.shields.io/badge/single--tab-supported-green.svg
-
-[badge2]: https://img.shields.io/badge/multi--tabs-in--progress-red.svg
-
-[badge3]: https://img.shields.io/badge/multi--tabs-supported-green.svg
-
-### Word marking
-
-### Suggenstions placing
 
 # License
