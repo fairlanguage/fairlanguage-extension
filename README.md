@@ -33,5 +33,6 @@ chrome://extension
 
 # Compatibility
 
+See [STATUS.md](STATUS.md).
 
 # License
