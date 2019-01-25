@@ -28,7 +28,7 @@ export default class App extends Component {
 
             log('Click')
 
-            const elementClickedOn = event.toElement;
+            const elementClickedOn = event.target
 
             if(elementClickedOn.id === 'fairlanguage-container') return;
 
@@ -39,7 +39,7 @@ export default class App extends Component {
 
             //If we have a parent element check all their children's elements if one of them is a fl widget
             elementClickedOn.parentNode.childNodes.forEach((node) => {
-                isAlreadyInjected = node.hasAttribute('fl')
+                isAlreadyInjected = node.hasAttribut?node.hasAttribute('fl'):false
             })
 
             log(`isAlreadyInjected: ${isAlreadyInjected}`)

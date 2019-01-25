@@ -153,7 +153,7 @@ class ComponentWidget extends Component {
 
           position: 'absolute',
           top: this.state.height,
-          marginTop: '-11px',
+          marginTop: '-22px',
 
           //transform: `translate(5px, calc(${this.state.height} - 0px)`,
       
