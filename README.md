@@ -12,6 +12,19 @@
 
 # Install
 
+## Non-CLI
+
+1. Klick "Clone or download"-Button -> "Download  ZIP"
+2. Extract files.
+
+### In Chrome:
+
+```
+chrome://extension
+```
+
+-> Load unpacked -> Select directory 
+
 ## Custom
 
 ```
