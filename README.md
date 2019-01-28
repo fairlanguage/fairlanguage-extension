@@ -1,4 +1,3 @@
-<p align="center"><img src="https://github.com/florianmaxim/fairlanguage-extension-chrome/blob/master/icon-white.png" width="150" height="150"></img></p>
 
 # <p align="center">Fairlanguage - Browser Extension (Chrome)</p>
 
@@ -14,16 +13,26 @@
 
 ## Non-CLI
 
+### On this website:
+
 1. Klick "Clone or download"-Button -> "Download  ZIP"
 2. Extract files.
 
-### In Chrome:
+### Chrome:
 
 ```
 chrome://extension
 ```
 
 -> Load unpacked -> Select directory 
+
+### Firefox:
+
+```
+about:debugging
+```
+
+-> Load Temporary Add-on... -> Select 'mainfest.json'
 
 ## Custom
 

@@ -10,7 +10,8 @@
   },
 
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "*://fairlanguage-api-dev.dev-star.de/*"
   ],
 
   "content_scripts": [
