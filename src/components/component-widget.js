@@ -74,19 +74,17 @@ class ComponentWidget extends Component {
 
     const keyUp = (event) => {
 
-      let text;
+      const textContent = this.props.textElement.textContent;
+      const value = this.props.textElement.value;
 
-      //const text1 = this.props.textElement.childNodes?this.props.textElement.childNodes[0].innerHTML:'';
-      const text2 = this.props.textElement.innerHTML;
-      const text3 = this.props.textElement.textContent;
-      const text4 = this.props.textElement.value;
+      log(textContent)
+      log(value)
 
-      //log(text1)
-      log(text2)
-      log(text3)
-      log(text4)
-
-      text = text3;
+      const text = 
+      
+      textContent != undefined && textContent != null && textContent != '' ? textContent : 
+      
+      (value != undefined && value != null && value != '' ? value : '');
 
       this.props.checkText(text, this.state.id);
 
@@ -151,9 +149,9 @@ class ComponentWidget extends Component {
 
           //marginLeft: '14px',
 
-          position: 'absolute',
-          top: this.state.height,
-          marginTop: '-22px',
+          //position: 'absolute',
+          //top: this.state.height,
+          //marginTop: '-22px',
 
           //transform: `translate(5px, calc(${this.state.height} - 0px)`,
       

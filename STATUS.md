@@ -1,4 +1,4 @@
-## (Updated 1/28/19)
+## (Updated 1/29/19)
 
 # Compatibility Status
 
@@ -76,11 +76,12 @@ Multi-tab web apps
 
 [badge11]: https://img.shields.io/badge/meet.google.com-in%20progress-red.svg
 
-[badge12]: https://img.shields.io/badge/web.telegram.com-in%20progress-red.svg
 
-[badge13]: https://img.shields.io/badge/web.whatsapp.com-in%20progress-red.svg
+[badge12]: https://img.shields.io/badge/web.telegram.com-supported-green.svg
 
-[badge14]: https://img.shields.io/badge/messenger.com-in%20progress-red.svg
+[badge13]: https://img.shields.io/badge/web.whatsapp.com-supported-green.svg
+
+[badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
 
 ### Word marking
 

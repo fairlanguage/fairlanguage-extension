@@ -104,24 +104,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"../config.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _default = {
-  default: {
-    toolbar: true
-  },
-  colors: {
-    primary: ['#A6B3FF', '#6652FF', '#F022EB', '#EBEBFF'],
-    gradient: 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)'
-  }
-};
-exports.default = _default;
-},{}],"../node_modules/object-assign/index.js":[function(require,module,exports) {
+})({"../node_modules/object-assign/index.js":[function(require,module,exports) {
 /*
 object-assign
 (c) Sindre Sorhus
@@ -25615,8 +25598,24 @@ var FORWARD_REF_STATICS = {
     propTypes: true
 };
 
+var MEMO_STATICS = {
+    '$$typeof': true,
+    compare: true,
+    defaultProps: true,
+    displayName: true,
+    propTypes: true,
+    type: true
+};
+
 var TYPE_STATICS = {};
 TYPE_STATICS[ReactIs.ForwardRef] = FORWARD_REF_STATICS;
+
+function getStatics(component) {
+    if (ReactIs.isMemo(component)) {
+        return MEMO_STATICS;
+    }
+    return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
+}
 
 var defineProperty = Object.defineProperty;
 var getOwnPropertyNames = Object.getOwnPropertyNames;
@@ -25642,8 +25641,8 @@ function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
             keys = keys.concat(getOwnPropertySymbols(sourceComponent));
         }
 
-        var targetStatics = TYPE_STATICS[targetComponent['$$typeof']] || REACT_STATICS;
-        var sourceStatics = TYPE_STATICS[sourceComponent['$$typeof']] || REACT_STATICS;
+        var targetStatics = getStatics(targetComponent);
+        var sourceStatics = getStatics(sourceComponent);
 
         for (var i = 0; i < keys.length; ++i) {
             var key = keys[i];
@@ -27370,6 +27369,23 @@ var _default = function _default(msg) {
 };
 
 exports.default = _default;
+},{}],"../config.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  default: {
+    toolbar: true
+  },
+  colors: {
+    primary: ['#FF0000', '#6652FF', '#F022EB', '#EBEBFF'],
+    gradient: 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)'
+  }
+};
+exports.default = _default;
 },{}],"../node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
@@ -28644,235 +28660,402 @@ module.exports = Array.isArray || function (arr) {
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
+'use strict';
+
+var R = typeof Reflect === 'object' ? Reflect : null;
+var ReflectApply = R && typeof R.apply === 'function' ? R.apply : function ReflectApply(target, receiver, args) {
+  return Function.prototype.apply.call(target, receiver, args);
+};
+var ReflectOwnKeys;
+
+if (R && typeof R.ownKeys === 'function') {
+  ReflectOwnKeys = R.ownKeys;
+} else if (Object.getOwnPropertySymbols) {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target).concat(Object.getOwnPropertySymbols(target));
+  };
+} else {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target);
+  };
+}
+
+function ProcessEmitWarning(warning) {
+  if (console && console.warn) console.warn(warning);
+}
+
+var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
+  return value !== value;
+};
+
 function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
+  EventEmitter.init.call(this);
 }
 
 module.exports = EventEmitter; // Backwards-compat with node 0.10.x
 
 EventEmitter.EventEmitter = EventEmitter;
 EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._eventsCount = 0;
 EventEmitter.prototype._maxListeners = undefined; // By default EventEmitters will print a warning if more than 10 listeners are
 // added to it. This is a useful default which helps finding memory leaks.
 
-EventEmitter.defaultMaxListeners = 10; // Obviously not all Emitters should be limited to 10. This function allows
+var defaultMaxListeners = 10;
+Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
+  enumerable: true,
+  get: function () {
+    return defaultMaxListeners;
+  },
+  set: function (arg) {
+    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
+      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
+    }
+
+    defaultMaxListeners = arg;
+  }
+});
+
+EventEmitter.init = function () {
+  if (this._events === undefined || this._events === Object.getPrototypeOf(this)._events) {
+    this._events = Object.create(null);
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
+}; // Obviously not all Emitters should be limited to 10. This function allows
 // that to be increased. Set to zero for unlimited.
 
-EventEmitter.prototype.setMaxListeners = function (n) {
-  if (!isNumber(n) || n < 0 || isNaN(n)) throw TypeError('n must be a positive number');
+
+EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
+    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
+  }
+
   this._maxListeners = n;
   return this;
 };
 
-EventEmitter.prototype.emit = function (type) {
-  var er, handler, len, args, i, listeners;
-  if (!this._events) this._events = {}; // If there is no 'error' event listener then throw.
+function $getMaxListeners(that) {
+  if (that._maxListeners === undefined) return EventEmitter.defaultMaxListeners;
+  return that._maxListeners;
+}
 
-  if (type === 'error') {
-    if (!this._events.error || isObject(this._events.error) && !this._events.error.length) {
-      er = arguments[1];
+EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+  return $getMaxListeners(this);
+};
 
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
-      }
-    }
+EventEmitter.prototype.emit = function emit(type) {
+  var args = [];
+
+  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
+
+  var doError = type === 'error';
+  var events = this._events;
+  if (events !== undefined) doError = doError && events.error === undefined;else if (!doError) return false; // If there is no 'error' event listener then throw.
+
+  if (doError) {
+    var er;
+    if (args.length > 0) er = args[0];
+
+    if (er instanceof Error) {
+      // Note: The comments on the `throw` lines are intentional, they show
+      // up in Node's output if this results in an unhandled exception.
+      throw er; // Unhandled 'error' event
+    } // At least give some kind of context to the user
+
+
+    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
+    err.context = er;
+    throw err; // Unhandled 'error' event
   }
 
-  handler = this._events[type];
-  if (isUndefined(handler)) return false;
+  var handler = events[type];
+  if (handler === undefined) return false;
 
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
+  if (typeof handler === 'function') {
+    ReflectApply(handler, this, args);
+  } else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
 
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-
-      default:
-        args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
-    listeners = handler.slice();
-    len = listeners.length;
-
-    for (i = 0; i < len; i++) listeners[i].apply(this, args);
+    for (var i = 0; i < len; ++i) ReflectApply(listeners[i], this, args);
   }
 
   return true;
 };
 
-EventEmitter.prototype.addListener = function (type, listener) {
+function _addListener(target, type, listener, prepend) {
   var m;
-  if (!isFunction(listener)) throw TypeError('listener must be a function');
-  if (!this._events) this._events = {}; // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
+  var events;
+  var existing;
 
-  if (this._events.newListener) this.emit('newListener', type, isFunction(listener.listener) ? listener.listener : listener);
-  if (!this._events[type]) // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;else if (isObject(this._events[type])) // If we've already got an array, just append.
-    this._events[type].push(listener);else // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener]; // Check for listener leak
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
 
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
+  events = target._events;
+
+  if (events === undefined) {
+    events = target._events = Object.create(null);
+    target._eventsCount = 0;
+  } else {
+    // To avoid recursion in the case that type === "newListener"! Before
+    // adding it to the listeners, first emit "newListener".
+    if (events.newListener !== undefined) {
+      target.emit('newListener', type, listener.listener ? listener.listener : listener); // Re-assign `events` because a newListener handler could have caused the
+      // this._events to be assigned to a new object
+
+      events = target._events;
     }
 
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' + 'leak detected. %d listeners added. ' + 'Use emitter.setMaxListeners() to increase limit.', this._events[type].length);
+    existing = events[type];
+  }
 
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
+  if (existing === undefined) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    existing = events[type] = listener;
+    ++target._eventsCount;
+  } else {
+    if (typeof existing === 'function') {
+      // Adding the second element, need to change to array.
+      existing = events[type] = prepend ? [listener, existing] : [existing, listener]; // If we've already got an array, just append.
+    } else if (prepend) {
+      existing.unshift(listener);
+    } else {
+      existing.push(listener);
+    } // Check for listener leak
+
+
+    m = $getMaxListeners(target);
+
+    if (m > 0 && existing.length > m && !existing.warned) {
+      existing.warned = true; // No error code for this since it is a Warning
+      // eslint-disable-next-line no-restricted-syntax
+
+      var w = new Error('Possible EventEmitter memory leak detected. ' + existing.length + ' ' + String(type) + ' listeners ' + 'added. Use emitter.setMaxListeners() to ' + 'increase limit');
+      w.name = 'MaxListenersExceededWarning';
+      w.emitter = target;
+      w.type = type;
+      w.count = existing.length;
+      ProcessEmitWarning(w);
     }
   }
 
-  return this;
+  return target;
+}
+
+EventEmitter.prototype.addListener = function addListener(type, listener) {
+  return _addListener(this, type, listener, false);
 };
 
 EventEmitter.prototype.on = EventEmitter.prototype.addListener;
 
-EventEmitter.prototype.once = function (type, listener) {
-  if (!isFunction(listener)) throw TypeError('listener must be a function');
-  var fired = false;
+EventEmitter.prototype.prependListener = function prependListener(type, listener) {
+  return _addListener(this, type, listener, true);
+};
 
-  function g() {
-    this.removeListener(type, g);
+function onceWrapper() {
+  var args = [];
 
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
+  for (var i = 0; i < arguments.length; i++) args.push(arguments[i]);
+
+  if (!this.fired) {
+    this.target.removeListener(this.type, this.wrapFn);
+    this.fired = true;
+    ReflectApply(this.listener, this.target, args);
+  }
+}
+
+function _onceWrap(target, type, listener) {
+  var state = {
+    fired: false,
+    wrapFn: undefined,
+    target: target,
+    type: type,
+    listener: listener
+  };
+  var wrapped = onceWrapper.bind(state);
+  wrapped.listener = listener;
+  state.wrapFn = wrapped;
+  return wrapped;
+}
+
+EventEmitter.prototype.once = function once(type, listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
   }
 
-  g.listener = listener;
-  this.on(type, g);
+  this.on(type, _onceWrap(this, type, listener));
   return this;
-}; // emits a 'removeListener' event iff the listener was removed
+};
+
+EventEmitter.prototype.prependOnceListener = function prependOnceListener(type, listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
+
+  this.prependListener(type, _onceWrap(this, type, listener));
+  return this;
+}; // Emits a 'removeListener' event if and only if the listener was removed.
 
 
-EventEmitter.prototype.removeListener = function (type, listener) {
-  var list, position, length, i;
-  if (!isFunction(listener)) throw TypeError('listener must be a function');
-  if (!this._events || !this._events[type]) return this;
-  list = this._events[type];
-  length = list.length;
-  position = -1;
+EventEmitter.prototype.removeListener = function removeListener(type, listener) {
+  var list, events, position, i, originalListener;
 
-  if (list === listener || isFunction(list.listener) && list.listener === listener) {
-    delete this._events[type];
-    if (this._events.removeListener) this.emit('removeListener', type, listener);
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener || list[i].listener && list[i].listener === listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
+
+  events = this._events;
+  if (events === undefined) return this;
+  list = events[type];
+  if (list === undefined) return this;
+
+  if (list === listener || list.listener === listener) {
+    if (--this._eventsCount === 0) this._events = Object.create(null);else {
+      delete events[type];
+      if (events.removeListener) this.emit('removeListener', type, list.listener || listener);
+    }
+  } else if (typeof list !== 'function') {
+    position = -1;
+
+    for (i = list.length - 1; i >= 0; i--) {
+      if (list[i] === listener || list[i].listener === listener) {
+        originalListener = list[i].listener;
         position = i;
         break;
       }
     }
 
     if (position < 0) return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
+    if (position === 0) list.shift();else {
+      spliceOne(list, position);
     }
-
-    if (this._events.removeListener) this.emit('removeListener', type, listener);
+    if (list.length === 1) events[type] = list[0];
+    if (events.removeListener !== undefined) this.emit('removeListener', type, originalListener || listener);
   }
 
   return this;
 };
 
-EventEmitter.prototype.removeAllListeners = function (type) {
-  var key, listeners;
-  if (!this._events) return this; // not listening for removeListener, no need to emit
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
 
-  if (!this._events.removeListener) {
-    if (arguments.length === 0) this._events = {};else if (this._events[type]) delete this._events[type];
+EventEmitter.prototype.removeAllListeners = function removeAllListeners(type) {
+  var listeners, events, i;
+  events = this._events;
+  if (events === undefined) return this; // not listening for removeListener, no need to emit
+
+  if (events.removeListener === undefined) {
+    if (arguments.length === 0) {
+      this._events = Object.create(null);
+      this._eventsCount = 0;
+    } else if (events[type] !== undefined) {
+      if (--this._eventsCount === 0) this._events = Object.create(null);else delete events[type];
+    }
+
     return this;
   } // emit removeListener for all listeners on all events
 
 
   if (arguments.length === 0) {
-    for (key in this._events) {
+    var keys = Object.keys(events);
+    var key;
+
+    for (i = 0; i < keys.length; ++i) {
+      key = keys[i];
       if (key === 'removeListener') continue;
       this.removeAllListeners(key);
     }
 
     this.removeAllListeners('removeListener');
-    this._events = {};
+    this._events = Object.create(null);
+    this._eventsCount = 0;
     return this;
   }
 
-  listeners = this._events[type];
+  listeners = events[type];
 
-  if (isFunction(listeners)) {
+  if (typeof listeners === 'function') {
     this.removeListener(type, listeners);
-  } else if (listeners) {
+  } else if (listeners !== undefined) {
     // LIFO order
-    while (listeners.length) this.removeListener(type, listeners[listeners.length - 1]);
+    for (i = listeners.length - 1; i >= 0; i--) {
+      this.removeListener(type, listeners[i]);
+    }
   }
 
-  delete this._events[type];
   return this;
 };
 
-EventEmitter.prototype.listeners = function (type) {
-  var ret;
-  if (!this._events || !this._events[type]) ret = [];else if (isFunction(this._events[type])) ret = [this._events[type]];else ret = this._events[type].slice();
-  return ret;
+function _listeners(target, type, unwrap) {
+  var events = target._events;
+  if (events === undefined) return [];
+  var evlistener = events[type];
+  if (evlistener === undefined) return [];
+  if (typeof evlistener === 'function') return unwrap ? [evlistener.listener || evlistener] : [evlistener];
+  return unwrap ? unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+}
+
+EventEmitter.prototype.listeners = function listeners(type) {
+  return _listeners(this, type, true);
 };
 
-EventEmitter.prototype.listenerCount = function (type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-    if (isFunction(evlistener)) return 1;else if (evlistener) return evlistener.length;
-  }
-
-  return 0;
+EventEmitter.prototype.rawListeners = function rawListeners(type) {
+  return _listeners(this, type, false);
 };
 
 EventEmitter.listenerCount = function (emitter, type) {
-  return emitter.listenerCount(type);
+  if (typeof emitter.listenerCount === 'function') {
+    return emitter.listenerCount(type);
+  } else {
+    return listenerCount.call(emitter, type);
+  }
 };
 
-function isFunction(arg) {
-  return typeof arg === 'function';
+EventEmitter.prototype.listenerCount = listenerCount;
+
+function listenerCount(type) {
+  var events = this._events;
+
+  if (events !== undefined) {
+    var evlistener = events[type];
+
+    if (typeof evlistener === 'function') {
+      return 1;
+    } else if (evlistener !== undefined) {
+      return evlistener.length;
+    }
+  }
+
+  return 0;
 }
 
-function isNumber(arg) {
-  return typeof arg === 'number';
+EventEmitter.prototype.eventNames = function eventNames() {
+  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
+};
+
+function arrayClone(arr, n) {
+  var copy = new Array(n);
+
+  for (var i = 0; i < n; ++i) copy[i] = arr[i];
+
+  return copy;
 }
 
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
+function spliceOne(list, index) {
+  for (; index + 1 < list.length; index++) list[index] = list[index + 1];
+
+  list.pop();
 }
 
-function isUndefined(arg) {
-  return arg === void 0;
+function unwrapListeners(arr) {
+  var ret = new Array(arr.length);
+
+  for (var i = 0; i < ret.length; ++i) {
+    ret[i] = arr[i].listener || arr[i];
+  }
+
+  return ret;
 }
 },{}],"../node_modules/base64-js/index.js":[function(require,module,exports) {
 'use strict'
@@ -38402,6 +38585,8 @@ exports.setTyped(TYPED_OK);
 //   misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 
+/* eslint-disable space-unary-ops */
+
 var utils = require('../utils/common');
 
 /* Public constants ==========================================================*/
@@ -41207,7 +41392,7 @@ function deflate(strm, flush) {
                     (!s.gzhead.extra ? 0 : 4) +
                     (!s.gzhead.name ? 0 : 8) +
                     (!s.gzhead.comment ? 0 : 16)
-                );
+        );
         put_byte(s, s.gzhead.time & 0xff);
         put_byte(s, (s.gzhead.time >> 8) & 0xff);
         put_byte(s, (s.gzhead.time >> 16) & 0xff);
@@ -44365,7 +44550,6 @@ module.exports = function isBuffer(arg) {
 }
 
 },{"buffer":"../node_modules/buffer/index.js"}],"../node_modules/util/util.js":[function(require,module,exports) {
-var global = arguments[3];
 var process = require("process");
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -44387,6 +44571,17 @@ var process = require("process");
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
+var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors || function getOwnPropertyDescriptors(obj) {
+  var keys = Object.keys(obj);
+  var descriptors = {};
+
+  for (var i = 0; i < keys.length; i++) {
+    descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
+  }
+
+  return descriptors;
+};
+
 var formatRegExp = /%[sdj%]/g;
 
 exports.format = function (f) {
@@ -44441,15 +44636,15 @@ exports.format = function (f) {
 
 
 exports.deprecate = function (fn, msg) {
-  // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
+  if (typeof process !== 'undefined' && process.noDeprecation === true) {
+    return fn;
+  } // Allow for deprecating things in the process of starting up.
+
+
+  if (typeof process === 'undefined') {
     return function () {
       return exports.deprecate(fn, msg).apply(this, arguments);
     };
-  }
-
-  if (process.noDeprecation === true) {
-    return fn;
   }
 
   var warned = false;
@@ -44956,6 +45151,125 @@ exports._extend = function (origin, add) {
 function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
+
+var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
+
+exports.promisify = function promisify(original) {
+  if (typeof original !== 'function') throw new TypeError('The "original" argument must be of type Function');
+
+  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
+    var fn = original[kCustomPromisifiedSymbol];
+
+    if (typeof fn !== 'function') {
+      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
+    }
+
+    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+      value: fn,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+    return fn;
+  }
+
+  function fn() {
+    var promiseResolve, promiseReject;
+    var promise = new Promise(function (resolve, reject) {
+      promiseResolve = resolve;
+      promiseReject = reject;
+    });
+    var args = [];
+
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+
+    args.push(function (err, value) {
+      if (err) {
+        promiseReject(err);
+      } else {
+        promiseResolve(value);
+      }
+    });
+
+    try {
+      original.apply(this, args);
+    } catch (err) {
+      promiseReject(err);
+    }
+
+    return promise;
+  }
+
+  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
+  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+    value: fn,
+    enumerable: false,
+    writable: false,
+    configurable: true
+  });
+  return Object.defineProperties(fn, getOwnPropertyDescriptors(original));
+};
+
+exports.promisify.custom = kCustomPromisifiedSymbol;
+
+function callbackifyOnRejected(reason, cb) {
+  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
+  // Because `null` is a special error value in callbacks which means "no error
+  // occurred", we error-wrap so the callback consumer can distinguish between
+  // "the promise rejected with null" or "the promise fulfilled with undefined".
+  if (!reason) {
+    var newReason = new Error('Promise was rejected with a falsy value');
+    newReason.reason = reason;
+    reason = newReason;
+  }
+
+  return cb(reason);
+}
+
+function callbackify(original) {
+  if (typeof original !== 'function') {
+    throw new TypeError('The "original" argument must be of type Function');
+  } // We DO NOT return the promise as it gives the user a false sense that
+  // the promise is actually somehow related to the callback's execution
+  // and that the callback throwing will reject the promise.
+
+
+  function callbackified() {
+    var args = [];
+
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+
+    var maybeCb = args.pop();
+
+    if (typeof maybeCb !== 'function') {
+      throw new TypeError('The last argument must be of type Function');
+    }
+
+    var self = this;
+
+    var cb = function () {
+      return maybeCb.apply(self, arguments);
+    }; // In true node style we process the callback on `nextTick` with all the
+    // implications (stack, `uncaughtException`, `async_hooks`)
+
+
+    original.apply(this, args).then(function (ret) {
+      process.nextTick(cb, null, ret);
+    }, function (rej) {
+      process.nextTick(callbackifyOnRejected, rej, cb);
+    });
+  }
+
+  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
+  Object.defineProperties(callbackified, getOwnPropertyDescriptors(original));
+  return callbackified;
+}
+
+exports.callbackify = callbackify;
 },{"./support/isBuffer":"../node_modules/util/support/isBuffer.js","inherits":"../node_modules/inherits/inherits_browser.js","process":"../node_modules/process/browser.js"}],"../node_modules/browserify-zlib/lib/index.js":[function(require,module,exports) {
 
 var process = require("process");
@@ -46537,8 +46851,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _config = _interopRequireDefault(require("../../config"));
-
 var _react = _interopRequireWildcard(require("react"));
 
 var _reactDom = _interopRequireDefault(require("react-dom"));
@@ -46547,13 +46859,15 @@ var _redux = require("redux");
 
 var _reactRedux = require("react-redux");
 
+var _config = _interopRequireDefault(require("../../config"));
+
 var actionsText = _interopRequireWildcard(require("../actions/actions-text"));
 
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -46627,18 +46941,20 @@ function (_Component) {
           justifyContent: 'space-between',
           width: '100%',
           height: this.state.collapsed ? '64px' : '6px',
-          background: _config.default.colors.primary,
+          backgroundColor: '#A6B3FF',
           transition: '0.5s all',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          userSelect: 'none'
         }
       }, _react.default.createElement("img", {
-        src: chrome.extension.getURL("icon-white.png"),
+        src: chrome.extension.getURL('icon-white.png'),
         style: {
           marginLeft: '16px',
           width: '32px',
           height: '32px',
           background: _config.default.colors.primary,
-          display: this.state.collapsed ? 'flex' : 'none'
+          display: this.state.collapsed ? 'flex' : 'none',
+          userSelect: 'none'
         }
       }), _react.default.createElement("div", {
         style: _defineProperty({
@@ -46649,7 +46965,7 @@ function (_Component) {
           width: '32px',
           height: '32px',
           borderRadius: '16px',
-          color: _config.default.colors.primary,
+          color: _config.default.colors.primary[0],
           background: 'white',
           fontWeight: 'bold',
           fontSize: '20'
@@ -46675,7 +46991,7 @@ var circle = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentToolbar);
 
 exports.default = _default;
-},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js"}],"components/component-widget.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../../config":"../config.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js"}],"components/component-widget.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46777,16 +47093,11 @@ function (_Component) {
       ; // Test
 
       var keyUp = function keyUp(event) {
-        var text; //const text1 = this.props.textElement.childNodes?this.props.textElement.childNodes[0].innerHTML:'';
-
-        var text2 = _this2.props.textElement.innerHTML;
-        var text3 = _this2.props.textElement.textContent;
-        var text4 = _this2.props.textElement.value; //log(text1)
-
-        (0, _helperLogger.default)(text2);
-        (0, _helperLogger.default)(text3);
-        (0, _helperLogger.default)(text4);
-        text = text3;
+        var textContent = _this2.props.textElement.textContent;
+        var value = _this2.props.textElement.value;
+        (0, _helperLogger.default)(textContent);
+        (0, _helperLogger.default)(value);
+        var text = textContent != undefined && textContent != null && textContent != '' ? textContent : value != undefined && value != null && value != '' ? value : '';
 
         _this2.props.checkText(text, _this2.state.id);
       };
@@ -46842,9 +47153,9 @@ function (_Component) {
           color: 'rgba(0,0,0,0.54)',
           textAlign: 'center',
           //marginLeft: '14px',
-          position: 'absolute',
-          top: this.state.height,
-          marginTop: '-22px',
+          //position: 'absolute',
+          //top: this.state.height,
+          //marginTop: '-22px',
           //transform: `translate(5px, calc(${this.state.height} - 0px)`,
           cursor: 'pointer',
           userSelect: 'none'
@@ -46898,7 +47209,173 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js"}],"App.js":[function(require,module,exports) {
+},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js"}],"modules/placing/google.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var google = function google(elementClickedOn) {
+  var con = document.getElementsByClassName('dRYYxd')[0];
+  var container = document.createElement('li');
+  container.style.width = '50px';
+  container.style.height = '44px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  con.insertBefore(container, con.childNodes[2]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = google;
+exports.default = _default;
+},{}],"modules/placing/zalando.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var zalando = function zalando(elementClickedOn) {
+  var con = document.getElementsByClassName('z-icon z-icon-search-semi-bold z-icon-small z-icon-black')[0];
+  var container = document.createElement('div');
+  container.style.width = '26px';
+  container.style.height = '26px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  con.style.display = 'flex';
+  con.style.border = '0px solid red';
+  con.style.flexDirection = 'row';
+  con.style.alignItems = 'center';
+  con.style.justifyContent = 'center';
+  con.style.width = '52px';
+  con.insertBefore(container, con.childNodes[0]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = zalando;
+exports.default = _default;
+},{}],"modules/placing/slack.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var slack = function slack(elementClickedOn) {
+  var element = document.getElementsByClassName('btn_unstyle msg_mentions_button')[0];
+  var container = document.createElement('div');
+  container.style.marginLeft = '-28px';
+  container.style.marginTop = '-2px';
+  element.prepend(container);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = slack;
+exports.default = _default;
+},{}],"modules/placing/messenger.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var messenger = function messenger(elementClickedOn) {
+  var con = document.getElementsByClassName('_4rv4')[0];
+  var container = document.createElement('li');
+  container.style.width = '35px';
+  container.style.height = '32px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  con.prepend(container);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = messenger;
+exports.default = _default;
+},{}],"modules/placing/whatsapp.js":[function(require,module,exports) {
+var whatsapp = function whatsapp(elementClickedOn) {
+  var con = document.getElementsByClassName('_3pkkz copyable-area')[0];
+  var container = document.createElement('div');
+  container.style.width = '46px';
+  container.style.height = '52px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  con.insertBefore(container, con.childNodes[1]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+},{}],"modules/placing/telegram.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var telegram = function telegram(elementClickedOn) {
+  var con = document.getElementsByClassName('im_send_buttons_wrap clearfix')[0];
+  var container = document.createElement('div');
+  container.style.width = '26px';
+  container.style.height = '24px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  container.style.marginTop = '2px';
+  con.append(container);
+  document.getElementsByClassName('composer_emoji_panel')[0].remove();
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = telegram;
+exports.default = _default;
+},{}],"modules/placing/facebook.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var facebook = function facebook(elementClickedOn) {
+  var con = document.getElementsByClassName('_4vc1 _2j7a')[0];
+  con.style.display = 'flex';
+  con.style.flexDirection = 'row';
+  var container = document.createElement('div');
+  container.style.width = '50px';
+  container.style.height = '44px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  con.parentNode.insertBefore(container, con.nextSibling); //con.insertBefore(container, con.childNodes[0]);
+
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = facebook;
+exports.default = _default;
+},{}],"App.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46913,6 +47390,20 @@ var _helperLogger = _interopRequireDefault(require("./helpers/helper-logger"));
 var _componentToolbar = _interopRequireDefault(require("./components/component-toolbar"));
 
 var _componentWidget = _interopRequireDefault(require("./components/component-widget"));
+
+var _google = _interopRequireDefault(require("./modules/placing/google"));
+
+var _zalando = _interopRequireDefault(require("./modules/placing/zalando"));
+
+var _slack = _interopRequireDefault(require("./modules/placing/slack"));
+
+var _messenger = _interopRequireDefault(require("./modules/placing/messenger"));
+
+var _whatsapp = _interopRequireDefault(require("./modules/placing/whatsapp"));
+
+var _telegram = _interopRequireDefault(require("./modules/placing/telegram"));
+
+var _facebook = _interopRequireDefault(require("./modules/placing/facebook"));
 
 var _config = _interopRequireDefault(require("../config"));
 
@@ -46952,7 +47443,7 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props));
     _this.state = {
-      textElements: []
+      textFields: []
     };
     return _this;
   }
@@ -46963,63 +47454,139 @@ function (_Component) {
       var _this2 = this;
 
       (0, _helperLogger.default)('* Fairlanguage 0.6 - App');
-      addEventListener('click', function (event) {
-        //@TODO: CLEAN THIS UP!!!
-        (0, _helperLogger.default)('Click');
+      window.addEventListener('click', function (event) {
+        (0, _helperLogger.default)('Detecting `elementClickedOn`');
         var elementClickedOn = event.target;
-        if (elementClickedOn.id === 'fairlanguage-container') return;
-        console.log(elementClickedOn); //First we check if there is already a widget connected to the element that was clicked on
+        if (dev) elementClickedOn.style.background = 'lightblue';
+        if (dev) console.log(elementClickedOn);
+        /*
+        *  First, check if it's ours.
+        */
 
-        var isAlreadyInjected; //If we have a parent element check all their children's elements if one of them is a fl widget
+        var isAlreadyInjected; // Is the element is our general container itself?
+
+        isAlreadyInjected = elementClickedOn.id === 'fairlanguage-container';
+        isAlreadyInjected = elementClickedOn.id === 'fairlanguage-container'; // Do the element's child elements have our 'attribute' (most likely).
 
         elementClickedOn.parentNode.childNodes.forEach(function (node) {
           isAlreadyInjected = node.hasAttribut ? node.hasAttribute('fl') : false;
         });
         (0, _helperLogger.default)("isAlreadyInjected: ".concat(isAlreadyInjected));
         if (isAlreadyInjected) return;
-        var isTextArea = elementClickedOn.type === 'textarea';
-        var isContentEditable = elementClickedOn.hasAttribute('contenteditable'); //Is the parent element's content editable? (Slack)
-
-        var parentElementsContentIsEditable = elementClickedOn.parentNode.hasAttribute('contenteditable');
-        (0, _helperLogger.default)("isTextArea: ".concat(isTextArea));
-        (0, _helperLogger.default)("isContentIsEditable: ".concat(isContentEditable));
-        (0, _helperLogger.default)("parentElementsContentIsEditable: ".concat(parentElementsContentIsEditable));
-        if (!isTextArea && !isContentEditable && !parentElementsContentIsEditable) return;
-        if (dev) elementClickedOn.style.background = 'lightblue';
-        if (dev) console.log(elementClickedOn);
-        var parentElement = parentElementsContentIsEditable ? elementClickedOn.parentNode.parentNode : elementClickedOn.parentNode; //const containerElement = document.createElement('div');
-        //      containerElement.id = 'fairlanguage-widget'
-        // parentElement.appendChild(containerElement);
-
-        var textElements = _this2.state.textElements;
         /*
-         Custom @TODO: 
+        *  Second, check if the element is any kind of text field.
         */
+        // Is the element itself a HTML TextArea element?
 
-        if (window.location.href.includes('slack.com')) {
-          //Search for certain elements
-          console.log(document.getElementById("primary_file_button"));
-          var element = document.getElementsByClassName('btn_unstyle msg_mentions_button')[0];
-          var container = document.createElement('div');
-          container.style.marginLeft = '-28px';
-          container.style.transform = 'translateY(-23px)';
-          element.prepend(container);
-          textElements.push([elementClickedOn, container]);
-        } else {
-          textElements.push([elementClickedOn, parentElement]);
+        var isTextArea = elementClickedOn.type === 'textarea';
+        (0, _helperLogger.default)("isTextArea: ".concat(isTextArea)); // Is the element an input element?
+
+        var isIn = elementClickedOn.tagName.toLowerCase() === 'input';
+        (0, _helperLogger.default)("isIn: ".concat(isIn)); // Is the element's type input?
+
+        var isInput = elementClickedOn.type === 'input';
+        (0, _helperLogger.default)("isInput: ".concat(isInput)); // Is the element's type search?
+
+        var isSearch = elementClickedOn.type === 'search';
+        (0, _helperLogger.default)("isSearch: ".concat(isSearch)); // Is the element itself content editable?
+
+        var isContentEditable = elementClickedOn.hasAttribute('contenteditable');
+        (0, _helperLogger.default)("isContentIsEditable: ".concat(isContentEditable)); // Is a parent element's content editable?
+
+        var isParentElementContentIsEditable;
+        var maxDepth = 10;
+        var depth = 0;
+        var el = elementClickedOn;
+
+        while (!isParentElementContentIsEditable && depth <= maxDepth) {
+          isParentElementContentIsEditable = el.hasAttribute('contenteditable');
+          el = el.parentNode;
+          depth += 1;
         }
 
+        (0, _helperLogger.default)("isParentElementContentIsEditable (".concat(depth, "): ").concat(isParentElementContentIsEditable)); // If none of that is the case it just wasn't a txt field (sorry :/).
+
+        if (!isTextArea && !isIn && !isInput && !isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
+        /*
+        *  Third, we decide where to place the fucking widget!
+        */
+
+        var textFields = _this2.state.textFields;
+        var textElement;
+        var widgetContainer; // Do we have a custom idea for the webapp?
+
+        var hasCustomPosition = false;
+
+        if (window.location.href.includes('slack.com')) {
+          hasCustomPosition = true;
+          var e = (0, _slack.default)(elementClickedOn);
+          textElement = e[0];
+          widgetContainer = e[1];
+        } else if (window.location.href.includes('google.com')) {
+          hasCustomPosition = true;
+
+          var _e = (0, _google.default)(elementClickedOn);
+
+          textElement = _e[0];
+          widgetContainer = _e[1];
+        } else if (window.location.href.includes('facebook.com')) {
+          hasCustomPosition = true;
+
+          var _e2 = (0, _facebook.default)(elementClickedOn);
+
+          textElement = _e2[0];
+          widgetContainer = _e2[1];
+        } else if (window.location.href.includes('en.zalando.de')) {
+          hasCustomPosition = true;
+
+          var _e3 = (0, _zalando.default)(elementClickedOn);
+
+          textElement = _e3[0];
+          widgetContainer = _e3[1];
+        } else if (window.location.href.includes('messenger.com')) {
+          hasCustomPosition = true;
+
+          var _e4 = (0, _messenger.default)(elementClickedOn);
+
+          textElement = _e4[0];
+          widgetContainer = _e4[1];
+        } else if (window.location.href.includes('whatsapp.com')) {
+          hasCustomPosition = true;
+
+          var _e5 = (0, _whatsapp.default)(elementClickedOn);
+
+          textElement = _e5[0];
+          widgetContainer = _e5[1];
+        } else if (window.location.href.includes('telegram.org')) {
+          hasCustomPosition = true;
+
+          var _e6 = (0, _telegram.default)(elementClickedOn);
+
+          textElement = _e6[0];
+          widgetContainer = _e6[1];
+        } else {
+          /*
+          * We don't have a custom position for this app, so just place it inside the parent node.
+          */
+          var parentElement = isParentElementContentIsEditable ? elementClickedOn.parentNode.parentNode : elementClickedOn.parentNode;
+          textElement = elementClickedOn;
+          widgetContainer = parentElement;
+        }
+
+        (0, _helperLogger.default)("hasCustomPosition: ".concat(hasCustomPosition));
+        textFields.push([textElement, widgetContainer]);
+
         _this2.setState({
-          textElements: textElements
+          textFields: textFields
         });
 
-        (0, _helperLogger.default)(textElements.length);
+        (0, _helperLogger.default)("$ Detected textElement #".concat(textFields.length));
       });
     }
   }, {
     key: "render",
     value: function render() {
-      return _react.default.createElement(_react.Fragment, null, _config.default.default.toolbar ? _react.default.createElement(_componentToolbar.default, null) : '', this.state.textElements.map(function (el, index) {
+      return _react.default.createElement(_react.Fragment, null, _config.default.default.toolbar ? _react.default.createElement(_componentToolbar.default, null) : '', this.state.textFields.map(function (el, index) {
         return _react.default.createElement(_componentWidget.default, {
           key: index,
           textElement: el[0],
@@ -47033,10 +47600,8 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","../config":"../config.js"}],"index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/zalando":"modules/placing/zalando.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","../config":"../config.js"}],"index.jsx":[function(require,module,exports) {
 "use strict";
-
-var _config = _interopRequireDefault(require("../config"));
 
 var _react = _interopRequireDefault(require("react"));
 
@@ -47046,25 +47611,23 @@ var _reactRedux = require("react-redux");
 
 var _store = _interopRequireDefault(require("./store"));
 
-var _App = _interopRequireDefault(require("./App.js"));
+var _App = _interopRequireDefault(require("./App"));
 
 var _helperLogger = _interopRequireDefault(require("./helpers/helper-logger"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var dev = true;
-
 window.onload = function () {
-  (0, _helperLogger.default)('* Fairlanguage 0.6 - index'); //Create container element (@TODO: Will we actually gonna need this?!)
+  (0, _helperLogger.default)('* Fairlanguage 0.6 - index'); // Create container element
 
-  var containerElement = document.createElement("div");
-  containerElement.id = 'fairlanguage-container'; //Append container element to parent element
-  //document.body.appendChild(containerElement);
-  //Different approach: Take the body's pole position.
+  var containerElement = document.createElement('div');
+  containerElement.id = 'fairlanguage-container'; // Append container element to parent element
+  // document.body.appendChild(containerElement);
+  // Different approach: Take the body's pole position.
 
   var prependChild = function prependChild(parentEle, newFirstChildEle) {
     parentEle.insertBefore(newFirstChildEle, parentEle.firstChild);
-  }; //Prepend container element as very first element in body
+  }; // Prepend container element as very first element in body
 
 
   prependChild(document.body, containerElement);
@@ -47073,7 +47636,7 @@ window.onload = function () {
     store: _store.default
   }, _react.default.createElement(_App.default, null)), containerElement);
 };
-},{"../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","react-redux":"../node_modules/react-redux/es/index.js","./store":"store.js","./App.js":"App.js","./helpers/helper-logger":"helpers/helper-logger.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","react-redux":"../node_modules/react-redux/es/index.js","./store":"store.js","./App":"App.jsx","./helpers/helper-logger":"helpers/helper-logger.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -47100,7 +47663,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53400" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59153" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
@@ -47242,5 +47805,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.jsx"], null)
 //# sourceMappingURL=/index.map
