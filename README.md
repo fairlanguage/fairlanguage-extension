@@ -9,6 +9,10 @@
 <img src="https://img.shields.io/badge/Slack-12%25-orange.svg"></img>
 </p>
 
+# Compatibility
+
+[STATUS.md](STATUS.md).
+
 # Install
 
 ## Non-CLI
