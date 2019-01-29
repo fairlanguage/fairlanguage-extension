@@ -122,17 +122,7 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-      } else 
-      
-      if (window.location.href.includes('google.com')) {
-
-        hasCustomPosition = true
-
-        const e = ModulePlacingGoogle(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
-
-      } else 
+      } else
       
       if (window.location.href.includes('facebook.com')) {
 

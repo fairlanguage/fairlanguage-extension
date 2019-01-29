@@ -47522,48 +47522,41 @@ function (_Component) {
           var e = (0, _slack.default)(elementClickedOn);
           textElement = e[0];
           widgetContainer = e[1];
-        } else if (window.location.href.includes('google.com')) {
-          hasCustomPosition = true;
-
-          var _e = (0, _google.default)(elementClickedOn);
-
-          textElement = _e[0];
-          widgetContainer = _e[1];
         } else if (window.location.href.includes('facebook.com')) {
           hasCustomPosition = true;
 
-          var _e2 = (0, _facebook.default)(elementClickedOn);
+          var _e = (0, _facebook.default)(elementClickedOn);
 
-          textElement = _e2[0];
-          widgetContainer = _e2[1];
+          textElement = _e[0];
+          widgetContainer = _e[1];
         } else if (window.location.href.includes('en.zalando.de')) {
           hasCustomPosition = true;
 
-          var _e3 = (0, _zalando.default)(elementClickedOn);
+          var _e2 = (0, _zalando.default)(elementClickedOn);
 
-          textElement = _e3[0];
-          widgetContainer = _e3[1];
+          textElement = _e2[0];
+          widgetContainer = _e2[1];
         } else if (window.location.href.includes('messenger.com')) {
           hasCustomPosition = true;
 
-          var _e4 = (0, _messenger.default)(elementClickedOn);
+          var _e3 = (0, _messenger.default)(elementClickedOn);
 
-          textElement = _e4[0];
-          widgetContainer = _e4[1];
+          textElement = _e3[0];
+          widgetContainer = _e3[1];
         } else if (window.location.href.includes('whatsapp.com')) {
           hasCustomPosition = true;
 
-          var _e5 = (0, _whatsapp.default)(elementClickedOn);
+          var _e4 = (0, _whatsapp.default)(elementClickedOn);
 
-          textElement = _e5[0];
-          widgetContainer = _e5[1];
+          textElement = _e4[0];
+          widgetContainer = _e4[1];
         } else if (window.location.href.includes('telegram.org')) {
           hasCustomPosition = true;
 
-          var _e6 = (0, _telegram.default)(elementClickedOn);
+          var _e5 = (0, _telegram.default)(elementClickedOn);
 
-          textElement = _e6[0];
-          widgetContainer = _e6[1];
+          textElement = _e5[0];
+          widgetContainer = _e5[1];
         } else {
           /*
           * We don't have a custom position for this app, so just place it inside the parent node.
@@ -47663,7 +47656,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59153" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57679" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

@@ -2,6 +2,8 @@
 
 # Compatibility Status
 
+## Custom support
+
 ### Mail
 
 |                                       |           |
@@ -60,7 +62,7 @@ Multi-tab web apps
 
 [badge3]: https://img.shields.io/badge/multi--tabs-supported-green.svg
 
-[badge4]: https://img.shields.io/badge/mail.google.com-active-brightgreen.svg
+[badge4]: https://img.shields.io/badge/mail.google.com-in%20progress-red.svg
 
 [badge5]: https://img.shields.io/badge/mail.yahoo.com-in%20progress-red.svg
 
@@ -72,7 +74,7 @@ Multi-tab web apps
 
 [badge9]: https://img.shields.io/badge/instagram.com-in%20progress-red.svg
 
-[badge10]: https://img.shields.io/badge/slack.com-in%20progress-red.svg
+[badge10]: https://img.shields.io/badge/slack.com-supported-green.svg
 
 [badge11]: https://img.shields.io/badge/meet.google.com-in%20progress-red.svg
 
