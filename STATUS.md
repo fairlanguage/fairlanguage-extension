@@ -49,8 +49,8 @@
 [badge111]: https://img.shields.io/badge/teams.microsoft.com-supported-green.svg
 
 
-[badge12]: https://img.shields.io/badge/web.telegram.com-supported-green.svg
+[badge12]: https://img.shields.io/badge/telegram.com-supported-green.svg
 
-[badge13]: https://img.shields.io/badge/web.whatsapp.com-supported-green.svg
+[badge13]: https://img.shields.io/badge/whatsapp.com-supported-green.svg
 
 [badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
