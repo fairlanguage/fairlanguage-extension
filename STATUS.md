@@ -55,9 +55,7 @@
 
 [badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
 
-# Screens
-
-### Instagram
+## Instagram
 
 [![screen-insta]](https://web.telegram.org)
 
