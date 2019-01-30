@@ -7,14 +7,9 @@ import ComponentWidget from './components/component-widget';
 
 import ModulePlacingGoogle from './modules/placing/google';
 
-import ModulePlacingTwitter from './modules/placing/twitter';
-
 import ModulePlacingGoogleMail from './modules/placing/google-mail';
 import ModulePlacingYahooMail from './modules/placing/yahoo-mail';
 import ModulePlacingOutlookMail from './modules/placing/outlook-mail';
-
-
-import ModulePlacingZalando from './modules/placing/zalando';
 
 import ModulePlacingSlack from './modules/placing/slack';
 import ModulePlacingGoogleMeet from './modules/placing/google-meet';
@@ -25,7 +20,10 @@ import ModulePlacingWhatsapp from './modules/placing/whatsapp';
 import ModulePlacingTelegram from './modules/placing/telegram';
 
 import ModulePlacingFacebook from './modules/placing/facebook';
+import ModulePlacingTwitter from './modules/placing/twitter';
+import ModulePlacingInstagram from './modules/placing/instagram';
 
+import ModulePlacingZalando from './modules/placing/zalando';
 
 import config from '../config';
 
@@ -134,7 +132,6 @@ export default class App extends Component {
         widgetContainer = e[1]
 
       } else
-      
       if (window.location.href.includes('twitter.com')) {
 
         hasCustomPosition = true
@@ -144,7 +141,6 @@ export default class App extends Component {
         widgetContainer = e[1]
 
       } else
-
       if (window.location.href.includes('outlook.live.com')) {
 
         hasCustomPosition = true
@@ -154,7 +150,6 @@ export default class App extends Component {
         widgetContainer = e[1]
 
       } else
-      
       if (window.location.href.includes('mail.yahoo.com')) {
 
         hasCustomPosition = true
@@ -163,10 +158,8 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-      } else
-      
+      } else  
       if (window.location.href.includes('mail.google.com')) {
-
         hasCustomPosition = true
 
         const e = ModulePlacingGoogleMail(elementClickedOn);
@@ -174,7 +167,6 @@ export default class App extends Component {
         widgetContainer = e[1]
 
       } else
-      
       if (window.location.href.includes('facebook.com')) {
 
         hasCustomPosition = true
@@ -183,8 +175,7 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-      } else  
-      
+      } else       
       if (window.location.href.includes('en.zalando.de')) {
 
         hasCustomPosition = true
@@ -193,8 +184,7 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-      } else 
-      
+      } else     
       if (window.location.href.includes('messenger.com')) {
 
         hasCustomPosition = true
@@ -203,8 +193,7 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-      } else 
-      
+      } else     
       if (window.location.href.includes('meet.google.com')) {
 
         hasCustomPosition = true;
@@ -213,8 +202,21 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
+      } else    
+      if (window.location.href.includes('instagram.com')) {
+
+        hasCustomPosition = true;
+
+        const e = ModulePlacingInstagram(elementClickedOn);
+        textElement = e[0]
+        widgetContainer = e[1]
+
+        /* const parentElement = isParentElementContentIsEditable ? elementClickedOn.parentNode.parentNode : elementClickedOn.parentNode;
+        
+        textElement = elementClickedOn;
+        widgetContainer = parentElement; */
+
       } else 
-      
       if (window.location.href.includes('teams.microsoft.com')) {
 
         hasCustomPosition = true;
@@ -223,8 +225,7 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-      } else
-      
+      } else    
       if (window.location.href.includes('whatsapp.com')) {
 
         hasCustomPosition = true;
@@ -233,8 +234,7 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-      } else 
-      
+      } else      
       if (window.location.href.includes('telegram.org')) {
 
         hasCustomPosition = true;

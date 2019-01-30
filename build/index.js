@@ -29479,34 +29479,6 @@ var google = function google(elementClickedOn) {
 
 var _default = google;
 exports.default = _default;
-},{}],"modules/placing/twitter.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var twitter = function twitter(elementClickedOn) {
-  var con = document.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0].parentNode;
-  var container = document.createElement('div');
-  container.style.marginLeft = '12px';
-  container.style.marginRight = '8px'; //container.style.marginTop = '-4px';
-
-  container.style.width = '46px';
-  container.style.height = '38px';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
-  container.style.justifyContent = 'center'; //con.appendChild(container)
-
-  con.insertBefore(container, con.childNodes[1]);
-  var textElement = elementClickedOn;
-  var widgetContainer = container;
-  return [textElement, widgetContainer];
-};
-
-var _default = twitter;
-exports.default = _default;
 },{}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
@@ -29584,36 +29556,6 @@ var outlook = function outlook(elementClickedOn) {
 };
 
 var _default = outlook;
-exports.default = _default;
-},{}],"modules/placing/zalando.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var zalando = function zalando(elementClickedOn) {
-  var con = document.getElementsByClassName('z-icon z-icon-search-semi-bold z-icon-small z-icon-black')[0];
-  var container = document.createElement('div');
-  container.style.width = '26px';
-  container.style.height = '26px';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
-  container.style.justifyContent = 'center';
-  con.style.display = 'flex';
-  con.style.border = '0px solid red';
-  con.style.flexDirection = 'row';
-  con.style.alignItems = 'center';
-  con.style.justifyContent = 'center';
-  con.style.width = '52px';
-  con.insertBefore(container, con.childNodes[0]);
-  var textElement = elementClickedOn;
-  var widgetContainer = container;
-  return [textElement, widgetContainer];
-};
-
-var _default = zalando;
 exports.default = _default;
 },{}],"modules/placing/slack.js":[function(require,module,exports) {
 "use strict";
@@ -29787,6 +29729,90 @@ var facebook = function facebook(elementClickedOn) {
 
 var _default = facebook;
 exports.default = _default;
+},{}],"modules/placing/twitter.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var twitter = function twitter(elementClickedOn) {
+  var con = document.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0].parentNode;
+  var container = document.createElement('div');
+  container.style.marginLeft = '12px';
+  container.style.marginRight = '8px'; //container.style.marginTop = '-4px';
+
+  container.style.width = '46px';
+  container.style.height = '38px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center'; //con.appendChild(container)
+
+  con.insertBefore(container, con.childNodes[1]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = twitter;
+exports.default = _default;
+},{}],"modules/placing/instagram.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var instagram = function instagram(elementClickedOn) {
+  var con = document.getElementsByClassName('J2XYq')[0];
+  var container = document.createElement('div');
+  container.style.height = '46px';
+  /* 
+  container.style.height = '52px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center'; */
+  //con.insertBefore(container, con.childNodes[1]);
+
+  var textElement = elementClickedOn;
+  var widgetContainer = elementClickedOn.parentNode;
+  return [textElement, widgetContainer];
+};
+
+var _default = instagram;
+exports.default = _default;
+},{}],"modules/placing/zalando.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var zalando = function zalando(elementClickedOn) {
+  var con = document.getElementsByClassName('z-icon z-icon-search-semi-bold z-icon-small z-icon-black')[0];
+  var container = document.createElement('div');
+  container.style.width = '26px';
+  container.style.height = '26px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  con.style.display = 'flex';
+  con.style.border = '0px solid red';
+  con.style.flexDirection = 'row';
+  con.style.alignItems = 'center';
+  con.style.justifyContent = 'center';
+  con.style.width = '52px';
+  con.insertBefore(container, con.childNodes[0]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = zalando;
+exports.default = _default;
 },{}],"App.jsx":[function(require,module,exports) {
 "use strict";
 
@@ -29805,15 +29831,11 @@ var _componentWidget = _interopRequireDefault(require("./components/component-wi
 
 var _google = _interopRequireDefault(require("./modules/placing/google"));
 
-var _twitter = _interopRequireDefault(require("./modules/placing/twitter"));
-
 var _googleMail = _interopRequireDefault(require("./modules/placing/google-mail"));
 
 var _yahooMail = _interopRequireDefault(require("./modules/placing/yahoo-mail"));
 
 var _outlookMail = _interopRequireDefault(require("./modules/placing/outlook-mail"));
-
-var _zalando = _interopRequireDefault(require("./modules/placing/zalando"));
 
 var _slack = _interopRequireDefault(require("./modules/placing/slack"));
 
@@ -29828,6 +29850,12 @@ var _whatsapp = _interopRequireDefault(require("./modules/placing/whatsapp"));
 var _telegram = _interopRequireDefault(require("./modules/placing/telegram"));
 
 var _facebook = _interopRequireDefault(require("./modules/placing/facebook"));
+
+var _twitter = _interopRequireDefault(require("./modules/placing/twitter"));
+
+var _instagram = _interopRequireDefault(require("./modules/placing/instagram"));
+
+var _zalando = _interopRequireDefault(require("./modules/placing/zalando"));
 
 var _config = _interopRequireDefault(require("../config"));
 
@@ -30005,27 +30033,38 @@ function (_Component) {
 
           textElement = _e8[0];
           widgetContainer = _e8[1];
-        } else if (window.location.href.includes('teams.microsoft.com')) {
+        } else if (window.location.href.includes('instagram.com')) {
           hasCustomPosition = true;
 
-          var _e9 = (0, _microsoftTeams.default)(elementClickedOn);
+          var _e9 = (0, _instagram.default)(elementClickedOn);
 
           textElement = _e9[0];
           widgetContainer = _e9[1];
-        } else if (window.location.href.includes('whatsapp.com')) {
+          /* const parentElement = isParentElementContentIsEditable ? elementClickedOn.parentNode.parentNode : elementClickedOn.parentNode;
+          
+          textElement = elementClickedOn;
+          widgetContainer = parentElement; */
+        } else if (window.location.href.includes('teams.microsoft.com')) {
           hasCustomPosition = true;
 
-          var _e10 = (0, _whatsapp.default)(elementClickedOn);
+          var _e10 = (0, _microsoftTeams.default)(elementClickedOn);
 
           textElement = _e10[0];
           widgetContainer = _e10[1];
-        } else if (window.location.href.includes('telegram.org')) {
+        } else if (window.location.href.includes('whatsapp.com')) {
           hasCustomPosition = true;
 
-          var _e11 = (0, _telegram.default)(elementClickedOn);
+          var _e11 = (0, _whatsapp.default)(elementClickedOn);
 
           textElement = _e11[0];
           widgetContainer = _e11[1];
+        } else if (window.location.href.includes('telegram.org')) {
+          hasCustomPosition = true;
+
+          var _e12 = (0, _telegram.default)(elementClickedOn);
+
+          textElement = _e12[0];
+          widgetContainer = _e12[1];
         } else {
           /*
           * We don't have a custom position for this app, so just place it inside the parent node.
@@ -30067,7 +30106,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/zalando":"modules/placing/zalando.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","../config":"../config.js"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","../config":"../config.js"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -30130,7 +30169,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62394" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57110" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

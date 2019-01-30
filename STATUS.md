@@ -1,41 +1,25 @@
 ## (Updated 1/30/19)
 
-# Compatibility Status
+# 🎉 Compatibility Status
 
-## Custom support
-
-### Messenger
-
-|                                                 |           |
-|-------------------------------------------------|:---------:|
-| [![badge12]](https://web.telegram.org)          |           |
-| [![badge13]](https://web.whatsapp.google.com)   |           |
-| [![badge14]](https://messenger.com)             |           |
-
-### Mail
-
-|                                       |           |
-|---------------------------------------|:---------:|
-| [![badge4]](https://mail.google.com)  |           |
-| [![badge5]](https://mail.yahoo.com)   |           |
-| [![badge6]](https://outlook.live.com) |           |
-
-### Work
-
-|                                        |           |
-|----------------------------------------|:---------:|
-| [![badge10]](https://slack.org)        |           |
-| [![badge11]](https://meet.google.com)  |           |
-| [![badge111]](https://meet.google.com) |           |
-
-
-### Social Media
-
-|                                        |           |
-|----------------------------------------|:---------:|
-| [![badge7]](https://facebook.com)      |           |
-| [![badge8]](https://twitter.com)       |           |
-| [![badge9]](https://instagram.com)     |           |
+|             Web App                             | widget | marking | replacing |
+|-------------------------------------------------|:------:|:-------:|:---------:|
+| Mail                                            |        |         |           |
+| [![badge12]](https://web.telegram.org)          | custom |         |           |
+| [![badge13]](https://web.whatsapp.google.com)   | custom |         |           | 
+| [![badge14]](https://messenger.com)             | custom |         |           |
+| Mail                                            |        |         |           |
+| [![badge4]](https://mail.google.com)            | custom |         |           |
+| [![badge5]](https://mail.yahoo.com)             | custom |         |           |
+| [![badge6]](https://outlook.live.com)           | custom |         |           |
+| Work                                            |        |         |           |
+| [![badge10]](https://slack.org)                 | custom |         |           |
+| [![badge11]](https://meet.google.com)           | custom |         |           |
+| [![badge111]](https://meet.google.com)          | custom |         |           |
+| Social Media                                    |        |         |           |
+| [![badge9]](https://instagram.com)              | custom |         |           |
+| [![badge8]](https://twitter.com)                | custom |         |           |
+| [![badge7]](https://facebook.com)               | custom |         |           |
 
 
 [badge0]: https://img.shields.io/badge/single--tab-in%20progress-red.svg
@@ -54,7 +38,7 @@
 
 [badge7]: https://img.shields.io/badge/facebook.com-in%20progress-red.svg
 
-[badge8]: https://img.shields.io/badge/twitter.com-supported-green.svg
+[badge8]: https://img.shields.io/badge/twitter.com-in%20progress-red.svg
 
 [badge9]: https://img.shields.io/badge/instagram.com-supported-green.svg
 
@@ -70,7 +54,3 @@
 [badge13]: https://img.shields.io/badge/web.whatsapp.com-supported-green.svg
 
 [badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
-
-### Word marking
-
-### Suggenstions placing
