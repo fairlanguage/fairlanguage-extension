@@ -62,7 +62,7 @@
 
 [badge11]: https://img.shields.io/badge/meet.google.com-supported-green.svg
 
-[badge111]: https://img.shields.io/badge/teams.microsoft.com-in%20progress-red.svg
+[badge111]: https://img.shields.io/badge/teams.microsoft.com-supported-green.svg
 
 
 [badge12]: https://img.shields.io/badge/web.telegram.com-supported-green.svg

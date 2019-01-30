@@ -29662,6 +29662,30 @@ var meet = function meet(elementClickedOn) {
 
 var _default = meet;
 exports.default = _default;
+},{}],"modules/placing/microsoft-teams.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var meet = function meet(elementClickedOn) {
+  var con = document.getElementsByClassName('extension-sub-icons compose-stripe')[0];
+  var container = document.createElement('div');
+  container.style.width = '32px';
+  container.style.height = '32px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center';
+  con.insertBefore(container, con.childNodes[0]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = meet;
+exports.default = _default;
 },{}],"modules/placing/messenger.js":[function(require,module,exports) {
 "use strict";
 
@@ -29794,6 +29818,8 @@ var _zalando = _interopRequireDefault(require("./modules/placing/zalando"));
 var _slack = _interopRequireDefault(require("./modules/placing/slack"));
 
 var _googleMeet = _interopRequireDefault(require("./modules/placing/google-meet"));
+
+var _microsoftTeams = _interopRequireDefault(require("./modules/placing/microsoft-teams"));
 
 var _messenger = _interopRequireDefault(require("./modules/placing/messenger"));
 
@@ -29979,20 +30005,27 @@ function (_Component) {
 
           textElement = _e8[0];
           widgetContainer = _e8[1];
-        } else if (window.location.href.includes('whatsapp.com')) {
+        } else if (window.location.href.includes('teams.microsoft.com')) {
           hasCustomPosition = true;
 
-          var _e9 = (0, _whatsapp.default)(elementClickedOn);
+          var _e9 = (0, _microsoftTeams.default)(elementClickedOn);
 
           textElement = _e9[0];
           widgetContainer = _e9[1];
-        } else if (window.location.href.includes('telegram.org')) {
+        } else if (window.location.href.includes('whatsapp.com')) {
           hasCustomPosition = true;
 
-          var _e10 = (0, _telegram.default)(elementClickedOn);
+          var _e10 = (0, _whatsapp.default)(elementClickedOn);
 
           textElement = _e10[0];
           widgetContainer = _e10[1];
+        } else if (window.location.href.includes('telegram.org')) {
+          hasCustomPosition = true;
+
+          var _e11 = (0, _telegram.default)(elementClickedOn);
+
+          textElement = _e11[0];
+          widgetContainer = _e11[1];
         } else {
           /*
           * We don't have a custom position for this app, so just place it inside the parent node.
@@ -30034,7 +30067,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/zalando":"modules/placing/zalando.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","../config":"../config.js"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/zalando":"modules/placing/zalando.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","../config":"../config.js"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -30097,7 +30130,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61557" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57110" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

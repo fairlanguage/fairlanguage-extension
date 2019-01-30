@@ -18,7 +18,7 @@ import ModulePlacingZalando from './modules/placing/zalando';
 
 import ModulePlacingSlack from './modules/placing/slack';
 import ModulePlacingGoogleMeet from './modules/placing/google-meet';
-
+import ModulePlacingMicrosoftTeams from './modules/placing/microsoft-teams';
 
 import ModulePlacingMessenger from './modules/placing/messenger';
 import ModulePlacingWhatsapp from './modules/placing/whatsapp';
@@ -214,6 +214,16 @@ export default class App extends Component {
         widgetContainer = e[1]
 
       } else 
+      
+      if (window.location.href.includes('teams.microsoft.com')) {
+
+        hasCustomPosition = true;
+
+        const e = ModulePlacingMicrosoftTeams(elementClickedOn);
+        textElement = e[0]
+        widgetContainer = e[1]
+
+      } else
       
       if (window.location.href.includes('whatsapp.com')) {
 
