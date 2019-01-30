@@ -55,10 +55,4 @@ chrome://extension
 
 -> Load unpacked -> Select directory 
 
-# Usage
-
-# Compatibility
-
-See [STATUS.md](STATUS.md).
-
 # License
