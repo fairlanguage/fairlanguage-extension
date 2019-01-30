@@ -60,3 +60,9 @@
 [![screen-insta]](https://web.telegram.org)
 
 [screen-insta]: screens/instagram.png
+
+## Telegram
+
+[![screen-telegram]](https://web.telegram.org)
+
+[screen-telegram]: screens/telegram.png
