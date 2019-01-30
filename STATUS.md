@@ -55,14 +55,20 @@
 
 [badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
 
+## Messenger
+
+[![screen-messenger]](https://messenger.com)
+
+[screen-messenger]: screens/messenger.png
+
 ## Instagram
 
-[![screen-insta]](https://web.telegram.org)
+[![screen-insta]](https://instagram.com)
 
 [screen-insta]: screens/instagram.png
 
 ## Telegram
 
-[![screen-telegram]](https://web.telegram.org)
+[![screen-telegram]](https://telegram.org)
 
 [screen-telegram]: screens/telegram.png
