@@ -1,31 +1,8 @@
-## (Updated 1/29/19)
+## (Updated 1/30/19)
 
 # Compatibility Status
 
 ## Custom support
-
-### Mail
-
-|                                       |           |
-|---------------------------------------|:---------:|
-| [![badge4]](https://mail.google.com)  |           |
-| [![badge5]](https://mail.yahoo.com)   |           |
-| [![badge6]](https://outlook.live.com) |           |
-
-### Social Media
-
-|                                        |           |
-|----------------------------------------|:---------:|
-| [![badge7]](https://facebook.com)      |           |
-| [![badge8]](https://twitter.com)       |           |
-| [![badge9]](https://instagram.com)     |           |
-
-### Work
-
-|                                        |           |
-|----------------------------------------|:---------:|
-| [![badge10]](https://slack.org)        |           |
-| [![badge11]](https://meet.google.com)  |           |
 
 ### Messenger
 
@@ -35,24 +12,31 @@
 | [![badge13]](https://web.whatsapp.google.com)   |           |
 | [![badge14]](https://messenger.com)             |           |
 
-# Details (TODO: This Overview) 
+### Mail
 
-### Widget placing
+|                                       |           |
+|---------------------------------------|:---------:|
+| [![badge4]](https://mail.google.com)  |           |
+| [![badge5]](https://mail.yahoo.com)   |           |
+| [![badge6]](https://outlook.live.com) |           |
 
-Single-tab web apps
+### Work
 
-|              |           |
-|--------------|:---------:|
-| Facebook     | ![badge0] |
-| Twitter      | ![badge0] |
+|                                        |           |
+|----------------------------------------|:---------:|
+| [![badge10]](https://slack.org)        |           |
+| [![badge11]](https://meet.google.com)  |           |
+| [![badge111]](https://meet.google.com)  |           |
 
-Multi-tab web apps
 
-|              |           |           |
-|--------------|:---------:|----------:|
-| Google Mail  | ![badge1] | ![badge3] |
-| Outlook Live | ![badge1] | ![badge2] |
-| Yahoo Mail   | ![badge1] | ![badge2] |
+### Social Media
+
+|                                        |           |
+|----------------------------------------|:---------:|
+| [![badge7]](https://facebook.com)      |           |
+| [![badge8]](https://twitter.com)       |           |
+| [![badge9]](https://instagram.com)     |           |
+
 
 [badge0]: https://img.shields.io/badge/single--tab-in%20progress-red.svg
 
@@ -62,21 +46,23 @@ Multi-tab web apps
 
 [badge3]: https://img.shields.io/badge/multi--tabs-supported-green.svg
 
-[badge4]: https://img.shields.io/badge/mail.google.com-in%20progress-red.svg
+[badge4]: https://img.shields.io/badge/mail.google.com-supported-green.svg
 
-[badge5]: https://img.shields.io/badge/mail.yahoo.com-in%20progress-red.svg
+[badge5]: https://img.shields.io/badge/mail.yahoo.com-supported-green.svg
 
-[badge6]: https://img.shields.io/badge/outlook.live.com-in%20progress-red.svg
+[badge6]: https://img.shields.io/badge/outlook.live.com-supported-green.svg
 
 [badge7]: https://img.shields.io/badge/facebook.com-in%20progress-red.svg
 
-[badge8]: https://img.shields.io/badge/twitter.com-in%20progress-red.svg
+[badge8]: https://img.shields.io/badge/twitter.com-supported-green.svg
 
-[badge9]: https://img.shields.io/badge/instagram.com-in%20progress-red.svg
+[badge9]: https://img.shields.io/badge/instagram.com-supported-green.svg
 
 [badge10]: https://img.shields.io/badge/slack.com-supported-green.svg
 
 [badge11]: https://img.shields.io/badge/meet.google.com-in%20progress-red.svg
+
+[badge111]: https://img.shields.io/badge/teams.microsoft.com-in%20progress-red.svg
 
 
 [badge12]: https://img.shields.io/badge/web.telegram.com-supported-green.svg

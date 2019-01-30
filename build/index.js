@@ -47233,6 +47233,112 @@ var google = function google(elementClickedOn) {
 
 var _default = google;
 exports.default = _default;
+},{}],"modules/placing/twitter.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var twitter = function twitter(elementClickedOn) {
+  var con = document.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0].parentNode;
+  var container = document.createElement('div');
+  container.style.marginLeft = '12px';
+  container.style.marginRight = '8px'; //container.style.marginTop = '-4px';
+
+  container.style.width = '46px';
+  container.style.height = '38px';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center'; //con.appendChild(container)
+
+  con.insertBefore(container, con.childNodes[1]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = twitter;
+exports.default = _default;
+},{}],"modules/placing/google-mail.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var googleMail = function googleMail(elementClickedOn) {
+  var con = document.getElementsByClassName('btC')[0];
+  var container = document.createElement('div');
+  container.style.marginLeft = '12px'; //container.style.height = '44px';
+
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center'; //con.appendChild(container)
+
+  con.insertBefore(container, con.childNodes[1]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = googleMail;
+exports.default = _default;
+},{}],"modules/placing/yahoo-mail.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var yahooMail = function yahooMail(elementClickedOn) {
+  var con = document.getElementsByClassName('z_Z14vXdP D_F ab_C I_52qC W_6D6F p_R B_0')[0];
+  var container = document.createElement('div');
+  container.style.marginLeft = '8px';
+  container.style.marginRight = '5px'; //container.style.height = '44px';
+
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center'; //con.appendChild(container)
+
+  con.insertBefore(container, con.childNodes[1]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = yahooMail;
+exports.default = _default;
+},{}],"modules/placing/outlook-mail.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var outlook = function outlook(elementClickedOn) {
+  var con = document.querySelectorAll('div[class="ms-OverflowSet-item item-60"]')[7].parentNode;
+  var container = document.createElement('div');
+  container.style.marginLeft = '12px';
+  container.style.marginRight = '12px';
+  container.style.marginTop = '-4px'; //container.style.height = '44px';
+
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.justifyContent = 'center'; //con.appendChild(container)
+
+  con.insertBefore(container, con.childNodes[0]);
+  var textElement = elementClickedOn;
+  var widgetContainer = container;
+  return [textElement, widgetContainer];
+};
+
+var _default = outlook;
+exports.default = _default;
 },{}],"modules/placing/zalando.js":[function(require,module,exports) {
 "use strict";
 
@@ -47393,6 +47499,14 @@ var _componentWidget = _interopRequireDefault(require("./components/component-wi
 
 var _google = _interopRequireDefault(require("./modules/placing/google"));
 
+var _twitter = _interopRequireDefault(require("./modules/placing/twitter"));
+
+var _googleMail = _interopRequireDefault(require("./modules/placing/google-mail"));
+
+var _yahooMail = _interopRequireDefault(require("./modules/placing/yahoo-mail"));
+
+var _outlookMail = _interopRequireDefault(require("./modules/placing/outlook-mail"));
+
 var _zalando = _interopRequireDefault(require("./modules/placing/zalando"));
 
 var _slack = _interopRequireDefault(require("./modules/placing/slack"));
@@ -47463,14 +47577,17 @@ function (_Component) {
         *  First, check if it's ours.
         */
 
-        var isAlreadyInjected; // Is the element is our general container itself?
+        var isAlreadyInjected = false;
+        var maxDepth = 10;
+        var depth = 0;
+        var el = elementClickedOn;
 
-        isAlreadyInjected = elementClickedOn.id === 'fairlanguage-container';
-        isAlreadyInjected = elementClickedOn.id === 'fairlanguage-container'; // Do the element's child elements have our 'attribute' (most likely).
+        while (!isAlreadyInjected && depth <= maxDepth) {
+          isAlreadyInjected = el.hasAttribute('fl');
+          el = el.parentNode;
+          depth += 1;
+        }
 
-        elementClickedOn.parentNode.childNodes.forEach(function (node) {
-          isAlreadyInjected = node.hasAttribut ? node.hasAttribute('fl') : false;
-        });
         (0, _helperLogger.default)("isAlreadyInjected: ".concat(isAlreadyInjected));
         if (isAlreadyInjected) return;
         /*
@@ -47494,9 +47611,9 @@ function (_Component) {
         (0, _helperLogger.default)("isContentIsEditable: ".concat(isContentEditable)); // Is a parent element's content editable?
 
         var isParentElementContentIsEditable;
-        var maxDepth = 10;
-        var depth = 0;
-        var el = elementClickedOn;
+        maxDepth = 10;
+        depth = 0;
+        el = elementClickedOn;
 
         while (!isParentElementContentIsEditable && depth <= maxDepth) {
           isParentElementContentIsEditable = el.hasAttribute('contenteditable');
@@ -47522,41 +47639,69 @@ function (_Component) {
           var e = (0, _slack.default)(elementClickedOn);
           textElement = e[0];
           widgetContainer = e[1];
-        } else if (window.location.href.includes('facebook.com')) {
+        } else if (window.location.href.includes('twitter.com')) {
           hasCustomPosition = true;
 
-          var _e = (0, _facebook.default)(elementClickedOn);
+          var _e = (0, _twitter.default)(elementClickedOn);
 
           textElement = _e[0];
           widgetContainer = _e[1];
-        } else if (window.location.href.includes('en.zalando.de')) {
+        } else if (window.location.href.includes('outlook.live.com')) {
           hasCustomPosition = true;
 
-          var _e2 = (0, _zalando.default)(elementClickedOn);
+          var _e2 = (0, _outlookMail.default)(elementClickedOn);
 
           textElement = _e2[0];
           widgetContainer = _e2[1];
-        } else if (window.location.href.includes('messenger.com')) {
+        } else if (window.location.href.includes('mail.yahoo.com')) {
           hasCustomPosition = true;
 
-          var _e3 = (0, _messenger.default)(elementClickedOn);
+          var _e3 = (0, _yahooMail.default)(elementClickedOn);
 
           textElement = _e3[0];
           widgetContainer = _e3[1];
-        } else if (window.location.href.includes('whatsapp.com')) {
+        } else if (window.location.href.includes('mail.google.com')) {
           hasCustomPosition = true;
 
-          var _e4 = (0, _whatsapp.default)(elementClickedOn);
+          var _e4 = (0, _googleMail.default)(elementClickedOn);
 
           textElement = _e4[0];
           widgetContainer = _e4[1];
-        } else if (window.location.href.includes('telegram.org')) {
+        } else if (window.location.href.includes('facebook.com')) {
           hasCustomPosition = true;
 
-          var _e5 = (0, _telegram.default)(elementClickedOn);
+          var _e5 = (0, _facebook.default)(elementClickedOn);
 
           textElement = _e5[0];
           widgetContainer = _e5[1];
+        } else if (window.location.href.includes('en.zalando.de')) {
+          hasCustomPosition = true;
+
+          var _e6 = (0, _zalando.default)(elementClickedOn);
+
+          textElement = _e6[0];
+          widgetContainer = _e6[1];
+        } else if (window.location.href.includes('messenger.com')) {
+          hasCustomPosition = true;
+
+          var _e7 = (0, _messenger.default)(elementClickedOn);
+
+          textElement = _e7[0];
+          widgetContainer = _e7[1];
+        } else if (window.location.href.includes('whatsapp.com')) {
+          hasCustomPosition = true;
+
+          var _e8 = (0, _whatsapp.default)(elementClickedOn);
+
+          textElement = _e8[0];
+          widgetContainer = _e8[1];
+        } else if (window.location.href.includes('telegram.org')) {
+          hasCustomPosition = true;
+
+          var _e9 = (0, _telegram.default)(elementClickedOn);
+
+          textElement = _e9[0];
+          widgetContainer = _e9[1];
         } else {
           /*
           * We don't have a custom position for this app, so just place it inside the parent node.
@@ -47572,8 +47717,13 @@ function (_Component) {
         _this2.setState({
           textFields: textFields
         });
+        /*
+        * Mark the element, so we wont give it a widget again.
+        */
 
-        (0, _helperLogger.default)("$ Detected textElement #".concat(textFields.length));
+
+        elementClickedOn.setAttribute("fl", "lala");
+        (0, _helperLogger.default)("Set widget #".concat(textFields.length));
       });
     }
   }, {
@@ -47593,7 +47743,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/zalando":"modules/placing/zalando.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","../config":"../config.js"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/zalando":"modules/placing/zalando.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","../config":"../config.js"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -47656,7 +47806,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57679" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65470" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

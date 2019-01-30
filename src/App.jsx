@@ -6,6 +6,14 @@ import ComponentToolbar from './components/component-toolbar';
 import ComponentWidget from './components/component-widget';
 
 import ModulePlacingGoogle from './modules/placing/google';
+
+import ModulePlacingTwitter from './modules/placing/twitter';
+
+import ModulePlacingGoogleMail from './modules/placing/google-mail';
+import ModulePlacingYahooMail from './modules/placing/yahoo-mail';
+import ModulePlacingOutlookMail from './modules/placing/outlook-mail';
+
+
 import ModulePlacingZalando from './modules/placing/zalando';
 import ModulePlacingSlack from './modules/placing/slack';
 import ModulePlacingMessenger from './modules/placing/messenger';
@@ -45,17 +53,16 @@ export default class App extends Component {
       /*
       *  First, check if it's ours.
       */
-      let isAlreadyInjected;
+      let isAlreadyInjected = false;
 
-      // Is the element is our general container itself?
-      isAlreadyInjected = (elementClickedOn.id === 'fairlanguage-container');
-
-      isAlreadyInjected = (elementClickedOn.id === 'fairlanguage-container');
-
-      // Do the element's child elements have our 'attribute' (most likely).
-      elementClickedOn.parentNode.childNodes.forEach((node) => {
-        isAlreadyInjected = node.hasAttribut ? node.hasAttribute('fl') : false;
-      });
+      let maxDepth = 10;
+      let depth = 0;
+      let el = elementClickedOn;
+      while (!isAlreadyInjected && depth <= maxDepth) {
+        isAlreadyInjected = el.hasAttribute('fl');
+        el = el.parentNode;
+        depth += 1;
+      }
 
       log(`isAlreadyInjected: ${isAlreadyInjected}`);
 
@@ -88,10 +95,10 @@ export default class App extends Component {
       // Is a parent element's content editable?
       let isParentElementContentIsEditable;
 
-      const maxDepth = 10;
+      maxDepth = 10;
 
-      let depth = 0;
-      let el = elementClickedOn;
+      depth = 0;
+      el = elementClickedOn;
       while (!isParentElementContentIsEditable && depth <= maxDepth) {
         isParentElementContentIsEditable = el.hasAttribute('contenteditable');
         el = el.parentNode;
@@ -119,6 +126,46 @@ export default class App extends Component {
         hasCustomPosition = true;
 
         const e = ModulePlacingSlack(elementClickedOn);
+        textElement = e[0]
+        widgetContainer = e[1]
+
+      } else
+      
+      if (window.location.href.includes('twitter.com')) {
+
+        hasCustomPosition = true
+
+        const e = ModulePlacingTwitter(elementClickedOn);
+        textElement = e[0]
+        widgetContainer = e[1]
+
+      } else
+
+      if (window.location.href.includes('outlook.live.com')) {
+
+        hasCustomPosition = true
+
+        const e = ModulePlacingOutlookMail(elementClickedOn);
+        textElement = e[0]
+        widgetContainer = e[1]
+
+      } else
+      
+      if (window.location.href.includes('mail.yahoo.com')) {
+
+        hasCustomPosition = true
+
+        const e = ModulePlacingYahooMail(elementClickedOn);
+        textElement = e[0]
+        widgetContainer = e[1]
+
+      } else
+      
+      if (window.location.href.includes('mail.google.com')) {
+
+        hasCustomPosition = true
+
+        const e = ModulePlacingGoogleMail(elementClickedOn);
         textElement = e[0]
         widgetContainer = e[1]
 
@@ -193,7 +240,13 @@ export default class App extends Component {
         textFields,
       });
 
-      log(`$ Detected textElement #${textFields.length}`);
+      /*
+      * Mark the element, so we wont give it a widget again.
+      */
+
+      elementClickedOn.setAttribute("fl", "lala");
+
+      log(`Set widget #${textFields.length}`);
 
     });
 
