@@ -39,9 +39,9 @@ let count = 0
 
 class ComponentWidget extends Component {
 
-  constructor() {
+  constructor(props) {
 
-    super();
+    super(props);
 
     this.state = {
       id: count++,
@@ -122,10 +122,12 @@ class ComponentWidget extends Component {
 
     return ReactDOM.createPortal(
       <div
+        
         id={'fairlanguage-widget-'+this.state.id}
         fl={this.state.id}
         style={{
-          display: 'flex',
+
+          display: this.props.visible?'flex':'none',
 
           alignItems: 'center',
           justifyContent: 'flex-start',

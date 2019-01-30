@@ -27,7 +27,10 @@ import ModulePlacingZalando from './modules/placing/zalando';
 
 import config from '../config';
 
-const dev = false;
+import * as manifest from '../manifest.json'
+import { hostname } from 'os';
+
+const dev = true;
 
 export default class App extends Component {
 
@@ -35,22 +38,147 @@ export default class App extends Component {
     super(props);
 
     this.state = {
+      enabled: true,
+      activated: false,
+      visible: true,
       textFields: [],
     };
   }
 
+  componentWillMount() {
+
+    chrome.storage.local.get(['deactivated', 'enabled', 'visible'], (storage) => {
+
+      const isEnabled = storage.enabled;
+      const isActivated = storage.deactivated.indexOf(window.location.hostname) === -1;
+      const isVisible = storage.visible;
+
+      // log(`List of deactivated hostnames:`)
+      // console.log(storage.deactivated)
+      // log(`isActivated: ${isActivated}`)
+
+      this.setState({
+        enabled: isEnabled,
+        activated: isActivated,
+        visible: isVisible,
+      }, () => {
+        log(`Extension is ${this.state.enabled ? 'ENABLED' : 'DISABLED'} (in general)`);
+        log(`Extention is ${this.state.visible ? 'VISIBLE' : 'HIDDEN'} (in general)`);   
+        log(`Extention is ${this.state.activated ? 'ACTIVE' : 'DEACTIVATED'} (on this web app)`);     
+      });
+
+    
+    });
+
+  }
+
   componentDidMount() {
 
-    log('* Fairlanguage 0.6 - App');
+    log(`Extension ${manifest.version} - init`);
+    /*
+    * Just gimme ONE call - they'll all be gone.
+    */
+    chrome.runtime.onMessage.addListener(
+      (message, sender) => {
+        log(JSON.stringify(message));
+        switch (message.command) {
+          case 'erase':
+            this.setState({
+              textFields: [],
+            });
+            break;
+          case 'hide':
+            this.setState({
+              visible: false,
+            });
+            break;
+          case 'show':
+            this.setState({
+              visible: true,
+            });
+            break;
+
+          case 'deactivate':
+
+            // Erase everything and run.
+            this.setState({
+              textFields: [],
+            });
+
+            //Remember this place. Do.not.come.back.
+
+            const url = window.location.hostname;
+
+            chrome.storage.local.get(['deactivated'], (result) => {
+
+              let list = result.deactivated!==undefined?result.deactivated:[];
+
+              list.push(url)
+
+              chrome.storage.local.set({deactivated: list}, (result) => {
+
+                log(`Added ${url} to blacklist.`)
+
+                console.log(list)
+              
+              })
+
+            })
+
+            break;
+
+            case 'activate':
+
+            chrome.storage.local.get(['deactivated'], function(result) {
+
+              let list = result.deactivated!==undefined?result.deactivated:[];
+
+              // Remove item
+              list.splice(list.indexOf(window.location.hostname), 1)
+
+              chrome.storage.local.set({deactivated: list}, (result) => {
+
+                log(`Removed ${window.location.hostname} from  blacklist. New list:`)
+                console.log(list);
+
+                this.setState({
+                  visible: true,
+                  activated: true,
+                  textFields: [],
+                }, () => {
+                });
+              
+              })
+
+            })
+
+            break;
+
+          default:
+            log('Ain`t got no more to say (It`s just language).');
+            break;
+        }
+      },
+    );
 
     window.addEventListener('click', (event) => {
 
-      log('Detecting `elementClickedOn`');
+      /*
+      * Are we live? That shit on?
+      */
+      if(!this.state.enabled)
+      return log(`Extension is disabled`)
 
+      /*
+      * Are we actually allowed in here?
+      */
+      if(!this.state.activated)
+      return log(`The extention is deactivated on this web app.`)
+
+      /*
+      * So, Where did this actually go?
+      */
       const elementClickedOn = event.target;
-
-      if (dev) elementClickedOn.style.background = 'lightblue';
-      if (dev) console.log(elementClickedOn);
 
       /*
       *  First, check if it's ours.
@@ -211,11 +339,6 @@ export default class App extends Component {
         textElement = e[0]
         widgetContainer = e[1]
 
-        /* const parentElement = isParentElementContentIsEditable ? elementClickedOn.parentNode.parentNode : elementClickedOn.parentNode;
-        
-        textElement = elementClickedOn;
-        widgetContainer = parentElement; */
-
       } else 
       if (window.location.href.includes('teams.microsoft.com')) {
 
@@ -256,12 +379,12 @@ export default class App extends Component {
 
       }
 
-      log(`hasCustomPosition: ${hasCustomPosition}`)
+      log(`hasCustomPosition (MODULE): ${hasCustomPosition}`)
 
       textFields.push([textElement, widgetContainer]);
 
       this.setState({
-        textFields,
+        textFields
       });
 
       /*
@@ -284,6 +407,7 @@ export default class App extends Component {
           this.state.textFields.map((el, index) => (
             <ComponentWidget
               key={index}
+              visible={this.state.visible}
               textElement={el[0]}
               containerElement={el[1]}
             />

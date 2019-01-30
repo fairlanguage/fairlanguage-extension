@@ -11,5 +11,5 @@ var styles = [
 ].join(';');
 
 export default (msg) => {
-    console.log(`%c ${msg}`, styles)
+    console.log(`%c * Fairlanguage - ${msg}`, styles)
 }

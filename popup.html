@@ -1,9 +1,4 @@
 <!doctype html>
-<!--
- This page is shown when the extension button is clicked, because the
- "browser_action" field in manifest.json contains the "default_popup" key with
- value "popup.html".
- -->
 <html>
 <head>
     <title>Getting Started Extension's Popup</title>
@@ -15,20 +10,31 @@
         #container {
             align-items: center;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
         }
-        .start {
+        .button {
+            width: 100px;
             border: 1px solid #000;
-            border-radius: 15px;
+            border-radius: 3px;
             padding: 5px 15px;
             cursor: pointer;
+            user-select: none;
+            margin: 10px;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            text-transform: uppercase;
         }
     </style>
-
 </head>
-
 <body>
-<div id="container">
-</div>
+  <div id="container">
+      <div id="visible" class="button"></div>
+      <div id="activated" class="button"></div>
+      <div id="enabled" class="button"></div>
+  </div>
+  <script src="popup/index.js"></script>
 </body>
 </html>
