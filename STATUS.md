@@ -26,7 +26,7 @@
 |----------------------------------------|:---------:|
 | [![badge10]](https://slack.org)        |           |
 | [![badge11]](https://meet.google.com)  |           |
-| [![badge111]](https://meet.google.com)  |           |
+| [![badge111]](https://meet.google.com) |           |
 
 
 ### Social Media
@@ -60,7 +60,7 @@
 
 [badge10]: https://img.shields.io/badge/slack.com-supported-green.svg
 
-[badge11]: https://img.shields.io/badge/meet.google.com-in%20progress-red.svg
+[badge11]: https://img.shields.io/badge/meet.google.com-supported-green.svg
 
 [badge111]: https://img.shields.io/badge/teams.microsoft.com-in%20progress-red.svg
 

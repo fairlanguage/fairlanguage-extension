@@ -15,7 +15,11 @@ import ModulePlacingOutlookMail from './modules/placing/outlook-mail';
 
 
 import ModulePlacingZalando from './modules/placing/zalando';
+
 import ModulePlacingSlack from './modules/placing/slack';
+import ModulePlacingGoogleMeet from './modules/placing/google-meet';
+
+
 import ModulePlacingMessenger from './modules/placing/messenger';
 import ModulePlacingWhatsapp from './modules/placing/whatsapp';
 import ModulePlacingTelegram from './modules/placing/telegram';
@@ -196,6 +200,16 @@ export default class App extends Component {
         hasCustomPosition = true
 
         const e = ModulePlacingMessenger(elementClickedOn);
+        textElement = e[0]
+        widgetContainer = e[1]
+
+      } else 
+      
+      if (window.location.href.includes('meet.google.com')) {
+
+        hasCustomPosition = true;
+
+        const e = ModulePlacingGoogleMeet(elementClickedOn);
         textElement = e[0]
         widgetContainer = e[1]
 

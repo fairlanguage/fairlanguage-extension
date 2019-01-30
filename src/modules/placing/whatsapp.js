@@ -17,3 +17,5 @@ const whatsapp = (elementClickedOn) => {
   return [textElement, widgetContainer];
   
 }
+
+export default whatsapp;
