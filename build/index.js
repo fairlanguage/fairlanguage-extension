@@ -27378,6 +27378,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = {
   default: {
+    enabled: true,
+    active: false,
     toolbar: true
   },
   colors: {
@@ -46871,8 +46873,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -46938,39 +46938,17 @@ function (_Component) {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           width: '100%',
-          height: this.state.collapsed ? '64px' : '6px',
+          height: !this.state.collapsed ? '64px' : '6px',
           backgroundColor: '#A6B3FF',
           transition: '0.5s all',
           cursor: 'pointer',
-          userSelect: 'none'
+          userSelect: 'none',
+          fontSize: '20px',
+          color: 'white'
         }
-      }, _react.default.createElement("img", {
-        src: chrome.extension.getURL('icon-white.png'),
-        style: {
-          marginLeft: '16px',
-          width: '32px',
-          height: '32px',
-          background: _config.default.colors.primary,
-          display: this.state.collapsed ? 'flex' : 'none',
-          userSelect: 'none'
-        }
-      }), _react.default.createElement("div", {
-        style: _defineProperty({
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginRight: '16px',
-          width: '32px',
-          height: '32px',
-          borderRadius: '16px',
-          color: _config.default.colors.primary[0],
-          background: 'white',
-          fontWeight: 'bold',
-          fontSize: '20'
-        }, "display", this.state.collapsed ? 'flex' : 'none')
-      }, this.props.textElements.length));
+      }, !this.state.collapsed ? this.props.children : null);
     }
   }]);
 
@@ -47209,31 +47187,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js"}],"modules/placing/google.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var google = function google(elementClickedOn) {
-  var con = document.getElementsByClassName('dRYYxd')[0];
-  var container = document.createElement('li');
-  container.style.width = '50px';
-  container.style.height = '44px';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
-  container.style.justifyContent = 'center';
-  con.insertBefore(container, con.childNodes[2]);
-  var textElement = elementClickedOn;
-  var widgetContainer = container;
-  return [textElement, widgetContainer];
-};
-
-var _default = google;
-exports.default = _default;
-},{}],"modules/placing/google-mail.js":[function(require,module,exports) {
+},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47585,57 +47539,6 @@ module.exports = {
   }],
   "web_accessible_resources": ["icon-off.png", "icon-transparent.png", "icon-white.png"]
 };
-},{}],"../node_modules/os-browserify/browser.js":[function(require,module,exports) {
-exports.endianness = function () { return 'LE' };
-
-exports.hostname = function () {
-    if (typeof location !== 'undefined') {
-        return location.hostname
-    }
-    else return '';
-};
-
-exports.loadavg = function () { return [] };
-
-exports.uptime = function () { return 0 };
-
-exports.freemem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.totalmem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.cpus = function () { return [] };
-
-exports.type = function () { return 'Browser' };
-
-exports.release = function () {
-    if (typeof navigator !== 'undefined') {
-        return navigator.appVersion;
-    }
-    return '';
-};
-
-exports.networkInterfaces
-= exports.getNetworkInterfaces
-= function () { return {} };
-
-exports.arch = function () { return 'javascript' };
-
-exports.platform = function () { return 'browser' };
-
-exports.tmpdir = exports.tmpDir = function () {
-    return '/tmp';
-};
-
-exports.EOL = '\n';
-
-exports.homedir = function () {
-	return '/'
-};
-
 },{}],"App.jsx":[function(require,module,exports) {
 "use strict";
 
@@ -47651,8 +47554,6 @@ var _helperLogger = _interopRequireDefault(require("./helpers/helper-logger"));
 var _componentToolbar = _interopRequireDefault(require("./components/component-toolbar"));
 
 var _componentWidget = _interopRequireDefault(require("./components/component-widget"));
-
-var _google = _interopRequireDefault(require("./modules/placing/google"));
 
 var _googleMail = _interopRequireDefault(require("./modules/placing/google-mail"));
 
@@ -47683,8 +47584,6 @@ var _zalando = _interopRequireDefault(require("./modules/placing/zalando"));
 var _config = _interopRequireDefault(require("../config"));
 
 var manifest = _interopRequireWildcard(require("../manifest.json"));
-
-var _os = require("os");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -47722,9 +47621,6 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props));
     _this.state = {
-      enabled: true,
-      activated: false,
-      visible: true,
       textFields: []
     };
     return _this;
@@ -47735,22 +47631,54 @@ function (_Component) {
     value: function componentWillMount() {
       var _this2 = this;
 
-      chrome.storage.local.get(['deactivated', 'enabled', 'visible'], function (storage) {
-        var isEnabled = storage.enabled;
-        var isActivated = storage.deactivated.indexOf(window.location.hostname) === -1;
-        var isVisible = storage.visible; // log(`List of deactivated hostnames:`)
-        // console.log(storage.deactivated)
-        // log(`isActivated: ${isActivated}`)
+      (0, _helperLogger.default)("Extension ".concat(manifest.version, " - init"));
+      (0, _helperLogger.default)("------------------------------------");
+      chrome.storage.local.get(['settings', 'hosts'], function (storage) {
+        /**
+         * Is it genesis?
+         */
+        var isGenesis = storage.settings === undefined;
+        if (isGenesis) (0, _helperLogger.default)("isGenesis: ".concat(isGenesis));
+        /**
+         * First things first: get settings from local storage
+         */
+
+        var settings = storage.settings;
+        (0, _helperLogger.default)("storage.settings: ".concat(settings));
+
+        if (settings) {
+          (0, _helperLogger.default)("storage.settings.enabled: ".concat(settings.enabled));
+          (0, _helperLogger.default)("storage.settings.active: ".concat(settings.active));
+        }
+        /*
+         * Get custom settings for current host from local storage.
+         */
+
+
+        var hostSettings;
+        storage.hosts.forEach(function (host) {
+          hostSettings = host.name === window.location.hostname ? host : hostSettings;
+        });
+        /**
+         * Copy to state
+         */
 
         _this2.setState({
-          enabled: isEnabled,
-          activated: isActivated,
-          visible: isVisible
+          enabled: storage.settings ? storage.settings.enabled : _config.default.default.enabled,
+          active: hostSettings ? hostSettings.enabled : _config.default.default.active
         }, function () {
-          (0, _helperLogger.default)("Extension is ".concat(_this2.state.enabled ? 'ENABLED' : 'DISABLED', " (in general)"));
-          (0, _helperLogger.default)("Extention is ".concat(_this2.state.visible ? 'VISIBLE' : 'HIDDEN', " (in general)"));
-          (0, _helperLogger.default)("Extention is ".concat(_this2.state.activated ? 'ACTIVE' : 'DEACTIVATED', " (on this web app)"));
+          (0, _helperLogger.default)("state.enabled: ".concat(_this2.state.enabled));
+          (0, _helperLogger.default)("state.active: ".concat(_this2.state.active));
         });
+        /**
+         * Get custom settings for current hostname
+         */
+
+        /* const currentHostname = window.location.hostname;
+         const currentHostnameSettings = hosts ? hosts[hosts.indexOf(currentHostname)] : null;
+         log(`currentHostnameSettings: ${currentHostnameSettings}`);
+         log(`----------------------------------------------------`) */
+
       });
     }
   }, {
@@ -47758,11 +47686,9 @@ function (_Component) {
     value: function componentDidMount() {
       var _this3 = this;
 
-      (0, _helperLogger.default)("Extension ".concat(manifest.version, " - init"));
       /*
       * Just gimme ONE call - they'll all be gone.
       */
-
       chrome.runtime.onMessage.addListener(function (message, sender) {
         (0, _helperLogger.default)(JSON.stringify(message));
 
@@ -47776,14 +47702,14 @@ function (_Component) {
 
           case 'hide':
             _this3.setState({
-              visible: false
+              enabled: false
             });
 
             break;
 
           case 'show':
             _this3.setState({
-              visible: true
+              enabled: true
             });
 
             break;
@@ -47792,42 +47718,23 @@ function (_Component) {
             // Erase everything and run.
             _this3.setState({
               textFields: []
-            }); //Remember this place. Do.not.come.back.
-
-
-            var url = window.location.hostname;
-            chrome.storage.local.get(['deactivated'], function (result) {
-              var list = result.deactivated !== undefined ? result.deactivated : [];
-              list.push(url);
-              chrome.storage.local.set({
-                deactivated: list
-              }, function (result) {
-                (0, _helperLogger.default)("Added ".concat(url, " to blacklist."));
-                console.log(list);
-              });
             });
+
+            _this3.setSiteStatus();
+
+            _this3.setState({
+              active: false
+            });
+
             break;
 
           case 'activate':
-            chrome.storage.local.get(['deactivated'], function (result) {
-              var _this4 = this;
+            _this3.setSiteStatus();
 
-              var list = result.deactivated !== undefined ? result.deactivated : []; // Remove item
-
-              list.splice(list.indexOf(window.location.hostname), 1);
-              chrome.storage.local.set({
-                deactivated: list
-              }, function (result) {
-                (0, _helperLogger.default)("Removed ".concat(window.location.hostname, " from  blacklist. New list:"));
-                console.log(list);
-
-                _this4.setState({
-                  visible: true,
-                  activated: true,
-                  textFields: []
-                }, function () {});
-              });
+            _this3.setState({
+              active: true
             });
+
             break;
 
           default:
@@ -47839,12 +47746,12 @@ function (_Component) {
         /*
         * Are we live? That shit on?
         */
-        if (!_this3.state.enabled) return (0, _helperLogger.default)("Extension is disabled");
+        if (!_this3.state.enabled) return (0, _helperLogger.default)("Extension is disabled, this.state.enabled: ".concat(_this3.state.enabled));
         /*
         * Are we actually allowed in here?
         */
 
-        if (!_this3.state.activated) return (0, _helperLogger.default)("The extention is deactivated on this web app.");
+        if (!_this3.state.active) return (0, _helperLogger.default)("Website / web app is disabled, this.state.active: ".concat(_this3.state.active));
         /*
         * So, Where did this actually go?
         */
@@ -47860,8 +47767,11 @@ function (_Component) {
         var el = elementClickedOn;
 
         while (!isAlreadyInjected && depth <= maxDepth) {
-          isAlreadyInjected = el.hasAttribute('fl');
-          el = el.parentNode;
+          if (el !== document && el !== document.body && el !== null) {
+            isAlreadyInjected = el.hasAttribute('fl');
+            el = el.parentNode !== null ? el.parentNode : el;
+          }
+
           depth += 1;
         }
 
@@ -47893,8 +47803,11 @@ function (_Component) {
         el = elementClickedOn;
 
         while (!isParentElementContentIsEditable && depth <= maxDepth) {
-          isParentElementContentIsEditable = el.hasAttribute('contenteditable');
-          el = el.parentNode;
+          if (el !== document && el !== document.body && el !== null) {
+            isParentElementContentIsEditable = el.hasAttribute('contenteditable');
+            el = el.parentNode !== null ? el.parentNode : el;
+          }
+
           depth += 1;
         }
 
@@ -48025,18 +47938,82 @@ function (_Component) {
       });
     }
   }, {
+    key: "setSiteStatus",
+    value: function setSiteStatus() {
+      var _this4 = this;
+
+      chrome.storage.local.get(['hosts'], function (storage) {
+        console.log(storage.hosts);
+        var hosts = storage.hosts;
+
+        if (storage.hosts.length > 0) {
+          var hostInStorage = null;
+          storage.hosts.forEach(function (host, index) {
+            hostInStorage = host.name == window.location.hostname ? host : hostInStorage;
+          });
+
+          if (hostInStorage) {
+            hosts[hosts.indexOf(hostInStorage)].enabled = !hosts[hosts.indexOf(hostInStorage)].enabled;
+
+            _this4.setState({
+              active: hosts[hosts.indexOf(hostInStorage)].enabled
+            });
+          } else {
+            hosts.push({
+              name: window.location.hostname,
+              enabled: true
+            });
+
+            _this4.setState({
+              active: true
+            });
+          }
+        } else {
+          hosts.push({
+            name: window.location.hostname,
+            enabled: true
+          });
+
+          _this4.setState({
+            active: true
+          });
+        }
+
+        chrome.storage.local.set({
+          hosts: hosts
+        });
+      });
+    }
+  }, {
+    key: "_handleSetActive",
+    value: function _handleSetActive() {
+      this.setState({
+        active: !this.state.active
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this5 = this;
 
-      return _react.default.createElement(_react.Fragment, null, _config.default.default.toolbar ? _react.default.createElement(_componentToolbar.default, null) : '', this.state.textFields.map(function (el, index) {
+      return _react.default.createElement(_react.Fragment, null, _config.default.default.toolbar && this.state.enabled ? _react.default.createElement(_componentToolbar.default, null, _react.default.createElement("div", {
+        style: {
+          borderRadius: '5px',
+          borderWidth: '2px',
+          borderColor: 'white',
+          padding: '5px'
+        },
+        onClick: function onClick() {
+          _this5.setSiteStatus();
+        }
+      }, "this.state.active: ".concat(this.state.active))) : null, this.state.enabled && this.state.active ? this.state.textFields.map(function (el, index) {
         return _react.default.createElement(_componentWidget.default, {
           key: index,
-          visible: _this5.state.visible,
+          visible: true,
           textElement: el[0],
           containerElement: el[1]
         });
-      }));
+      }) : null);
     }
   }]);
 
@@ -48044,7 +48021,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google":"modules/placing/google.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","../config":"../config.js","../manifest.json":"../manifest.json","os":"../node_modules/os-browserify/browser.js"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","../config":"../config.js","../manifest.json":"../manifest.json"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -48064,7 +48041,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.onload = function () {
   // Create container element
   var containerElement = document.createElement('div');
-  containerElement.id = 'fairlanguage-container'; // Append container element to parent element
+  containerElement.id = 'fairlanguage-container';
+  /*     containerElement.style.position = 'absolute';
+      containerElement.style.width = '100%';
+      containerElement.style.zIndex = '1';
+   */
+  // Append container element to parent element
   // document.body.appendChild(containerElement);
   // Different approach: Take the body's pole position.
 
@@ -48106,7 +48088,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58298" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63203" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

@@ -49,44 +49,18 @@ class ComponentToolbar extends Component {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           width: '100%',
-          height: this.state.collapsed ? '64px' : '6px',
+          height: !this.state.collapsed ? '64px' : '6px',
           backgroundColor: '#A6B3FF',
           transition: '0.5s all',
           cursor: 'pointer',
-          userSelect: 'none'
+          userSelect: 'none',
+          fontSize: '20px',
+          color: 'white'
         }}
       >
-        <img
-          src={chrome.extension.getURL('icon-white.png')}
-          style={{
-            marginLeft: '16px',
-            width: '32px',
-            height: '32px',
-            background: config.colors.primary,
-            display: this.state.collapsed ? 'flex' : 'none',
-            userSelect: 'none'
-          }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: '16px',
-            width: '32px',
-            height: '32px',
-            borderRadius: '16px',
-            color: config.colors.primary[0],
-            background: 'white',
-            fontWeight: 'bold',
-            fontSize: '20',
-            display: this.state.collapsed ? 'flex' : 'none',
-          }}
-        >
-          {this.props.textElements.length}
-        </div>
+        {!this.state.collapsed?this.props.children:null}
       </div>
     );
 

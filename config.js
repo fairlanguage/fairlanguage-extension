@@ -1,5 +1,7 @@
 export default {
   default: {
+    enabled: true,
+    active: false,
     toolbar: true,
   },
   colors: {

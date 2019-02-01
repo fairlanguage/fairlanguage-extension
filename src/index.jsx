@@ -14,6 +14,11 @@ import log from './helpers/helper-logger';
     // Create container element
     const containerElement = document.createElement('div');
     containerElement.id = 'fairlanguage-container';
+/*     containerElement.style.position = 'absolute';
+    containerElement.style.width = '100%';
+    containerElement.style.zIndex = '1';
+ */
+
 
     // Append container element to parent element
     // document.body.appendChild(containerElement);

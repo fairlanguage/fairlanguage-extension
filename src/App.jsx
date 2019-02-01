@@ -5,8 +5,6 @@ import log from './helpers/helper-logger';
 import ComponentToolbar from './components/component-toolbar';
 import ComponentWidget from './components/component-widget';
 
-import ModulePlacingGoogle from './modules/placing/google';
-
 import ModulePlacingGoogleMail from './modules/placing/google-mail';
 import ModulePlacingYahooMail from './modules/placing/yahoo-mail';
 import ModulePlacingOutlookMail from './modules/placing/outlook-mail';
@@ -27,8 +25,7 @@ import ModulePlacingZalando from './modules/placing/zalando';
 
 import config from '../config';
 
-import * as manifest from '../manifest.json'
-import { hostname } from 'os';
+import * as manifest from '../manifest.json';
 
 const dev = true;
 
@@ -38,43 +35,74 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      enabled: true,
-      activated: false,
-      visible: true,
       textFields: [],
     };
   }
 
   componentWillMount() {
 
-    chrome.storage.local.get(['deactivated', 'enabled', 'visible'], (storage) => {
+    log(`Extension ${manifest.version} - init`);
+    log(`------------------------------------`)
 
-      const isEnabled = storage.enabled;
-      const isActivated = storage.deactivated.indexOf(window.location.hostname) === -1;
-      const isVisible = storage.visible;
+    chrome.storage.local.get(['settings', 'hosts'], (storage) => {
 
-      // log(`List of deactivated hostnames:`)
-      // console.log(storage.deactivated)
-      // log(`isActivated: ${isActivated}`)
+      /**
+       * Is it genesis?
+       */
+      const isGenesis = storage.settings === undefined;
 
-      this.setState({
-        enabled: isEnabled,
-        activated: isActivated,
-        visible: isVisible,
-      }, () => {
-        log(`Extension is ${this.state.enabled ? 'ENABLED' : 'DISABLED'} (in general)`);
-        log(`Extention is ${this.state.visible ? 'VISIBLE' : 'HIDDEN'} (in general)`);   
-        log(`Extention is ${this.state.activated ? 'ACTIVE' : 'DEACTIVATED'} (on this web app)`);     
+      if (isGenesis) log(`isGenesis: ${isGenesis}`);
+
+      /**
+       * First things first: get settings from local storage
+       */
+      const { settings } = storage;
+      log(`storage.settings: ${settings}`);
+
+      if (settings) {
+        log(`storage.settings.enabled: ${settings.enabled}`);
+        log(`storage.settings.active: ${settings.active}`);
+      }
+
+      /*
+       * Get custom settings for current host from local storage.
+       */
+      let hostSettings;
+      storage.hosts.forEach((host) => {
+        hostSettings = host.name === window.location.hostname ? host : hostSettings;
       });
 
-    
+      /**
+       * Copy to state
+       */
+      this.setState({
+        
+        enabled: storage.settings ? storage.settings.enabled : config.default.enabled,
+        
+        active: hostSettings ? hostSettings.enabled : config.default.active,
+      
+      }, () => {
+        log(`state.enabled: ${this.state.enabled}`)
+        log(`state.active: ${this.state.active}`)
+      });
+
+      /**
+       * Get custom settings for current hostname
+       */
+      /* const currentHostname = window.location.hostname;
+
+      const currentHostnameSettings = hosts ? hosts[hosts.indexOf(currentHostname)] : null;
+
+      log(`currentHostnameSettings: ${currentHostnameSettings}`);
+
+      log(`----------------------------------------------------`) */
+
     });
 
   }
 
   componentDidMount() {
 
-    log(`Extension ${manifest.version} - init`);
     /*
     * Just gimme ONE call - they'll all be gone.
     */
@@ -89,12 +117,12 @@ export default class App extends Component {
             break;
           case 'hide':
             this.setState({
-              visible: false,
+              enabled: false,
             });
             break;
           case 'show':
             this.setState({
-              visible: true,
+              enabled: true,
             });
             break;
 
@@ -105,52 +133,17 @@ export default class App extends Component {
               textFields: [],
             });
 
-            //Remember this place. Do.not.come.back.
+            this.setSiteStatus();
 
-            const url = window.location.hostname;
-
-            chrome.storage.local.get(['deactivated'], (result) => {
-
-              let list = result.deactivated!==undefined?result.deactivated:[];
-
-              list.push(url)
-
-              chrome.storage.local.set({deactivated: list}, (result) => {
-
-                log(`Added ${url} to blacklist.`)
-
-                console.log(list)
-              
-              })
-
-            })
+            this.setState({ active: false });
 
             break;
 
-            case 'activate':
+          case 'activate':
 
-            chrome.storage.local.get(['deactivated'], function(result) {
+            this.setSiteStatus();
 
-              let list = result.deactivated!==undefined?result.deactivated:[];
-
-              // Remove item
-              list.splice(list.indexOf(window.location.hostname), 1)
-
-              chrome.storage.local.set({deactivated: list}, (result) => {
-
-                log(`Removed ${window.location.hostname} from  blacklist. New list:`)
-                console.log(list);
-
-                this.setState({
-                  visible: true,
-                  activated: true,
-                  textFields: [],
-                }, () => {
-                });
-              
-              })
-
-            })
+            this.setState({ active: true });
 
             break;
 
@@ -161,19 +154,20 @@ export default class App extends Component {
       },
     );
 
+
     window.addEventListener('click', (event) => {
 
       /*
       * Are we live? That shit on?
       */
       if(!this.state.enabled)
-      return log(`Extension is disabled`)
+      return log(`Extension is disabled, this.state.enabled: ${this.state.enabled}`)
 
       /*
       * Are we actually allowed in here?
       */
-      if(!this.state.activated)
-      return log(`The extention is deactivated on this web app.`)
+      if(!this.state.active)
+      return log(`Website / web app is disabled, this.state.active: ${this.state.active}`)
 
       /*
       * So, Where did this actually go?
@@ -189,8 +183,10 @@ export default class App extends Component {
       let depth = 0;
       let el = elementClickedOn;
       while (!isAlreadyInjected && depth <= maxDepth) {
-        isAlreadyInjected = el.hasAttribute('fl');
-        el = el.parentNode;
+        if(el!==document && el!==document.body && el!==null){
+          isAlreadyInjected = el.hasAttribute('fl');
+          el = el.parentNode!==null ? el.parentNode: el;
+        }
         depth += 1;
       }
 
@@ -230,8 +226,10 @@ export default class App extends Component {
       depth = 0;
       el = elementClickedOn;
       while (!isParentElementContentIsEditable && depth <= maxDepth) {
-        isParentElementContentIsEditable = el.hasAttribute('contenteditable');
-        el = el.parentNode;
+        if(el!==document && el!==document.body && el!==null) {
+          isParentElementContentIsEditable = el.hasAttribute('contenteditable');
+          el = el.parentNode !== null ? el.parentNode : el;
+        }
         depth += 1;
       }
 
@@ -399,19 +397,97 @@ export default class App extends Component {
 
   }
 
+  setSiteStatus() {
+
+    chrome.storage.local.get(['hosts'], (storage) => {
+
+      console.log(storage.hosts)
+
+      const hosts = storage.hosts;
+
+      if(storage.hosts.length>0){
+
+        let hostInStorage = null;
+
+        storage.hosts.forEach( (host, index) => {
+
+            hostInStorage = host.name == window.location.hostname ? host : hostInStorage;
+
+        });
+
+        if(hostInStorage){
+          hosts[hosts.indexOf(hostInStorage)].enabled = !hosts[hosts.indexOf(hostInStorage)].enabled;
+          this.setState({active: hosts[hosts.indexOf(hostInStorage)].enabled})
+        }else{
+          hosts.push({
+            name: window.location.hostname,
+            enabled: true
+          })
+          this.setState({active: true})
+        }
+
+      }else{
+
+        hosts.push({
+          name: window.location.hostname,
+          enabled: true
+        })
+        this.setState({active: true})
+      }
+
+      chrome.storage.local.set({hosts:hosts})
+    
+    })
+
+    }
+
+  _handleSetActive(){
+    this.setState({
+      active: !this.state.active
+    })
+  }
+
   render() {
     return (
       <Fragment>
-        {config.default.toolbar ? <ComponentToolbar /> : ''}
         {
+          config.default.toolbar && this.state.enabled ? 
+          
+              <ComponentToolbar>
+            
+                <div
+                  style={{
+                    borderRadius: '5px',
+                    borderWidth: '2px',
+                    borderColor: 'white',
+                    padding: '5px'
+                  }}
+
+                  onClick={()=>{
+                    this.setSiteStatus()
+                  }}
+                >
+                  {`this.state.active: ${this.state.active}`}
+                </div>
+
+              </ComponentToolbar>
+
+            :
+            null
+        }
+        {
+          this.state.enabled&&
+          this.state.active?
+
           this.state.textFields.map((el, index) => (
             <ComponentWidget
               key={index}
-              visible={this.state.visible}
+              visible={true}
               textElement={el[0]}
               containerElement={el[1]}
             />
           ))
+          :null
         }
       </Fragment>
     );
