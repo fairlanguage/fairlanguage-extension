@@ -9,6 +9,14 @@ import * as actionsText from '../actions/actions-text';
 
 import log from '../helpers/helper-logger';
 
+import WebFont from 'webfontloader';
+
+WebFont.load({
+  google: {
+    families: ['Montserrat', 'Roboto']
+  }
+});
+
 const STRING_GRADIENT = config.colors.gradient;
 
 const URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
@@ -32,35 +40,76 @@ class ComponentToolbar extends Component {
     super();
 
     this.state = {
-      collapsed: false,
+      open: false,
     };
 
+  }
+
+  componentWillMount(){
+    this.setState({
+      open: this.props.open
+    })
   }
 
   render() {
     return (
       <div
+      onClick={(event) => {
+        //if(!this.state.open)
+        this.setState({
+          open: !this.state.open,
+        });
+      }}
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: this.state.open ? config.toolbar.height : '5px',
+        backgroundColor: config.colors.primary[0],
+        transition: '0.5s all',
+        cursor: 'pointer',
+        userSelect: 'none',
+        fontSize: '16px',
+        fontFamily: 'Arial',
+        fontWeight: '300',
+        color: 'white',
+        position: 'fixed',
+        top: 0,
+        opacity:config.toolbar.opacity,
+        zIndex: 999999999
+      }}
+      >
+        <div
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex:1000000000
+          }}
+        >
+          {this.state.open?this.props.children:null}
+        </div>
+
+        <img
         onClick={(event) => {
           this.setState({
-            collapsed: !this.state.collapsed,
+            open: !this.state.open,
           });
         }}
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: !this.state.collapsed ? '64px' : '6px',
-          backgroundColor: '#A6B3FF',
-          transition: '0.5s all',
-          cursor: 'pointer',
-          userSelect: 'none',
-          fontSize: '20px',
-          color: 'white'
-        }}
-      >
-        {!this.state.collapsed?this.props.children:null}
+          style={{
+            position: 'absolute',
+            top: '25px',
+            right: '25px',
+            width: '17.5px',
+            height: '17.5px',
+            display: this.state.open?'flex':'none'
+          }}
+          src={chrome.extension.getURL("close.png")}
+        >
+        </img>
+        
       </div>
     );
 

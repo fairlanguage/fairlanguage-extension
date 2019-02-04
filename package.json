@@ -1,12 +1,14 @@
 {
   "name": "fairlanguage",
-  "version": "0.6.0",
-  "description": "Write fair.",
+  "version": "0.8.2",
+  "description": "I am flamingo.",
   "main": "src/index.js",
   "scripts": {
     "start": "npm run watch",
     "build": "parcel build src/index.jsx -d build/ -o index.js",
-    "watch": "parcel watch src/index.jsx -d build/ -o index.js"
+    "build-popup": "parcel build src/popup/index.jsx -d build/popup -o index.js",
+    "watch": "parcel watch src/index.jsx -d build/ -o index.js",
+    "watch-popup": "parcel watch src/popup/index.js -d build/popup -o index.js"
   },
   "author": "Florian Maxim",
   "dependencies": {
@@ -19,7 +21,8 @@
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

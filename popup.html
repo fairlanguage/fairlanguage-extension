@@ -8,10 +8,11 @@
             white-space: nowrap;
         }
         #container {
-            align-items: center;
+            align-items: flex-start;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            padding: 10px;
         }
         .button {
             width: 100px;
@@ -20,19 +21,58 @@
             padding: 5px 15px;
             cursor: pointer;
             user-select: none;
-            margin: 10px;
             display:flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             text-transform: uppercase;
+            margin: 10px 0px;
+        }
+        .display {
+            width: 100px;
+            border: 1px solid red;
+            border-radius: 0px;
+            padding: 5px 15px;
+            cursor: pointer;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            word-wrap: break-word;
+            margin: 10px 0px;
+        }
+        .caption {
+            width: 100px;
+            border: 0px solid red;
+            color: red;
+            border-radius: 0px;
+            cursor: pointer;
+            margin: 10px 0px;
         }
     </style>
 </head>
 <body>
   <div id="container">
-      <div id="enabled" class="button"></div>
+      
+      <div id="caption-version" class="caption">storage-host:</div>
+
+      <textarea id="display" class="display"></textarea>
+      <div id="active-status" class="display"></div>
+      <div id="active-button" class="button"></div>
+
+      <div id="caption-version" class="caption">storage-toolbar:</div>
+
+      <textarea id="string-toolbar" class="display"></textarea>
+      <div id="state-toolbar" class="display"></div>
+      <div id="button-toolbar" class="button">hide</div>
+
+      <div id="caption-version" class="caption">dev:</div>
+
+      <div id="button-reset-hosts" class="button">resets hosts</div>
+
+      <div id="caption-version" class="caption">version:</div>
+      <div id="display-version" class="display"></div>
   </div>
-  <script src="popup/index.js"></script>
+  <script src="build/popup/index.js"></script>
 </body>
 </html>
