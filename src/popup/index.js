@@ -3,9 +3,34 @@ import * as manifest from '../../manifest.json';
 import StorageController from '../controller/storage';
 
 const displayVersion = document.getElementById('display-version');
-displayVersion.textContent = manifest.version;
+
+const displaySettings = document.getElementById('string-settings');
+
+const statusToolbar = document.getElementById('status-toolbar');
+const buttonToolbar = document.getElementById('button-toolbar');
+
+const displayActive = document.getElementById('active-status');
+const buttonActive = document.getElementById('active-button');
 
 const display = document.getElementById('display');
+
+const statusHosts = document.getElementById('status-hosts');
+const buttonResetHosts = document.getElementById('button-reset-hosts');
+
+/**
+ * Storage settings
+ */
+const getSettings = () => {
+  StorageController.getSettings()
+    .then((settings) => {
+      displaySettings.value = JSON.stringify(settings);
+      statusToolbar.textContent = settings.toolbar;
+      buttonToolbar.textContent = settings.toolbar ? 'hide' : 'show';
+    })
+    .catch((error) => {
+      displaySettings.value = (error);
+    });
+};
 
 const getCurrentHostSettings = () => {
 
@@ -16,6 +41,11 @@ const getCurrentHostSettings = () => {
     StorageController.getHostSettings(currentHostname)
       .then((settings) => {
         display.value = JSON.stringify(settings);
+
+        displayActive.textContent = settings.enabled;
+        buttonActive.textContent = settings.enabled ? 'disable' : 'enable';
+
+
       })
       .catch((error) => {
         display.value = (error);
@@ -25,103 +55,64 @@ const getCurrentHostSettings = () => {
 
 };
 
+StorageController.getHosts()
+  .then((hosts) => {
+    statusHosts.textContent = 'hosts: '+hosts.length;
+  });
+
+getSettings();
 getCurrentHostSettings();
 
-document.getElementById('button-reset-hosts').addEventListener('click', () => {
+/**
+ * Toolbar
+ */
+buttonToolbar.addEventListener('click', () => {
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+
+    chrome.tabs.sendMessage(tabs[0].id, { command: 'toolbar' });
+
+  });
+
+});
+
+chrome.runtime.onMessage.addListener((settings) => {
+  if (settings.toolbar === undefined) return;
+  StorageController.getSettings()
+    .then((_settings) => {
+      displaySettings.value = JSON.stringify(_settings);
+      statusToolbar.textContent = _settings.toolbar;
+      buttonToolbar.textContent = _settings.toolbar ? 'hide' : 'show';
+    })
+    .catch((error) => {
+      displaySettings.value = (error);
+    });
+});
+
+/**
+ * Hosts
+ */
+buttonActive.addEventListener('click', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, { command: 'host' });
+  });
+});
+chrome.runtime.onMessage.addListener((settings) => {
+  if (settings.host === undefined) return;
+  displayActive.textContent = settings.host.enabled;
+  buttonActive.textContent = settings.host.enabled ? 'disable' : 'enable';
+  display.value = JSON.stringify(settings.host);
+});
+
+/**
+ * Reset hosts
+ */
+buttonResetHosts.addEventListener('click', () => {
   StorageController.resetAllHosts();
   getCurrentHostSettings();
 });
 
-
-
-
-var displayActive = document.getElementById("active-status")
-var buttonActive = document.getElementById("active-button")
-
-
-/*
-* activate/deactivate
-*/
-
-chrome.storage.local.get(['hosts'], (storage) => {
-
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    
-    var tab = tabs[0];
-
-    var currentHostname = new URL(tab.url).hostname
-
-    var hostInStorage = null;
-
-    storage.hosts.forEach( (host, index) => {
-
-      hostInStorage = host.name === currentHostname ? host : hostInStorage;
-  
-    });
-
-    //display.value = JSON.stringify(hostInStorage)
-
-    if(!hostInStorage){
-
-      displayActive.textContent = 'not set'
-
-      buttonActive.textContent = 'enable'
-  
-    }else{
-
-     displayActive.textContent = hostInStorage.enabled;
-
-      buttonActive.textContent = hostInStorage.enabled?'disable':'enable';
-    
-    }
-    
-  })
-
-})
-
-buttonActive.addEventListener('click', function(){
-
-  chrome.storage.local.get(['hosts'], (storage) => {
-
-
-          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-
-            var tab = tabs[0];
-        
-            var currentHostname = new URL(tab.url).hostname
-        
-            var hostInStorage = null;
-        
-            storage.hosts.forEach( (host, index) => {
-        
-              hostInStorage = host.name === currentHostname ? host : hostInStorage;
-          
-            });
-
-            if(!hostInStorage){
-
-              chrome.tabs.sendMessage(tab.id, {command:'activate'});
-
-        
-              displayActive.textContent = 'true'
-        
-              buttonActive.textContent = 'disable'
-          
-            }else{
-
-              if(hostInStorage.enabled){
-                chrome.tabs.sendMessage(tab.id, {command:'deactivate'});
-              }else{
-                chrome.tabs.sendMessage(tab.id, {command:'activate'});
-              }
-              
-              displayActive.textContent = !hostInStorage.enabled;
-              buttonActive.textContent = !hostInStorage.enabled?'disable':'enable';
-            
-            }
-            
-          })
-
-        })
-
-})
+/**
+ * Version
+ */
+displayVersion.textContent = manifest.version;

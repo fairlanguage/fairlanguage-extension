@@ -30,6 +30,7 @@ import config from '../config';
 import './index.css';
 
 import * as manifest from '../manifest.json';
+import { Promise } from 'q';
 
 const dev = true;
 
@@ -49,77 +50,25 @@ export default class App extends Component {
 
   componentWillMount() {
 
-    log(`Extension ${manifest.version} - init`);
-    //log(`------------------------------------`);
+    const localStorage = [
+      StorageController.getSettings(), 
+      StorageController.getHostSettings(),
+    ]
 
-    chrome.storage.local.get(['settings', 'hosts'], (storage) => {
-
-      /**
-       * Is it genesis?
-       */
-      
-      //const isGenesis = storage.settings === undefined;
-
-      //if (isGenesis) log(`isGenesis: ${isGenesis}`);
-
-      /**
-       * First things first: get settings from local storage
-       */
-      /* const { settings } = storage;
-      log(`storage.settings: ${settings}`);
-
-      if (settings) {
-        log(`storage.settings.enabled: ${settings.enabled}`);
-        log(`storage.settings.active: ${settings.active}`);
-      } */
-
-      /*
-       * Get custom settings for current host from local storage.
-       */
-      let hostSettings = null;
-
-      if(storage.hosts)
-      storage.hosts.forEach((host) => {
-        hostSettings = host.name === window.location.hostname ? host : hostSettings;
+    Promise.all(localStorage)
+      .then((results) => {
+        const generalSettings = results[0];
+        const hostSettings = results[1];
+        this.setState({
+          enabled: generalSettings.enabled,
+          active: hostSettings.enabled,
+          toolbar: generalSettings.toolbar,
+        }, () => console.log(this.state));
       });
-
-      /**
-       * Copy to state
-       */
-      this.setState({
-
-        bar: hostSettings === null ? true : false,
-        
-        enabled: storage.settings ? storage.settings.enabled : config.default.enabled,
-        
-        active: hostSettings ? hostSettings.enabled : config.default.active,
-      
-      }, () => {
-        //log(`state.genesis: ${this.state.genesis}`)
-        log(`state.enabled: ${this.state.enabled}`)
-        log(`state.active: ${this.state.active}`)
-      });
-
-      /**
-       * Get custom settings for current hostname
-       */
-      /* const currentHostname = window.location.hostname;
-
-      const currentHostnameSettings = hosts ? hosts[hosts.indexOf(currentHostname)] : null;
-
-      log(`currentHostnameSettings: ${currentHostnameSettings}`);
-
-      log(`----------------------------------------------------`) */
-
-    });
 
   }
 
   componentDidMount() {
-
-    StorageController.getHostSettings()
-    .then(settings => console.log(`Found these settings for this host: ${JSON.stringify(settings)}`))
-    .catch(() => console.log(`No settings for this host yet.`));
 
     /*
     * Just gimme ONE call - they'll all be gone.
@@ -129,39 +78,22 @@ export default class App extends Component {
       (message, sender) => {
         log(JSON.stringify(message));
         switch (message.command) {
-          case 'erase':
-            this.setState({
-              textFields: [],
-            });
-            break;
-          case 'hide':
-            this.setState({
-              enabled: false,
-            });
-            break;
-          case 'show':
-            this.setState({
-              enabled: true,
-            });
-            break;
-
-          case 'deactivate':
-
-          log('received msg: deactivate')
-
-            this.setSiteStatus();
-
-            this.setState({ active: false });
+          case 'toolbar':
+          
+            StorageController.setToolbar()
+              .then((state) => {
+                this.setState({ toolbar: state });
+                chrome.runtime.sendMessage({ toolbar: state });
+              });
 
             break;
-
-          case 'activate':
-
-          log('received msg: activate')
-
-            this.setSiteStatus();
-
-            this.setState({ active: true });
+          case 'host':
+            
+            StorageController.setHost()
+              .then((settings) => {
+                this.setState({ active: settings.enabled });
+                chrome.runtime.sendMessage({ host: settings });
+              });
 
             break;
 
@@ -486,7 +418,7 @@ export default class App extends Component {
           this.state.enabled ? 
           
               <ComponentToolbar
-                open={this.state.bar}
+                open={this.state.toolbar}
               >
                 <div style={{fontSize: '20px', marginBottom: '8px'}}>
                   {TEXT_PROMPT_ACTIVATE}

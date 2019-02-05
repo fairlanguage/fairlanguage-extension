@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Getting Started Extension's Popup</title>
+    <title>Fairlanguage</title>
     <style type="text/css">
         body {
             margin: 10px;
@@ -30,6 +30,20 @@
         }
         .display {
             width: 100px;
+            height: 50px;
+            border: 1px solid red;
+            border-radius: 0px;
+            padding: 5px 15px;
+            cursor: pointer;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            word-wrap: break-word;
+            margin: 10px 0px;
+        }
+        .label {
+            width: 100px;
             border: 1px solid red;
             border-radius: 0px;
             padding: 5px 15px;
@@ -53,25 +67,29 @@
 </head>
 <body>
   <div id="container">
+
+      <div id="caption-settings" class="caption">storage-settings:</div>
+
+      <textarea id="string-settings" class="display"></textarea>
+
+      <div id="caption-toolbar" class="caption">toolbar:</div>
+
+      <div id="status-toolbar" class="label"></div>
+      <div id="button-toolbar" class="button">hide</div>
       
       <div id="caption-version" class="caption">storage-host:</div>
 
       <textarea id="display" class="display"></textarea>
-      <div id="active-status" class="display"></div>
+      <div id="active-status" class="label"></div>
       <div id="active-button" class="button"></div>
-
-      <div id="caption-version" class="caption">storage-toolbar:</div>
-
-      <textarea id="string-toolbar" class="display"></textarea>
-      <div id="state-toolbar" class="display"></div>
-      <div id="button-toolbar" class="button">hide</div>
 
       <div id="caption-version" class="caption">dev:</div>
 
+      <div id="status-hosts" class="label"></div>
       <div id="button-reset-hosts" class="button">resets hosts</div>
 
       <div id="caption-version" class="caption">version:</div>
-      <div id="display-version" class="display"></div>
+      <div id="display-version" class="label"></div>
   </div>
   <script src="build/popup/index.js"></script>
 </body>

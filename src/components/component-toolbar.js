@@ -51,6 +51,12 @@ class ComponentToolbar extends Component {
     })
   }
 
+  componentWillReceiveProps(props){
+    this.setState({
+      open:props.open
+    })
+  }
+
   render() {
     return (
       <div

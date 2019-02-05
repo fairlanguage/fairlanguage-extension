@@ -146,6 +146,41 @@ function () {
   }
 
   _createClass(StorageController, null, [{
+    key: "getSettings",
+    value: function getSettings() {
+      return new Promise(function (resolve, reject) {
+        chrome.storage.local.get(['settings'], function (storage) {
+          if (storage.settings) {
+            resolve(storage.settings);
+          } else {
+            reject(new Error('Reading settings from local storage'));
+          }
+        });
+      });
+    }
+  }, {
+    key: "setToolbar",
+    value: function setToolbar() {
+      var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'toggle';
+      return new Promise(function (resolve, reject) {
+        chrome.storage.local.get(['settings'], function (storage) {
+          var settings = storage.settings; //console.log(settings)
+
+          settings.toolbar = mode === 'toggle' ? !settings.toolbar : mode; //console.log(settings)
+
+          chrome.storage.local.set({
+            settings: settings
+          }, function () {
+            if (settings) {
+              resolve(settings.toolbar);
+            } else {
+              reject(new Error('Writing toolbar settings to local storage'));
+            }
+          });
+        });
+      });
+    }
+  }, {
     key: "getHostSettings",
     value: function getHostSettings() {
       var currentHost = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window.location.hostname;
@@ -155,12 +190,66 @@ function () {
           settings = storage.hosts.find(function (hostInStorage) {
             return hostInStorage.name === currentHost;
           });
+          if (settings) resolve(settings);
+          reject(new Error('Reading host settings from local storage'));
+        });
+      });
+    }
+  }, {
+    key: "setHost",
+    value: function setHost() {
+      var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'toggle';
+      var currentHost = window.location.hostname;
+      return new Promise(function (resolve, reject) {
+        chrome.storage.local.get(['hosts'], function (storage) {
+          if (storage.hosts) {
+            //console.log(storage.hosts);
+            var settings = storage.hosts.find(function (hostInStorage) {
+              return hostInStorage.name === currentHost;
+            }); //console.log(settings);
 
-          if (settings) {
-            resolve(settings);
-          }
+            var index = storage.hosts.indexOf(settings); //console.log(index);
 
-          reject(new Error('No custom host settings'));
+            storage.hosts[index].enabled = !storage.hosts[index].enabled; //console.log(storage.hosts);
+
+            chrome.storage.local.set({
+              hosts: storage.hosts
+            }, function () {
+              if (settings) resolve(storage.hosts[index]); //reject(new Error('Reading host settings from local storage'));
+            });
+            /*  const settings = storage.hosts.find(hostInStorage => hostInStorage.name === currentHost);
+             
+             const index = hosts.indexOf(settings);
+              console.log(hosts[index]);
+              hosts[index].enabled = !hosts[index].enabled;
+              console.log(hosts[index])
+              console.log(hosts); */
+          } //console.log(hosts[hosts.indexOf(settings)])
+
+          /* 
+                  hosts[hosts.indexOf(settings)].enabled = !settings.enabled;
+          
+                  console.log(hosts[hosts.indexOf(settings)])
+          
+                  console.log(hosts); */
+          //console.log(hosts)
+
+          /* // Write the invert
+          chrome.storage.local.set({ hosts: hosts }, () => {
+             if (settings) resolve(settings);
+           reject(new Error('Reading host settings from local storage'));
+           }) */
+
+        });
+      });
+    }
+  }, {
+    key: "getHosts",
+    value: function getHosts() {
+      return new Promise(function (resolve, reject) {
+        chrome.storage.local.get(['hosts'], function (storage) {
+          if (storage.hosts) resolve(storage.hosts);
+          reject(new Error('Reading host settings from local storage'));
         });
       });
     }
@@ -194,8 +283,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 var displayVersion = document.getElementById('display-version');
-displayVersion.textContent = manifest.version;
+var displaySettings = document.getElementById('string-settings');
+var statusToolbar = document.getElementById('status-toolbar');
+var buttonToolbar = document.getElementById('button-toolbar');
+var displayActive = document.getElementById('active-status');
+var buttonActive = document.getElementById('active-button');
 var display = document.getElementById('display');
+var statusHosts = document.getElementById('status-hosts');
+var buttonResetHosts = document.getElementById('button-reset-hosts');
+/**
+ * Storage settings
+ */
+
+var getSettings = function getSettings() {
+  _storage.default.getSettings().then(function (settings) {
+    displaySettings.value = JSON.stringify(settings);
+    statusToolbar.textContent = settings.toolbar;
+    buttonToolbar.textContent = settings.toolbar ? 'hide' : 'show';
+  }).catch(function (error) {
+    displaySettings.value = error;
+  });
+};
 
 var getCurrentHostSettings = function getCurrentHostSettings() {
   chrome.tabs.query({
@@ -206,81 +314,79 @@ var getCurrentHostSettings = function getCurrentHostSettings() {
 
     _storage.default.getHostSettings(currentHostname).then(function (settings) {
       display.value = JSON.stringify(settings);
+      displayActive.textContent = settings.enabled;
+      buttonActive.textContent = settings.enabled ? 'disable' : 'enable';
     }).catch(function (error) {
       display.value = error;
     });
   });
 };
 
-getCurrentHostSettings();
-document.getElementById('button-reset-hosts').addEventListener('click', function () {
-  _storage.default.resetAllHosts();
-
-  getCurrentHostSettings();
+_storage.default.getHosts().then(function (hosts) {
+  statusHosts.textContent = 'hosts: ' + hosts.length;
 });
-var displayActive = document.getElementById("active-status");
-var buttonActive = document.getElementById("active-button");
-/*
-* activate/deactivate
-*/
 
-chrome.storage.local.get(['hosts'], function (storage) {
+getSettings();
+getCurrentHostSettings();
+/**
+ * Toolbar
+ */
+
+buttonToolbar.addEventListener('click', function () {
   chrome.tabs.query({
     active: true,
     currentWindow: true
   }, function (tabs) {
-    var tab = tabs[0];
-    var currentHostname = new URL(tab.url).hostname;
-    var hostInStorage = null;
-    storage.hosts.forEach(function (host, index) {
-      hostInStorage = host.name === currentHostname ? host : hostInStorage;
-    }); //display.value = JSON.stringify(hostInStorage)
-
-    if (!hostInStorage) {
-      displayActive.textContent = 'not set';
-      buttonActive.textContent = 'enable';
-    } else {
-      displayActive.textContent = hostInStorage.enabled;
-      buttonActive.textContent = hostInStorage.enabled ? 'disable' : 'enable';
-    }
-  });
-});
-buttonActive.addEventListener('click', function () {
-  chrome.storage.local.get(['hosts'], function (storage) {
-    chrome.tabs.query({
-      active: true,
-      currentWindow: true
-    }, function (tabs) {
-      var tab = tabs[0];
-      var currentHostname = new URL(tab.url).hostname;
-      var hostInStorage = null;
-      storage.hosts.forEach(function (host, index) {
-        hostInStorage = host.name === currentHostname ? host : hostInStorage;
-      });
-
-      if (!hostInStorage) {
-        chrome.tabs.sendMessage(tab.id, {
-          command: 'activate'
-        });
-        displayActive.textContent = 'true';
-        buttonActive.textContent = 'disable';
-      } else {
-        if (hostInStorage.enabled) {
-          chrome.tabs.sendMessage(tab.id, {
-            command: 'deactivate'
-          });
-        } else {
-          chrome.tabs.sendMessage(tab.id, {
-            command: 'activate'
-          });
-        }
-
-        displayActive.textContent = !hostInStorage.enabled;
-        buttonActive.textContent = !hostInStorage.enabled ? 'disable' : 'enable';
-      }
+    chrome.tabs.sendMessage(tabs[0].id, {
+      command: 'toolbar'
     });
   });
 });
+chrome.runtime.onMessage.addListener(function (settings) {
+  if (settings.toolbar === undefined) return;
+
+  _storage.default.getSettings().then(function (_settings) {
+    displaySettings.value = JSON.stringify(_settings);
+    statusToolbar.textContent = _settings.toolbar;
+    buttonToolbar.textContent = _settings.toolbar ? 'hide' : 'show';
+  }).catch(function (error) {
+    displaySettings.value = error;
+  });
+});
+/**
+ * Hosts
+ */
+
+buttonActive.addEventListener('click', function () {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      command: 'host'
+    });
+  });
+});
+chrome.runtime.onMessage.addListener(function (settings) {
+  if (settings.host === undefined) return;
+  displayActive.textContent = settings.host.enabled;
+  buttonActive.textContent = settings.host.enabled ? 'disable' : 'enable';
+  display.value = JSON.stringify(settings.host);
+});
+/**
+ * Reset hosts
+ */
+
+buttonResetHosts.addEventListener('click', function () {
+  _storage.default.resetAllHosts();
+
+  getCurrentHostSettings();
+});
+/**
+ * Version
+ */
+
+displayVersion.textContent = manifest.version;
 },{"../../manifest.json":"../../manifest.json","../controller/storage":"../controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -308,7 +414,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57899" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51636" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
