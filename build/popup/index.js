@@ -104,7 +104,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"../../manifest.json":[function(require,module,exports) {
+})({"../manifest.json":[function(require,module,exports) {
 module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
@@ -242,7 +242,8 @@ function () {
       return new Promise(function (resolve, reject) {
         var settings;
         chrome.storage.local.get(['hosts'], function (storage) {
-          // If there aren't any entries, start with this one
+          console.log(storage.hosts); // If there aren't any entries, start with this one
+
           if (!storage.hosts) {
             settings = {
               enabled: null,
@@ -276,15 +277,6 @@ function () {
             });
           }
 
-          settings = {
-            enabled: null,
-            name: currentHost
-          };
-          chrome.storage.local.set({
-            hosts: [settings]
-          }, function () {
-            resolve(settings);
-          });
           reject(new Error('Reading host settings from local storage'));
         });
       });
@@ -524,7 +516,7 @@ buttonResetHosts.addEventListener('click', function () {
  */
 
 displayVersion.textContent = manifest.version;
-},{"../../manifest.json":"../../manifest.json","../controller/storage":"../controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../../manifest.json":"../manifest.json","../controller/storage":"../controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -551,7 +543,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51418" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58578" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

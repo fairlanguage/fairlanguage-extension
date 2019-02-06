@@ -130,6 +130,8 @@ export default class StorageController {
 
       chrome.storage.local.get(['hosts'], (storage) => {
 
+        console.log(storage.hosts)
+
         // If there aren't any entries, start with this one
         if (!storage.hosts) {
           settings = {
@@ -162,15 +164,6 @@ export default class StorageController {
           });
 
         }
-
-        settings = {
-          enabled: null,
-          name: currentHost,
-        };
-
-        chrome.storage.local.set({ hosts: [settings] }, () => {
-          resolve(settings);
-        });
 
         reject(new Error('Reading host settings from local storage'));
       
