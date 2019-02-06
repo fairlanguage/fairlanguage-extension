@@ -30,7 +30,6 @@ import config from '../config';
 import './index.css';
 
 import * as manifest from '../manifest.json';
-import { Promise } from 'q';
 
 const dev = true;
 
@@ -50,6 +49,8 @@ export default class App extends Component {
 
   componentWillMount() {
 
+    log(`${manifest.version} initialising`);
+
     const localStorage = [
       StorageController.getSettings(), 
       StorageController.getHostSettings(),
@@ -61,9 +62,12 @@ export default class App extends Component {
         const hostSettings = results[1];
         this.setState({
           enabled: generalSettings.enabled,
+          consent: generalSettings.consent,
           active: hostSettings.enabled,
-          toolbar: generalSettings.toolbar,
-        }, () => console.log(this.state));
+          toolbar: generalSettings.consent===false?true:generalSettings.toolbar,
+        }, () => {
+          if (dev)console.log(this.state);
+        });
       });
 
   }
@@ -78,6 +82,15 @@ export default class App extends Component {
       (message, sender) => {
         log(JSON.stringify(message));
         switch (message.command) {
+          case 'enabled':
+          
+            StorageController.setEnabled()
+              .then((state) => {
+                this.setState({ enabled: state });
+                chrome.runtime.sendMessage({ enabled: state });
+              });
+
+            break;
           case 'toolbar':
           
             StorageController.setToolbar()
@@ -87,9 +100,27 @@ export default class App extends Component {
               });
 
             break;
-          case 'host':
+          case 'consent':
+        
+            StorageController.setConsent()
+              .then((state) => {
+                this.setState({ consent: state });
+                chrome.runtime.sendMessage({ consent: state });
+              });
+
+            break;
+          case 'host-enable':
             
-            StorageController.setHost()
+            StorageController.setHost(true)
+              .then((settings) => {
+                this.setState({ active: settings.enabled });
+                chrome.runtime.sendMessage({ host: settings });
+              });
+
+            break;
+          case 'host-disable':
+          
+            StorageController.setHost(false)
               .then((settings) => {
                 this.setState({ active: settings.enabled });
                 chrome.runtime.sendMessage({ host: settings });
@@ -104,21 +135,17 @@ export default class App extends Component {
       },
     );
 
-
     window.addEventListener('click', (event) => {
 
       /*
       * Are we live? That shit on?
-      */
-      if(!this.state.enabled)
-      return log(`Extension is disabled, this.state.enabled: ${this.state.enabled}`)
-
-      /*
       * Are we actually allowed in here?
       */
-      if(!this.state.active)
-      return log(`Website / web app is disabled, this.state.active: ${this.state.active}`)
+      const enabled = this.getOverallState();
 
+      if (dev) console.log(this.state);
+      if (!enabled) return log(`Detection disabled`)
+      
       /*
       * So, Where did this actually go?
       */
@@ -133,9 +160,9 @@ export default class App extends Component {
       let depth = 0;
       let el = elementClickedOn;
       while (!isAlreadyInjected && depth <= maxDepth) {
-        if(el!==document && el!==document.body && el!==null){
+        if (el !== document && el !== document.body && el !== null) {
           isAlreadyInjected = el.hasAttribute('fl');
-          el = el.parentNode!==null ? el.parentNode: el;
+          el = el.parentNode !== null ? el.parentNode : el;
         }
         depth += 1;
       }
@@ -347,6 +374,22 @@ export default class App extends Component {
 
   }
 
+  getOverallState() {
+
+    let enabled = false;
+
+    if (this.state.enabled) {
+      if (this.state.active === null) {
+        enabled = this.state.consent;
+      } else {
+        enabled = this.state.active;
+      }
+    } 
+
+    return enabled;
+
+  }
+
   /**
    * Sets website / web apps status (enabled: boolean)
    * @param {*} mode 
@@ -412,13 +455,16 @@ export default class App extends Component {
 
   render() {
     const text = dev?` (this.state.active: ${this.state.active})`:null;
+
+    const enabled = this.getOverallState();
+
     return (
       <Fragment>
         {
           this.state.enabled ? 
           
               <ComponentToolbar
-                open={this.state.toolbar}
+                open={this.state.consent===false?true:this.state.toolbar}
               >
                 <div style={{fontSize: '20px', marginBottom: '8px'}}>
                   {TEXT_PROMPT_ACTIVATE}
@@ -471,9 +517,7 @@ export default class App extends Component {
             null
         }
         {
-          this.state.enabled&&
-          this.state.active?
-
+          enabled?
           this.state.textFields.map((el, index) => (
             <ComponentWidget
               key={index}
