@@ -67,6 +67,8 @@ class ComponentToolbar extends Component {
         });
       }}
       style={{
+        position: "sticky",
+        zIndex: 999999999999999999999
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -81,10 +83,8 @@ class ComponentToolbar extends Component {
         fontFamily: 'Arial',
         fontWeight: '300',
         color: 'white',
-        position: 'fixed',
         top: 0,
         opacity:config.toolbar.opacity,
-        zIndex: 999999999
       }}
       >
         <div

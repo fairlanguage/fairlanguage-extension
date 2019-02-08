@@ -1,3 +1,5 @@
+import config from "../../config";
+
 export default class StorageController {
 
   constructor() {
@@ -14,9 +16,9 @@ export default class StorageController {
           resolve(storage.settings);
         } else {
           const settings = {
-            enabled: true,
-            consent: false,
-            toolbar: false,
+            enabled: config.default.enabled,
+            consent: config.default.consent,
+            toolbar: config.default.toolbar,
           };
     
           chrome.storage.local.set({ settings }, () => {

@@ -106,13 +106,16 @@ const getCurrentHostSettings = () => {
 
 };
 
-StorageController.getHosts()
-  .then((hosts) => {
-    statusHosts.textContent = 'hosts: '+hosts.length;
-  });
+const getAllHosts = () => {
+  StorageController.getHosts()
+    .then((hosts) => {
+      statusHosts.textContent = 'hosts: '+hosts.length;
+    });
+}
 
 getSettings();
 getCurrentHostSettings();
+getAllHosts();
 
 /**
  * Enabled
@@ -218,6 +221,7 @@ chrome.runtime.onMessage.addListener((settings) => {
 buttonResetHosts.addEventListener('click', () => {
   StorageController.resetAllHosts();
   getCurrentHostSettings();
+  getAllHosts();
 });
 
 /**

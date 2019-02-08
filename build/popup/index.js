@@ -104,12 +104,12 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"../manifest.json":[function(require,module,exports) {
+})({"../../manifest.json":[function(require,module,exports) {
 module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "browser_action": {
     "default_icon": "icon-transparent.png",
     "default_popup": "popup.html"
@@ -132,6 +132,7 @@ exports.default = void 0;
 var _default = {
   default: {
     enabled: true,
+    consent: true,
     active: null,
     toolbar: true
   },
@@ -139,10 +140,10 @@ var _default = {
     settingsString: false,
     hostString: false,
     enabled: false,
-    consent: true,
+    consent: false,
     host: true,
     toolbar: false,
-    dev: false
+    dev: true
   },
   colors: {
     primary: ['#40B3FF', '#6652FF', '#F022EB', '#EBEBFF'],
@@ -154,13 +155,17 @@ var _default = {
   }
 };
 exports.default = _default;
-},{}],"controller/storage.js":[function(require,module,exports) {
+},{}],"../controller/storage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+var _config = _interopRequireDefault(require("../../config"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -186,9 +191,9 @@ function () {
             resolve(storage.settings);
           } else {
             var settings = {
-              enabled: true,
-              consent: false,
-              toolbar: false
+              enabled: _config.default.default.enabled,
+              consent: _config.default.default.consent,
+              toolbar: _config.default.default.toolbar
             };
             chrome.storage.local.set({
               settings: settings
@@ -363,7 +368,7 @@ function () {
 }();
 
 exports.default = StorageController;
-},{}],"index.js":[function(require,module,exports) {
+},{"../../config":"../../config.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var manifest = _interopRequireWildcard(require("../../manifest.json"));
@@ -454,12 +459,15 @@ var getCurrentHostSettings = function getCurrentHostSettings() {
   });
 };
 
-_storage.default.getHosts().then(function (hosts) {
-  statusHosts.textContent = 'hosts: ' + hosts.length;
-});
+var getAllHosts = function getAllHosts() {
+  _storage.default.getHosts().then(function (hosts) {
+    statusHosts.textContent = 'hosts: ' + hosts.length;
+  });
+};
 
 getSettings();
 getCurrentHostSettings();
+getAllHosts();
 /**
  * Enabled
  */
@@ -572,13 +580,14 @@ buttonResetHosts.addEventListener('click', function () {
   _storage.default.resetAllHosts();
 
   getCurrentHostSettings();
+  getAllHosts();
 });
 /**
  * Version
  */
 
 displayVersion.textContent = manifest.version;
-},{"../../manifest.json":"../manifest.json","../../config":"../../config.js","../controller/storage":"controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../../manifest.json":"../../manifest.json","../../config":"../../config.js","../controller/storage":"../controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -605,7 +614,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63762" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58578" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

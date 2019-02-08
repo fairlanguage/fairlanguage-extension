@@ -1,6 +1,7 @@
 export default {
   default: {
     enabled: true,
+    consent: true,
     active: null,
     toolbar: true,
   },
@@ -8,10 +9,10 @@ export default {
     settingsString: false,
     hostString: false,
     enabled: false,
-    consent: true,
+    consent: false,
     host: true,
     toolbar: false,
-    dev: false,
+    dev: true,
   },
   colors: {
     primary: ['#40B3FF', '#6652FF', '#F022EB', '#EBEBFF'],
