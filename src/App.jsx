@@ -25,23 +25,23 @@ import ModulePlacingZalando from './modules/placing/zalando';
 
 import StorageController from './controller/storage';
 
-import config from '../config';
-
 import './index.css';
 
 import * as manifest from '../manifest.json';
 
 const dev = true;
 
-const TEXT_PROMPT_ACTIVATE = `Do you want to use fairlanguage on this website? (Terms and Policy)`;
-const TEXT_ACTIVATE = `Yes, I'm super flamingo with that, sign me up. (ENABLE)`;
-const TEXT_DEACTIVATE = `No, I'm already pretty aware of my language. (DISABLE)`;
+const TEXT_PROMPT_ACTIVATE = 'Do you want to use fairlanguage on this website? (Terms and Policy)';
+const TEXT_ACTIVATE = 'Yes, I\'m super flamingo with that, sign me up. (ENABLE)';
+const TEXT_DEACTIVATE = 'No, I\'m already pretty aware of my language. (DISABLE)';
 
+/**
+ * I am flamingo.
+ */
 export default class App extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       textFields: [],
     };
@@ -54,7 +54,7 @@ export default class App extends Component {
     const localStorage = [
       StorageController.getSettings(), 
       StorageController.getHostSettings(),
-    ]
+    ];
 
     Promise.all(localStorage)
       .then((results) => {
@@ -64,7 +64,7 @@ export default class App extends Component {
           enabled: generalSettings.enabled,
           consent: generalSettings.consent,
           active: hostSettings.enabled,
-          toolbar: generalSettings.consent===false?true:generalSettings.toolbar,
+          toolbar: generalSettings.consent === false ? true : generalSettings.toolbar,
         }, () => {
           if (dev)console.log(this.state);
         });
@@ -77,7 +77,6 @@ export default class App extends Component {
     /*
     * Just gimme ONE call - they'll all be gone.
     */
-
     chrome.runtime.onMessage.addListener(
       (message, sender) => {
         log(JSON.stringify(message));
@@ -129,7 +128,7 @@ export default class App extends Component {
             break;
 
           default:
-            log('Ain`t got no more to say (It`s just language).');
+            log('Ain`t got nothing to say(it`s just language).');
             break;
         }
       },
@@ -144,7 +143,7 @@ export default class App extends Component {
       const enabled = this.getOverallState();
 
       if (dev) console.log(this.state);
-      if (!enabled) return log(`Detection disabled`)
+      if (!enabled) return log('Detection disabled');
       
       /*
       * So, Where did this actually go?
@@ -203,7 +202,7 @@ export default class App extends Component {
       depth = 0;
       el = elementClickedOn;
       while (!isParentElementContentIsEditable && depth <= maxDepth) {
-        if(el!==document && el!==document.body && el!==null) {
+        if (el !== document && el !== document.body && el !== null) {
           isParentElementContentIsEditable = el.hasAttribute('contenteditable');
           el = el.parentNode !== null ? el.parentNode : el;
         }
@@ -231,70 +230,70 @@ export default class App extends Component {
         hasCustomPosition = true;
 
         const e = ModulePlacingSlack(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else
       if (window.location.href.includes('twitter.com')) {
 
-        hasCustomPosition = true
+        hasCustomPosition = true;
 
         const e = ModulePlacingTwitter(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else
       if (window.location.href.includes('outlook.live.com')) {
 
-        hasCustomPosition = true
+        hasCustomPosition = true;
 
         const e = ModulePlacingOutlookMail(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else
       if (window.location.href.includes('mail.yahoo.com')) {
 
-        hasCustomPosition = true
+        hasCustomPosition = true;
 
         const e = ModulePlacingYahooMail(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else  
       if (window.location.href.includes('mail.google.com')) {
-        hasCustomPosition = true
+        hasCustomPosition = true;
 
         const e = ModulePlacingGoogleMail(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else
       if (window.location.href.includes('facebook.com')) {
 
-        hasCustomPosition = true
+        hasCustomPosition = true;
 
         const e = ModulePlacingFacebook(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else       
       if (window.location.href.includes('en.zalando.de')) {
 
-        hasCustomPosition = true
+        hasCustomPosition = true;
 
         const e = ModulePlacingZalando(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else     
       if (window.location.href.includes('messenger.com')) {
 
-        hasCustomPosition = true
+        hasCustomPosition = true;
 
         const e = ModulePlacingMessenger(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else     
       if (window.location.href.includes('meet.google.com')) {
@@ -302,8 +301,8 @@ export default class App extends Component {
         hasCustomPosition = true;
 
         const e = ModulePlacingGoogleMeet(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else    
       if (window.location.href.includes('instagram.com')) {
@@ -311,8 +310,8 @@ export default class App extends Component {
         hasCustomPosition = true;
 
         const e = ModulePlacingInstagram(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else 
       if (window.location.href.includes('teams.microsoft.com')) {
@@ -320,8 +319,8 @@ export default class App extends Component {
         hasCustomPosition = true;
 
         const e = ModulePlacingMicrosoftTeams(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else    
       if (window.location.href.includes('whatsapp.com')) {
@@ -329,8 +328,8 @@ export default class App extends Component {
         hasCustomPosition = true;
 
         const e = ModulePlacingWhatsapp(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else      
       if (window.location.href.includes('telegram.org')) {
@@ -338,12 +337,12 @@ export default class App extends Component {
         hasCustomPosition = true;
 
         const e = ModulePlacingTelegram(elementClickedOn);
-        textElement = e[0]
-        widgetContainer = e[1]
+        textElement = e[0];
+        widgetContainer = e[1];
 
       } else {
 
-      /*
+        /*
       * We don't have a custom position for this app, so just place it inside the parent node.
       */
 
@@ -354,19 +353,19 @@ export default class App extends Component {
 
       }
 
-      log(`hasCustomPosition (MODULE): ${hasCustomPosition}`)
+      log(`hasCustomPosition (MODULE): ${hasCustomPosition}`);
 
       textFields.push([textElement, widgetContainer]);
 
       this.setState({
-        textFields
+        textFields,
       });
 
       /*
       * Mark the element, so we wont give it a widget again.
       */
 
-      elementClickedOn.setAttribute("fl", "lala");
+      elementClickedOn.setAttribute('fl', 'lala');
 
       log(`Set widget #${textFields.length}`);
 
@@ -400,73 +399,74 @@ export default class App extends Component {
 
       const hosts = storage.hosts;
 
-      if(storage.hosts.length>0){
+      if (storage.hosts.length > 0) {
 
         let hostInStorage = null;
 
-        storage.hosts.forEach( (host, index) => {
+        storage.hosts.forEach((host, index) => {
 
-            hostInStorage = host.name == window.location.hostname ? host : hostInStorage;
+          hostInStorage = host.name == window.location.hostname ? host : hostInStorage;
 
         });
 
-        if(hostInStorage){
+        if (hostInStorage) {
           hosts[hosts.indexOf(hostInStorage)].enabled = !hosts[hosts.indexOf(hostInStorage)].enabled;
-          this.setState({active: hosts[hosts.indexOf(hostInStorage)].enabled})
-        }else{
+          this.setState({ active: hosts[hosts.indexOf(hostInStorage)].enabled });
+        } else {
           hosts.push({
             name: window.location.hostname,
-            enabled: true
-          })
-          this.setState({active: true})
+            enabled: true,
+          });
+          this.setState({ active: true });
         }
 
-      }else{
+      } else {
 
         hosts.push({
           name: window.location.hostname,
-          enabled: true
-        })
-        this.setState({active: true})
+          enabled: true,
+        });
+        this.setState({ active: true });
       }
 
-      if(mode===false){
+      if (mode === false) {
         hosts.push({
           name: window.location.hostname,
-          enabled: false
-        })
-        this.setState({active: false})
+          enabled: false,
+        });
+        this.setState({ active: false });
       }
 
 
-      chrome.storage.local.set({hosts:hosts})
+      chrome.storage.local.set({ hosts });
 
-      console.log(storage.hosts)
+      console.log(storage.hosts);
     
-    })
+    });
 
-    }
+  }
 
-  _handleSetActive(){
+  _handleSetActive() {
     this.setState({
-      active: !this.state.active
-    })
+      active: !this.state.active,
+    });
   }
 
   render() {
-    const text = dev?` (this.state.active: ${this.state.active})`:null;
+    const text = dev ? ` (this.state.active: ${this.state.active})` : null;
 
     const enabled = this.getOverallState();
 
     return (
       <Fragment>
         {
-          this.state.enabled ? 
+          this.state.enabled 
           
+            ? (
               <ComponentToolbar
-                open={this.state.consent===false?true:this.state.toolbar}
+                open={this.state.consent === false ? true : this.state.toolbar}
               >
-                <div style={{fontSize: '20px', marginBottom: '8px'}}>
+                <div style={{ fontSize: '20px', marginBottom: '8px' }}>
                   {TEXT_PROMPT_ACTIVATE}
                 </div>
                 <div
@@ -475,58 +475,60 @@ export default class App extends Component {
                     borderWidth: '2px',
                     borderColor: 'white',
                     padding: '5px',
-                    textAlign:'center'
+                    textAlign: 'center',
                   }}
 
-                  onClick={()=>{
-                    this.setSiteStatus()
+                  onClick={() => {
+                    this.setSiteStatus();
                   }}
                 >
                   {
-                    !this.state.active?TEXT_ACTIVATE:TEXT_DEACTIVATE
+                    !this.state.active ? TEXT_ACTIVATE : TEXT_DEACTIVATE
                   }
 
                 </div>
 
                 {
-                  this.state.active===null?
-                  <div
-                  style={{
-                    borderRadius: '5px',
-                    borderWidth: '2px',
-                    borderColor: 'white',
-                    padding: '5px',
-                    textAlign:'center'
-                  }}
+                  this.state.active === null
+                    ? (
+                      <div
+                        style={{
+                          borderRadius: '5px',
+                          borderWidth: '2px',
+                          borderColor: 'white',
+                          padding: '5px',
+                          textAlign: 'center',
+                        }}
 
-                  onClick={()=>{
-                    this.setSiteStatus(false)
-                  }}
-                >
-                  {
+                        onClick={() => {
+                          this.setSiteStatus(false);
+                        }}
+                      >
+                        {
                     TEXT_DEACTIVATE
                   }
 
-                </div>
-                :null
+                      </div>
+                    )
+                    : null
                 }
 
               </ComponentToolbar>
+            )
 
-            :
-            null
+            : null
         }
         {
-          enabled?
-          this.state.textFields.map((el, index) => (
-            <ComponentWidget
-              key={index}
-              visible={true}
-              textElement={el[0]}
-              containerElement={el[1]}
-            />
-          ))
-          :null
+          enabled
+            ? this.state.textFields.map((el, index) => (
+              <ComponentWidget
+                key={index}
+                visible
+                textElement={el[0]}
+                containerElement={el[1]}
+              />
+            ))
+            : null
         }
       </Fragment>
     );

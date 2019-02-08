@@ -1,29 +1,64 @@
 import * as manifest from '../../manifest.json';
 
+import config from '../../config';
+
 import StorageController from '../controller/storage';
 
-const displayVersion = document.getElementById('display-version');
+const captionSettings = document.getElementById('caption-settings');
+const displaySettings = document.getElementById('string-settings');
 
+captionSettings.style.display = config.options.settingsString ? 'flex' : 'none';
+displaySettings.style.display = config.options.settingsString ? 'flex' : 'none';
+
+const captionEnabled = document.getElementById('caption-enabled');
 const statusEnabled = document.getElementById('status-enabled');
 const buttonEnabled = document.getElementById('button-enabled');
 
+statusEnabled.style.display = config.options.enabled ? 'flex' : 'none';
+buttonEnabled.style.display = config.options.enabled ? 'flex' : 'none';
+captionEnabled.style.display = config.options.enabled ? 'flex' : 'none';
+
+const captionConsent = document.getElementById('caption-consent');
 const statusConsent = document.getElementById('status-consent');
 const buttonConsent = document.getElementById('button-consent');
 
-const displaySettings = document.getElementById('string-settings');
+statusConsent.style.display = config.options.consent ? 'flex' : 'none';
+buttonConsent.style.display = config.options.consent ? 'flex' : 'none';
+captionConsent.style.display = config.options.consent ? 'flex' : 'none';
 
+const captionHost = document.getElementById('caption-host');
+const stringHost = document.getElementById('string-host');
+const displayHost = document.getElementById('active-status');
+const buttonHostEnable = document.getElementById('active-button-enable');
+const buttonHostDisable = document.getElementById('active-button-disable');
+
+captionHost.style.display = config.options.host ? 'flex' : 'none';
+stringHost.style.display = config.options.hostString ? 'flex' : 'none';
+displayHost.style.display = config.options.host ? 'flex' : 'none';
+buttonHostEnable.style.display = config.options.host ? 'flex' : 'none';
+buttonHostDisable.style.display = config.options.host ? 'flex' : 'none';
+
+const captionToolbar = document.getElementById('caption-toolbar');
 const statusToolbar = document.getElementById('status-toolbar');
 const buttonToolbar = document.getElementById('button-toolbar');
 
-const displayActive = document.getElementById('active-status');
+captionToolbar.style.display = config.options.toolbar ? 'flex' : 'none';
+statusToolbar.style.display = config.options.toolbar ? 'flex' : 'none';
+buttonToolbar.style.display = config.options.toolbar ? 'flex' : 'none';
 
-const buttonActiveEnable = document.getElementById('active-button-enable');
-const buttonActiveDisable = document.getElementById('active-button-disable');
-
-const display = document.getElementById('display');
-
+const captionDev = document.getElementById('caption-dev');
 const statusHosts = document.getElementById('status-hosts');
 const buttonResetHosts = document.getElementById('button-reset-hosts');
+
+captionDev.style.display = config.options.dev ? 'flex' : 'none';
+statusHosts.style.display = config.options.dev ? 'flex' : 'none';
+buttonResetHosts.style.display = config.options.dev ? 'flex' : 'none';
+
+const captionVersion = document.getElementById('caption-version');
+const displayVersion = document.getElementById('display-version');
+
+captionVersion.style.display = config.options.dev ? 'flex' : 'none';
+displayVersion.style.display = config.options.dev ? 'flex' : 'none';
 
 /**
  * Settings
@@ -55,12 +90,12 @@ const getCurrentHostSettings = () => {
 
     StorageController.getHostSettings(currentHostname)
       .then((settings) => {
-        display.value = JSON.stringify(settings);
+        stringHost.value = JSON.stringify(settings);
 
-        displayActive.textContent = settings.enabled === null ? 'not set' : settings.enabled;
+        displayHost.textContent = settings.enabled === null ? 'not set' : settings.enabled;
 
-        buttonActiveEnable.textContent = 'enable';
-        buttonActiveDisable.textContent = 'disable';
+        buttonHostEnable.textContent = 'enable';
+        buttonHostDisable.textContent = 'disable';
 
       })
       .catch((error) => {
@@ -160,12 +195,12 @@ chrome.runtime.onMessage.addListener((settings) => {
 /**
  * Hosts
  */
-buttonActiveEnable.addEventListener('click', () => {
+buttonHostEnable.addEventListener('click', () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, { command: 'host-enable' });
   });
 });
-buttonActiveDisable.addEventListener('click', () => {
+buttonHostDisable.addEventListener('click', () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, { command: 'host-disable' });
   });
@@ -173,8 +208,8 @@ buttonActiveDisable.addEventListener('click', () => {
 
 chrome.runtime.onMessage.addListener((settings) => {
   if (settings.host === undefined) return;
-  displayActive.textContent = settings.host.enabled;
-  display.value = JSON.stringify(settings.host);
+  displayHost.textContent = settings.host.enabled;
+  stringHost.value = JSON.stringify(settings.host);
 });
 
 /**

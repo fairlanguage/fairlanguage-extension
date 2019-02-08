@@ -122,7 +122,39 @@ module.exports = {
   }],
   "web_accessible_resources": ["icon-off.png", "icon-transparent.png", "icon-white.png", "close.png"]
 };
-},{}],"../controller/storage.js":[function(require,module,exports) {
+},{}],"../../config.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  default: {
+    enabled: true,
+    active: null,
+    toolbar: true
+  },
+  options: {
+    settingsString: false,
+    hostString: false,
+    enabled: false,
+    consent: true,
+    host: true,
+    toolbar: false,
+    dev: false
+  },
+  colors: {
+    primary: ['#40B3FF', '#6652FF', '#F022EB', '#EBEBFF'],
+    gradient: 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)'
+  },
+  toolbar: {
+    height: '150px',
+    opacity: 1
+  }
+};
+exports.default = _default;
+},{}],"controller/storage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -336,26 +368,56 @@ exports.default = StorageController;
 
 var manifest = _interopRequireWildcard(require("../../manifest.json"));
 
+var _config = _interopRequireDefault(require("../../config"));
+
 var _storage = _interopRequireDefault(require("../controller/storage"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
-var displayVersion = document.getElementById('display-version');
+var captionSettings = document.getElementById('caption-settings');
+var displaySettings = document.getElementById('string-settings');
+captionSettings.style.display = _config.default.options.settingsString ? 'flex' : 'none';
+displaySettings.style.display = _config.default.options.settingsString ? 'flex' : 'none';
+var captionEnabled = document.getElementById('caption-enabled');
 var statusEnabled = document.getElementById('status-enabled');
 var buttonEnabled = document.getElementById('button-enabled');
+statusEnabled.style.display = _config.default.options.enabled ? 'flex' : 'none';
+buttonEnabled.style.display = _config.default.options.enabled ? 'flex' : 'none';
+captionEnabled.style.display = _config.default.options.enabled ? 'flex' : 'none';
+var captionConsent = document.getElementById('caption-consent');
 var statusConsent = document.getElementById('status-consent');
 var buttonConsent = document.getElementById('button-consent');
-var displaySettings = document.getElementById('string-settings');
+statusConsent.style.display = _config.default.options.consent ? 'flex' : 'none';
+buttonConsent.style.display = _config.default.options.consent ? 'flex' : 'none';
+captionConsent.style.display = _config.default.options.consent ? 'flex' : 'none';
+var captionHost = document.getElementById('caption-host');
+var stringHost = document.getElementById('string-host');
+var displayHost = document.getElementById('active-status');
+var buttonHostEnable = document.getElementById('active-button-enable');
+var buttonHostDisable = document.getElementById('active-button-disable');
+captionHost.style.display = _config.default.options.host ? 'flex' : 'none';
+stringHost.style.display = _config.default.options.hostString ? 'flex' : 'none';
+displayHost.style.display = _config.default.options.host ? 'flex' : 'none';
+buttonHostEnable.style.display = _config.default.options.host ? 'flex' : 'none';
+buttonHostDisable.style.display = _config.default.options.host ? 'flex' : 'none';
+var captionToolbar = document.getElementById('caption-toolbar');
 var statusToolbar = document.getElementById('status-toolbar');
 var buttonToolbar = document.getElementById('button-toolbar');
-var displayActive = document.getElementById('active-status');
-var buttonActiveEnable = document.getElementById('active-button-enable');
-var buttonActiveDisable = document.getElementById('active-button-disable');
-var display = document.getElementById('display');
+captionToolbar.style.display = _config.default.options.toolbar ? 'flex' : 'none';
+statusToolbar.style.display = _config.default.options.toolbar ? 'flex' : 'none';
+buttonToolbar.style.display = _config.default.options.toolbar ? 'flex' : 'none';
+var captionDev = document.getElementById('caption-dev');
 var statusHosts = document.getElementById('status-hosts');
 var buttonResetHosts = document.getElementById('button-reset-hosts');
+captionDev.style.display = _config.default.options.dev ? 'flex' : 'none';
+statusHosts.style.display = _config.default.options.dev ? 'flex' : 'none';
+buttonResetHosts.style.display = _config.default.options.dev ? 'flex' : 'none';
+var captionVersion = document.getElementById('caption-version');
+var displayVersion = document.getElementById('display-version');
+captionVersion.style.display = _config.default.options.dev ? 'flex' : 'none';
+displayVersion.style.display = _config.default.options.dev ? 'flex' : 'none';
 /**
  * Settings
  */
@@ -382,10 +444,10 @@ var getCurrentHostSettings = function getCurrentHostSettings() {
     var currentHostname = new URL(tabs[0].url).hostname;
 
     _storage.default.getHostSettings(currentHostname).then(function (settings) {
-      display.value = JSON.stringify(settings);
-      displayActive.textContent = settings.enabled === null ? 'not set' : settings.enabled;
-      buttonActiveEnable.textContent = 'enable';
-      buttonActiveDisable.textContent = 'disable';
+      stringHost.value = JSON.stringify(settings);
+      displayHost.textContent = settings.enabled === null ? 'not set' : settings.enabled;
+      buttonHostEnable.textContent = 'enable';
+      buttonHostDisable.textContent = 'disable';
     }).catch(function (error) {
       display.value = error;
     });
@@ -477,7 +539,7 @@ chrome.runtime.onMessage.addListener(function (settings) {
  * Hosts
  */
 
-buttonActiveEnable.addEventListener('click', function () {
+buttonHostEnable.addEventListener('click', function () {
   chrome.tabs.query({
     active: true,
     currentWindow: true
@@ -487,7 +549,7 @@ buttonActiveEnable.addEventListener('click', function () {
     });
   });
 });
-buttonActiveDisable.addEventListener('click', function () {
+buttonHostDisable.addEventListener('click', function () {
   chrome.tabs.query({
     active: true,
     currentWindow: true
@@ -499,8 +561,8 @@ buttonActiveDisable.addEventListener('click', function () {
 });
 chrome.runtime.onMessage.addListener(function (settings) {
   if (settings.host === undefined) return;
-  displayActive.textContent = settings.host.enabled;
-  display.value = JSON.stringify(settings.host);
+  displayHost.textContent = settings.host.enabled;
+  stringHost.value = JSON.stringify(settings.host);
 });
 /**
  * Reset hosts
@@ -516,7 +578,7 @@ buttonResetHosts.addEventListener('click', function () {
  */
 
 displayVersion.textContent = manifest.version;
-},{"../../manifest.json":"../manifest.json","../controller/storage":"../controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../../manifest.json":"../manifest.json","../../config":"../../config.js","../controller/storage":"controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -543,7 +605,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58578" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63762" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
