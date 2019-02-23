@@ -27379,6 +27379,7 @@ exports.default = void 0;
 var _default = {
   default: {
     enabled: true,
+    consent: true,
     active: null,
     toolbar: true
   },
@@ -27386,10 +27387,10 @@ var _default = {
     settingsString: false,
     hostString: false,
     enabled: false,
-    consent: true,
+    consent: false,
     host: true,
     toolbar: false,
-    dev: false
+    dev: true
   },
   colors: {
     primary: ['#40B3FF', '#6652FF', '#F022EB', '#EBEBFF'],
@@ -46991,6 +46992,8 @@ function (_Component) {
           });
         },
         style: {
+          position: "sticky",
+          zIndex: 999999999999999999999,
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
@@ -47005,10 +47008,8 @@ function (_Component) {
           fontFamily: 'Arial',
           fontWeight: '300',
           color: 'white',
-          position: 'fixed',
           top: 0,
-          opacity: _config.default.toolbar.opacity,
-          zIndex: 999999999
+          opacity: _config.default.toolbar.opacity
         }
       }, _react.default.createElement("div", {
         style: {
@@ -47053,7 +47054,162 @@ var circle = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentToolbar);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../../config":"../config.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js","webfontloader":"../node_modules/webfontloader/webfontloader.js"}],"components/component-widget.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../../config":"../config.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js","webfontloader":"../node_modules/webfontloader/webfontloader.js"}],"scripts/underline.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createRange = createRange;
+exports.setCurrentCursorPosition = setCurrentCursorPosition;
+exports.underline = void 0;
+var _DEV_ = false;
+
+var l = function l(i) {
+  if (_DEV_) return console.log(i);
+};
+
+var isChildlessTextNode = function isChildlessTextNode(node) {
+  return !node.hasChildNodes() && node.nodeType === 3;
+};
+
+var isIncluded = function isIncluded(word, text) {
+  return text.includes(word) === true;
+};
+
+var getTextBeforeWord = function getTextBeforeWord(word, text) {
+  if (text === word) return undefined;
+  var indexStart = 0;
+  var indexEnd = text.indexOf(word) !== -1 ? text.indexOf(word) : undefined;
+  var textBefore = indexStart !== undefined && indexEnd !== undefined ? text.substring(indexStart, indexEnd) : undefined;
+  l(textBefore);
+  return textBefore;
+};
+
+var getTextAfterWord = function getTextAfterWord(word, text) {
+  if (text === word) return undefined;
+  var indexStart = text.indexOf(word) + word.length;
+  var indexEnd = text.length;
+  var textAfter = text.substring(indexStart, indexEnd);
+  l(textAfter);
+  return textAfter;
+};
+
+var createTextElement = function createTextElement(word) {
+  return document.createTextNode(word);
+};
+
+var style = document.createElement('style');
+style.type = 'text/css';
+style.innerHTML = '.underline { border-color: #fa4a4e; border-bottom-width: 3px; border-bottom-style: solid; }';
+document.getElementsByTagName('head')[0].appendChild(style);
+
+var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word) {
+  var replacement = document.createElement("span");
+  replacement.className = "underline";
+  replacement;
+  replacement.innerHTML = word;
+  return replacement;
+};
+
+function insertAfter(newNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+/**
+ *
+ */
+
+
+var underline = function underline(word, element, cb) {
+  var found = false;
+  l("We are looking for: ".concat(word));
+
+  function iterate(current) {
+    if (found) return;
+    var text = current.textContent; //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+
+    if (isChildlessTextNode(current) && isIncluded(word, text)) {
+      //Check if its already underlined
+      if (current.parentNode.tagName.toLowerCase() == "span" && current.parentNode.classList.contains("underline")) return; //console.log(`There is a "${word}" in this: "${text}"`);
+
+      l("isIncluded(".concat(word, ", ").concat(text, "): ").concat(isIncluded(word, text))); //Divide text
+
+      var textBefore = getTextBeforeWord(word, text);
+      var textAfter = getTextAfterWord(word, text); //l(`(${word}, "${text}") before: ${textBefore}, after: ${textAfter}`);
+      //Create nodes
+
+      var nodeBefore = textBefore ? createTextElement(textBefore) : undefined;
+      var nodeUnderlined = createSpanElementWithUnderlinedClass(word);
+      var nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
+      var nodes = [nodeBefore !== undefined ? nodeBefore : "", nodeUnderlined, nodeAfter !== undefined ? nodeAfter : ""];
+      current.replaceWith.apply(current, nodes); //current.parentNode.focus();
+
+      found = true;
+      if (cb !== undefined) cb();
+    } else {
+      var children = current.childNodes;
+
+      for (var i = 0, len = children.length; i < len; i++) {
+        iterate(children[i]);
+      }
+    }
+  }
+
+  iterate(element);
+  return element;
+};
+
+exports.underline = underline;
+
+function createRange(node, chars, range) {
+  if (!range) {
+    range = document.createRange();
+    range.selectNode(node);
+    range.setStart(node, 0);
+  }
+
+  if (chars.count === 0) {
+    range.setEnd(node, chars.count);
+  } else if (node && chars.count > 0) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.textContent.length < chars.count) {
+        chars.count -= node.textContent.length;
+      } else {
+        range.setEnd(node, chars.count);
+        chars.count = 0;
+      }
+    } else {
+      for (var lp = 0; lp < node.childNodes.length; lp++) {
+        range = createRange(node.childNodes[lp], chars, range);
+
+        if (chars.count === 0) {
+          break;
+        }
+      }
+    }
+  }
+
+  return range;
+}
+
+function setCurrentCursorPosition(chars, container) {
+  //console.log(setCurrentCursorPosition);
+  console.log("restored: ".concat(chars));
+
+  if (chars >= 0 && chars !== undefined) {
+    //var selection = window.getSelection();
+    var range = createRange(container, {
+      count: chars
+    });
+
+    if (range) {
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }
+}
+},{}],"components/component-widget.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47074,6 +47230,8 @@ var _reactRedux = require("react-redux");
 var actionsText = _interopRequireWildcard(require("../actions/actions-text"));
 
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
+
+var _underline = require("../scripts/underline");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -47096,6 +47254,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var axios = require("axios");
 
 var STRING_GRADIENT = _config.default.colors.gradient;
 var URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
@@ -47154,14 +47314,43 @@ function (_Component) {
 
       ; // Test
 
+      var saved = 0;
+
       var keyUp = function keyUp(event) {
         var textContent = _this2.props.textElement.textContent;
         var value = _this2.props.textElement.value;
         (0, _helperLogger.default)(textContent);
         (0, _helperLogger.default)(value);
         var text = textContent != undefined && textContent != null && textContent != '' ? textContent : value != undefined && value != null && value != '' ? value : '';
+        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text));
+        var container = _this2.props.textElement;
+        console.log(container);
 
-        _this2.props.checkText(text, _this2.state.id);
+        if (event.keyCode === 32 || event.keyCode === 188 || event.keyCode === 190) {
+          //Save prev cursor position
+          var _range = document.getSelection().getRangeAt(0);
+
+          var range = _range.cloneRange();
+
+          range.selectNodeContents(_this2.props.textElement);
+          range.setEnd(_range.endContainer, _range.endOffset);
+          saved = range.toString().length;
+          console.log(range.toString());
+          console.log("saved: ".concat(saved));
+          axios.get("".concat(url)).then(function (response) {
+            if (response.data.length > 0) {
+              var words = response.data;
+              console.log(words);
+              words.forEach(function (word) {
+                (0, _underline.underline)(word.string, _this2.props.textElement, function () {
+                  (0, _underline.setCurrentCursorPosition)(saved, _this2.props.textElement);
+                });
+              });
+            }
+          }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+          });
+        } //this.props.checkText(text, this.state.id);
+
       };
 
       (function checkForNewIframe(doc) {
@@ -47271,7 +47460,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
+},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","axios":"../node_modules/axios/index.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47605,13 +47794,17 @@ var zalando = function zalando(elementClickedOn) {
 
 var _default = zalando;
 exports.default = _default;
-},{}],"controller/storage.js":[function(require,module,exports) {
+},{}],"../controller/storage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+var _config = _interopRequireDefault(require("../../config"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -47637,9 +47830,9 @@ function () {
             resolve(storage.settings);
           } else {
             var settings = {
-              enabled: true,
-              consent: false,
-              toolbar: false
+              enabled: _config.default.default.enabled,
+              consent: _config.default.default.consent,
+              toolbar: _config.default.default.toolbar
             };
             chrome.storage.local.set({
               settings: settings
@@ -47814,7 +48007,7 @@ function () {
 }();
 
 exports.default = StorageController;
-},{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+},{"../../config":"../config.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
 function getBundleURLCached() {
@@ -47886,12 +48079,12 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../manifest.json":[function(require,module,exports) {
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../../manifest.json":[function(require,module,exports) {
 module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "browser_action": {
     "default_icon": "icon-transparent.png",
     "default_popup": "popup.html"
@@ -48433,7 +48626,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"controller/storage.js","./index.css":"index.css","../manifest.json":"../manifest.json"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"../controller/storage.js","./index.css":"index.css","../manifest.json":"../../manifest.json"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -48500,7 +48693,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63753" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51789" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

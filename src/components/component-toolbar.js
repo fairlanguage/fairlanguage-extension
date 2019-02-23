@@ -68,7 +68,7 @@ class ComponentToolbar extends Component {
       }}
       style={{
         position: "sticky",
-        zIndex: 999999999999999999999
+        zIndex: 999999999999999999999,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',

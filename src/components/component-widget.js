@@ -4,12 +4,18 @@ import config from '../../config';
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 
+//import axios from 'axios';
+
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 
 import * as actionsText from '../actions/actions-text';
 
-import log from '../helpers/helper-logger'
+import log from '../helpers/helper-logger';
+
+import {underline, createRange, setCurrentCursorPosition} from '../scripts/underline';
+
+const axios = require("axios");
 
 const STRING_GRADIENT = config.colors.gradient;
 
@@ -72,6 +78,8 @@ class ComponentWidget extends Component {
 
     function keyDown(e) {console.log(e.which);}; // Test
 
+    let saved = 0;
+
     const keyUp = (event) => {
 
       const textContent = this.props.textElement.textContent;
@@ -86,7 +94,51 @@ class ComponentWidget extends Component {
       
       (value != undefined && value != null && value != '' ? value : '');
 
-      this.props.checkText(text, this.state.id);
+      const url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(
+        text
+      )}`;
+
+      const container = this.props.textElement;
+      
+
+      console.log(container)
+      if (
+        event.keyCode === 32 ||
+        event.keyCode === 188 ||
+        event.keyCode === 190
+      ) {
+        //Save prev cursor position
+   
+        let _range = document.getSelection().getRangeAt(0);
+        let range = _range.cloneRange();
+        range.selectNodeContents(this.props.textElement);
+        range.setEnd(_range.endContainer, _range.endOffset);
+        saved = range.toString().length;
+  
+        console.log(range.toString());
+  
+        console.log(`saved: ${saved}`);
+
+        axios
+        .get(`${url}`)
+        .then(response => {
+          if (response.data.length > 0) {
+            const words = response.data;
+            console.log(words)
+            words.forEach(word => {
+              underline(word.string, this.props.textElement, () => {
+                setCurrentCursorPosition(saved, this.props.textElement);
+              });
+            });
+          }
+        })
+        .catch(err => {
+          //dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+        });
+        
+      }
+
+      //this.props.checkText(text, this.state.id);
 
     }; 
    
