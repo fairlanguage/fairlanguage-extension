@@ -47062,7 +47062,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createRange = createRange;
 exports.setCurrentCursorPosition = setCurrentCursorPosition;
-exports.underline = void 0;
+exports.getCurrentCursorPosition = exports.underline = void 0;
+
+var _config = _interopRequireDefault(require("../../config"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var _DEV_ = false;
 
 var l = function l(i) {
@@ -47099,22 +47104,18 @@ var createTextElement = function createTextElement(word) {
   return document.createTextNode(word);
 };
 
+var CLASS_NAME = 'fl-underline';
 var style = document.createElement('style');
 style.type = 'text/css';
-style.innerHTML = '.underline { border-color: #fa4a4e; border-bottom-width: 3px; border-bottom-style: solid; }';
+style.innerHTML = ".".concat(CLASS_NAME, " { border-color: ").concat(_config.default.colors.primary[2], "; border-bottom-width: 2.5px; border-bottom-style: solid; }");
 document.getElementsByTagName('head')[0].appendChild(style);
 
 var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word) {
-  var replacement = document.createElement("span");
-  replacement.className = "underline";
-  replacement;
+  var replacement = document.createElement('span');
+  replacement.className = CLASS_NAME;
   replacement.innerHTML = word;
   return replacement;
 };
-
-function insertAfter(newNode, referenceNode) {
-  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
 /**
  *
  */
@@ -47126,11 +47127,11 @@ var underline = function underline(word, element, cb) {
 
   function iterate(current) {
     if (found) return;
-    var text = current.textContent; //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+    var text = current.textContent; // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
 
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
-      //Check if its already underlined
-      if (current.parentNode.tagName.toLowerCase() == "span" && current.parentNode.classList.contains("underline")) return; //console.log(`There is a "${word}" in this: "${text}"`);
+      // Check if its already underlined
+      if (current.parentNode.tagName.toLowerCase() === 'span' && current.parentNode.classList.contains(CLASS_NAME)) return; // console.log(`There is a "${word}" in this: "${text}"`);
 
       l("isIncluded(".concat(word, ", ").concat(text, "): ").concat(isIncluded(word, text))); //Divide text
 
@@ -47161,9 +47162,10 @@ var underline = function underline(word, element, cb) {
 
 exports.underline = underline;
 
-function createRange(node, chars, range) {
+function createRange(node, chars) {
+  var range = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document.createRange();
+
   if (!range) {
-    range = document.createRange();
     range.selectNode(node);
     range.setStart(node, 0);
   }
@@ -47179,7 +47181,7 @@ function createRange(node, chars, range) {
         chars.count = 0;
       }
     } else {
-      for (var lp = 0; lp < node.childNodes.length; lp++) {
+      for (var lp = 0; lp < node.childNodes.length; lp += 1) {
         range = createRange(node.childNodes[lp], chars, range);
 
         if (chars.count === 0) {
@@ -47192,12 +47194,21 @@ function createRange(node, chars, range) {
   return range;
 }
 
+var getCurrentCursorPosition = function getCurrentCursorPosition(node) {
+  var range = document.getSelection().getRangeAt(0);
+  range = range.cloneRange();
+  range.selectNodeContents(node);
+  range.setEnd(range.endContainer, range.endOffset);
+  return range.toString().length;
+};
+
+exports.getCurrentCursorPosition = getCurrentCursorPosition;
+
 function setCurrentCursorPosition(chars, container) {
-  //console.log(setCurrentCursorPosition);
-  console.log("restored: ".concat(chars));
+  l("restored: ".concat(chars));
 
   if (chars >= 0 && chars !== undefined) {
-    //var selection = window.getSelection();
+    var selection = window.getSelection();
     var range = createRange(container, {
       count: chars
     });
@@ -47209,15 +47220,13 @@ function setCurrentCursorPosition(chars, container) {
     }
   }
 }
-},{}],"components/component-widget.js":[function(require,module,exports) {
+},{"../../config":"../config.js"}],"components/component-widget.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
-var _config = _interopRequireDefault(require("../../config"));
 
 var _react = _interopRequireWildcard(require("react"));
 
@@ -47229,13 +47238,15 @@ var _reactRedux = require("react-redux");
 
 var actionsText = _interopRequireWildcard(require("../actions/actions-text"));
 
+var _config = _interopRequireDefault(require("../../config"));
+
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
 
 var _underline = require("../scripts/underline");
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -47255,7 +47266,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var axios = require("axios");
+var axios = require('axios');
 
 var STRING_GRADIENT = _config.default.colors.gradient;
 var URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
@@ -47288,9 +47299,8 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(ComponentWidget).call(this, props));
     _this.state = {
-      id: count++,
-      text: '_',
-      height: '',
+      id: count += 1,
+      currentCursorPosition: 0,
       amount: 0
     };
     return _this;
@@ -47301,20 +47311,17 @@ function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      //Add to global state
+      // Add to global state
       this.props.addText(this.state.id);
       var compStyles = window.getComputedStyle(this.props.textElement);
       this.setState({
         height: compStyles.getPropertyValue('height')
-      }); //Listen to keyboard
+      });
 
-      function keyDown(e) {
-        console.log(e.which);
-      }
+      var keyDown = function keyDown(e) {
+        return console.log(e.which);
+      }; // Test
 
-      ; // Test
-
-      var saved = 0;
 
       var keyUp = function keyUp(event) {
         var textContent = _this2.props.textElement.textContent;
@@ -47324,33 +47331,34 @@ function (_Component) {
         var text = textContent != undefined && textContent != null && textContent != '' ? textContent : value != undefined && value != null && value != '' ? value : '';
         var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text));
         var container = _this2.props.textElement;
-        console.log(container);
 
-        if (event.keyCode === 32 || event.keyCode === 188 || event.keyCode === 190) {
-          //Save prev cursor position
-          var _range = document.getSelection().getRangeAt(0);
+        if (event.keyCode === 32 // Space
+        || event.keyCode === 8 // Backslash
+        || event.keyCode === 188 // ,
+        || event.keyCode === 190 // .
+        ) {
+            // Save prev cursor position
+            _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPosition)(container); //console.log(range.toString());
+            //console.log(`saved: ${saved}`);
 
-          var range = _range.cloneRange();
-
-          range.selectNodeContents(_this2.props.textElement);
-          range.setEnd(_range.endContainer, _range.endOffset);
-          saved = range.toString().length;
-          console.log(range.toString());
-          console.log("saved: ".concat(saved));
-          axios.get("".concat(url)).then(function (response) {
-            if (response.data.length > 0) {
-              var words = response.data;
-              console.log(words);
-              words.forEach(function (word) {
-                (0, _underline.underline)(word.string, _this2.props.textElement, function () {
-                  (0, _underline.setCurrentCursorPosition)(saved, _this2.props.textElement);
-                });
+            axios.get("".concat(url)).then(function (response) {
+              _this2.setState({
+                amount: response.data.length
               });
-            }
-          }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
-          });
-        } //this.props.checkText(text, this.state.id);
 
+              if (response.data.length > 0) {
+                var words = response.data;
+                words.forEach(function (word) {
+                  (0, _underline.underline)(word.string, container, function () {
+                    (0, _underline.setCurrentCursorPosition)(_this2.state.currentCursorPosition, container);
+                  });
+                });
+              }
+            }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+            });
+          }
+
+        _this2.props.checkText(text, _this2.state.id);
       };
 
       (function checkForNewIframe(doc) {
@@ -47415,12 +47423,14 @@ function (_Component) {
         style: circle
       }, _react.default.createElement("div", {
         style: circleCaption
-      }, this.amount))), this.props.containerElement);
+      }, this.state.amount))), this.props.containerElement);
     }
   }, {
     key: "amount",
     get: function get() {
-      return this.props && this.props.textElements && this.props.textElements[this.state.id] ? this.props.textElements[this.state.id].detectedWords.length : 0;
+      var res = this.props && this.props.textElements && this.props.textElements[this.state.id] ? this.props.textElements[this.state.id].detectedWords.length : 0;
+      console.log(res);
+      return res;
     }
   }]);
 
@@ -47460,7 +47470,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"../../config":"../config.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","axios":"../node_modules/axios/index.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","axios":"../node_modules/axios/index.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -48583,7 +48593,7 @@ function (_Component) {
       var text = dev ? " (this.state.active: ".concat(this.state.active, ")") : null;
       var enabled = this.getOverallState();
       return _react.default.createElement(_react.Fragment, null, this.state.enabled ? _react.default.createElement(_componentToolbar.default, {
-        open: this.state.consent === false ? true : this.state.toolbar
+        open: false
       }, _react.default.createElement("div", {
         style: {
           fontSize: '20px',
@@ -48693,7 +48703,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51789" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59543" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

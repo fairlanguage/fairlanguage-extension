@@ -1,47 +1,34 @@
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
-import config from '../../config';
-
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
-
-//import axios from 'axios';
-
-import {bindActionCreators} from 'redux';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import * as actionsText from '../actions/actions-text';
 
+import config from '../../config';
+
 import log from '../helpers/helper-logger';
 
-import {underline, createRange, setCurrentCursorPosition} from '../scripts/underline';
+import { underline, setCurrentCursorPosition, getCurrentCursorPosition } from '../scripts/underline';
 
-const axios = require("axios");
+const axios = require('axios');
 
 const STRING_GRADIENT = config.colors.gradient;
 
 const URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
 const URL_ICON_OFF = 'https://a.icons8.com/MVhZihaX/0yohoZ/oval.png';
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => ({
+  textElements: state.textElements,
+});
 
-  return {
-    textElements: state.textElements
-  };
+const mapDispatchToProps = dispatch => bindActionCreators({
+  addText: actionsText.addText,
+  checkText: actionsText.checkText,
+}, dispatch);
 
-}
-
-const mapDispatchToProps = (dispatch) => {
-
-  return bindActionCreators({
-
-    addText: actionsText.addText,
-    checkText: actionsText.checkText
-
-  }, dispatch);
-
-}
-
-let count = 0
+let count = 0;
 
 class ComponentWidget extends Component {
 
@@ -50,23 +37,23 @@ class ComponentWidget extends Component {
     super(props);
 
     this.state = {
-      id: count++,
-      text: '_',
-      height: '',
-      amount: 0
-    }
+      id: count += 1,
+      currentCursorPosition: 0,
+      amount: 0,
+    };
 
   }
 
-  get amount(){
-    return this.props&&this.props.textElements&&this.props.textElements[this.state.id]?this.props.textElements[this.state.id].detectedWords.length:0
+  get amount() {
+    const res = this.props&&this.props.textElements&&this.props.textElements[this.state.id]?this.props.textElements[this.state.id].detectedWords.length:0
+    console.log(res)
+    return res;
   }
 
-  componentDidMount(){
+  componentDidMount() {
 
-    //Add to global state
+    // Add to global state
     this.props.addText(this.state.id)
-
 
     let compStyles = window.getComputedStyle(this.props.textElement);
 
@@ -74,71 +61,57 @@ class ComponentWidget extends Component {
       height:compStyles.getPropertyValue('height')
     })
 
-    //Listen to keyboard
-
-    function keyDown(e) {console.log(e.which);}; // Test
-
-    let saved = 0;
+    const keyDown = e => console.log(e.which); // Test
 
     const keyUp = (event) => {
 
       const textContent = this.props.textElement.textContent;
       const value = this.props.textElement.value;
 
-      log(textContent)
-      log(value)
+      log(textContent);
+      log(value);
 
-      const text = 
-      
-      textContent != undefined && textContent != null && textContent != '' ? textContent : 
-      
-      (value != undefined && value != null && value != '' ? value : '');
+      const text = textContent != undefined && textContent != null && textContent != '' ? textContent : (value != undefined && value != null && value != '' ? value : '');
 
       const url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(
         text
       )}`;
 
       const container = this.props.textElement;
-      
 
-      console.log(container)
       if (
-        event.keyCode === 32 ||
-        event.keyCode === 188 ||
-        event.keyCode === 190
+        event.keyCode === 32 // Space
+        || event.keyCode === 8 // Backslash
+        || event.keyCode === 188 // ,
+        || event.keyCode === 190 // .
       ) {
-        //Save prev cursor position
-   
-        let _range = document.getSelection().getRangeAt(0);
-        let range = _range.cloneRange();
-        range.selectNodeContents(this.props.textElement);
-        range.setEnd(_range.endContainer, _range.endOffset);
-        saved = range.toString().length;
+
+        // Save prev cursor position
+        this.state.currentCursorPosition = getCurrentCursorPosition(container);
   
-        console.log(range.toString());
-  
-        console.log(`saved: ${saved}`);
+        //console.log(range.toString());
+        //console.log(`saved: ${saved}`);
 
         axios
-        .get(`${url}`)
-        .then(response => {
-          if (response.data.length > 0) {
-            const words = response.data;
-            console.log(words)
-            words.forEach(word => {
-              underline(word.string, this.props.textElement, () => {
-                setCurrentCursorPosition(saved, this.props.textElement);
+          .get(`${url}`)
+          .then((response) => {
+            this.setState({ amount: response.data.length });
+            if (response.data.length > 0) {
+              const words = response.data;
+              words.forEach((word) => {
+                underline(word.string, container, () => {
+                  setCurrentCursorPosition(this.state.currentCursorPosition, container);
+                });
               });
-            });
-          }
-        })
-        .catch(err => {
-          //dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
-        });
+            }
+          })
+          .catch((err) => {
+            //dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+          });
         
       }
 
-      //this.props.checkText(text, this.state.id);
+      this.props.checkText(text, this.state.id);
 
     }; 
    
@@ -216,7 +189,7 @@ class ComponentWidget extends Component {
         <div style={circle}>
           <div style={circleCaption}>
             {
-              this.amount
+              this.state.amount
             }
           </div>
         </div>

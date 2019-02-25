@@ -1,3 +1,5 @@
+import config from '../../config';
+
 const _DEV_ = false;
 const l = i => {
   if (_DEV_) return console.log(i);
@@ -22,6 +24,7 @@ const getTextBeforeWord = (word, text) => {
 
   return textBefore;
 };
+
 const getTextAfterWord = (word, text) => {
   if (text === word) return undefined;
 
@@ -36,22 +39,19 @@ const getTextAfterWord = (word, text) => {
 
 const createTextElement = word => document.createTextNode(word);
 
+const CLASS_NAME = 'fl-underline';
+
 const style = document.createElement('style');
 style.type = 'text/css';
-style.innerHTML = '.underline { border-color: #fa4a4e; border-bottom-width: 3px; border-bottom-style: solid; }';
+style.innerHTML = `.${CLASS_NAME} { border-color: ${config.colors.primary[2]}; border-bottom-width: 2.5px; border-bottom-style: solid; }`;
 document.getElementsByTagName('head')[0].appendChild(style);
 
-const createSpanElementWithUnderlinedClass = word => {
-  let replacement = document.createElement("span");
-  replacement.className = "underline";
-  replacement
+const createSpanElementWithUnderlinedClass = (word) => {
+  const replacement = document.createElement('span');
+  replacement.className = CLASS_NAME;
   replacement.innerHTML = word;
   return replacement;
 };
-
-function insertAfter(newNode, referenceNode) {
-  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
 
 /**
  *
@@ -63,16 +63,14 @@ const underline = (word, element, cb) => {
   function iterate(current) {
     if (found) return;
     const text = current.textContent;
-    //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+    // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
-      //Check if its already underlined
+      // Check if its already underlined
       if (
-        current.parentNode.tagName.toLowerCase() == "span" &&
-        current.parentNode.classList.contains("underline")
-      )
-        return;
-
-      //console.log(`There is a "${word}" in this: "${text}"`);
+        current.parentNode.tagName.toLowerCase() === 'span' &&
+        current.parentNode.classList.contains(CLASS_NAME)
+      ) return;
+      // console.log(`There is a "${word}" in this: "${text}"`);
 
       l(`isIncluded(${word}, ${text}): ${isIncluded(word, text)}`);
 
@@ -110,9 +108,8 @@ const underline = (word, element, cb) => {
   return element;
 };
 
-function createRange(node, chars, range) {
+function createRange(node, chars, range = document.createRange()) {
   if (!range) {
-    range = document.createRange();
     range.selectNode(node);
     range.setStart(node, 0);
   }
@@ -128,9 +125,8 @@ function createRange(node, chars, range) {
         chars.count = 0;
       }
     } else {
-      for (var lp = 0; lp < node.childNodes.length; lp++) {
+      for (let lp = 0; lp < node.childNodes.length; lp += 1) {
         range = createRange(node.childNodes[lp], chars, range);
-
         if (chars.count === 0) {
           break;
         }
@@ -141,14 +137,24 @@ function createRange(node, chars, range) {
   return range;
 }
 
-function setCurrentCursorPosition(chars, container) {
-  //console.log(setCurrentCursorPosition);
-  console.log(`restored: ${chars}`);
-  if (chars >= 0 && chars !== undefined) {
-    //var selection = window.getSelection();
+const getCurrentCursorPosition = (node) => {
+  let range = document.getSelection().getRangeAt(0);
+  range = range.cloneRange();
+  range.selectNodeContents(node);
+  range.setEnd(range.endContainer, range.endOffset);
+  return range.toString().length;
+}
 
-    let range = createRange(container, {
-      count: chars
+function setCurrentCursorPosition(chars, container) {
+  
+  l(`restored: ${chars}`);
+  
+  if (chars >= 0 && chars !== undefined) {
+    
+    const selection = window.getSelection();
+
+    const range = createRange(container, {
+      count: chars,
     });
 
     if (range) {
@@ -157,5 +163,9 @@ function setCurrentCursorPosition(chars, container) {
       selection.addRange(range);
     }
   }
+
 }
-export {underline, createRange, setCurrentCursorPosition};
+
+export {
+  underline, createRange, getCurrentCursorPosition, setCurrentCursorPosition, 
+};

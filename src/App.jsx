@@ -464,7 +464,7 @@ export default class App extends Component {
           
             ? (
               <ComponentToolbar
-                open={this.state.consent === false ? true : this.state.toolbar}
+                open={false}
               >
                 <div style={{ fontSize: '20px', marginBottom: '8px' }}>
                   {TEXT_PROMPT_ACTIVATE}
