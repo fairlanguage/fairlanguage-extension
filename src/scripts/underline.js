@@ -1,7 +1,21 @@
+import config from '../../config';
+
 const _DEV_ = false;
 const l = i => {
   if (_DEV_) return console.log(i);
 };
+
+const UNDERLINE_COLOR = config.colors.primary[3];
+
+const CSS_CLASS_NAME = `fl-${generateRandomString(10)}`;
+const CSS_CLASS_STYLE = `.${CSS_CLASS_NAME} 
+{ 
+  border-color: ${UNDERLINE_COLOR}; 
+  border-bottom-width: 2.5px;
+  border-bottom-style: solid;
+  cursor: pointer;
+  user-select:none;
+}`;
 
 function dec2hex(dec) {
   return ("0" + dec.toString(16)).substr(-2);
@@ -44,18 +58,6 @@ const getTextAfterWord = (word, text) => {
 
   return textAfter;
 };
-
-const UNDERLINE_COLOR = '#EBEBFF';
-
-const CSS_CLASS_NAME = `fl-${generateRandomString(10)}`;
-const CSS_CLASS_STYLE = `.${CSS_CLASS_NAME} 
-{ 
-  border-color: ${UNDERLINE_COLOR}; 
-  border-bottom-width: 2.5px;
-  border-bottom-style: solid;
-  cursor: pointer;
-  user-select:none;
-}`;
 
 const createTextElement = word => document.createTextNode(word);
 
