@@ -115,7 +115,7 @@ class ComponentWidget extends Component {
                 });
                 /*
                 *TODO:
-                *  Export the counting!
+                *  well, you know ;)
                 */
               });
             }

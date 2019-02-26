@@ -45,7 +45,7 @@ const getTextAfterWord = (word, text) => {
   return textAfter;
 };
 
-const UNDERLINE_COLOR = "red";
+const UNDERLINE_COLOR = '#EBEBFF';
 
 const CSS_CLASS_NAME = `fl-${generateRandomString(10)}`;
 const CSS_CLASS_STYLE = `.${CSS_CLASS_NAME} 
