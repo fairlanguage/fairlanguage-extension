@@ -34,8 +34,12 @@ const checkText = (text, id) => {
 
         payload.suggestion = response.data
         
-        if(response.data.length>0)        
+        if(response.data.length>0){
         dispatch({type: "RECEIVED_SUGGESTIONS", payload:payload})
+        }else{
+          payload.suggestion = []
+          dispatch({type: "RECEIVED_SUGGESTIONS", payload:payload})
+        }
       
       })
       .catch((err) => {

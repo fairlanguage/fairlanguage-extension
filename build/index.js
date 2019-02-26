@@ -46847,10 +46847,19 @@ var checkText = function checkText(text, id) {
 
     _axios.default.get("".concat(url)).then(function (response) {
       payload.suggestion = response.data;
-      if (response.data.length > 0) dispatch({
-        type: "RECEIVED_SUGGESTIONS",
-        payload: payload
-      });
+
+      if (response.data.length > 0) {
+        dispatch({
+          type: "RECEIVED_SUGGESTIONS",
+          payload: payload
+        });
+      } else {
+        payload.suggestion = [];
+        dispatch({
+          type: "RECEIVED_SUGGESTIONS",
+          payload: payload
+        });
+      }
     }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
     }); //Text has been sent
     //dispatch({type: "RECEIVE_WORDS", payload: pseudo})
@@ -47060,18 +47069,21 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createRange = createRange;
-exports.setCurrentCursorPosition = setCurrentCursorPosition;
-exports.getCurrentCursorPosition = exports.underline = void 0;
-
-var _config = _interopRequireDefault(require("../../config"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+exports.setCursorAtPositionInDOMNode = exports.getCurrentCursorPositionInDOMNode = exports.CSS_CLASS_NAME = exports.default = void 0;
 var _DEV_ = false;
 
 var l = function l(i) {
   if (_DEV_) return console.log(i);
+};
+
+function dec2hex(dec) {
+  return ("0" + dec.toString(16)).substr(-2);
+}
+
+var generateRandomString = function generateRandomString(length) {
+  var arr = new Uint8Array((length || 40) / 2);
+  window.crypto.getRandomValues(arr);
+  return Array.from(arr, dec2hex).join("");
 };
 
 var isChildlessTextNode = function isChildlessTextNode(node) {
@@ -47100,20 +47112,42 @@ var getTextAfterWord = function getTextAfterWord(word, text) {
   return textAfter;
 };
 
+var UNDERLINE_COLOR = "red";
+var CSS_CLASS_NAME = "fl-".concat(generateRandomString(10));
+exports.CSS_CLASS_NAME = CSS_CLASS_NAME;
+var CSS_CLASS_STYLE = ".".concat(CSS_CLASS_NAME, " \n{ \n  border-color: ").concat(UNDERLINE_COLOR, "; \n  border-bottom-width: 2.5px;\n  border-bottom-style: solid;\n  cursor: pointer;\n  user-select:none;\n}");
+
 var createTextElement = function createTextElement(word) {
   return document.createTextNode(word);
 };
 
-var CLASS_NAME = 'fl-underline';
-var style = document.createElement('style');
-style.type = 'text/css';
-style.innerHTML = ".".concat(CLASS_NAME, " { border-color: ").concat(_config.default.colors.primary[2], "; border-bottom-width: 2.5px; border-bottom-style: solid; }");
-document.getElementsByTagName('head')[0].appendChild(style);
-
-var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word) {
-  var replacement = document.createElement('span');
-  replacement.className = CLASS_NAME;
+var style = document.createElement("style");
+style.type = "text/css";
+style.innerHTML = CSS_CLASS_STYLE;
+document.getElementsByTagName("head")[0].appendChild(style);
+/* const createSpanElementWithUnderlinedClass = word => {
+  const replacement = document.createElement("span");
+  replacement.className = CSS_CLASS_NAME;
   replacement.innerHTML = word;
+  return replacement;
+}; */
+
+var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word, suggestions, cb) {
+  suggestions.unshift(word);
+  console.log(suggestions);
+  var replacement = document.createElement("span");
+  replacement.className = CSS_CLASS_NAME;
+  replacement.innerHTML = word;
+  var index = 1;
+  replacement.addEventListener("mousedown", function (e) {
+    return e.preventDefault();
+  }, false);
+  replacement.addEventListener("mouseup", function (event) {
+    replacement.textContent = suggestions[index];
+    replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
+    index = suggestions.length - 1 > index ? index += 1 : 0;
+    cb();
+  });
   return replacement;
 };
 /**
@@ -47121,17 +47155,19 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
  */
 
 
-var underline = function underline(word, element, cb) {
+var underline = function underline(data, element, cb) {
+  var word = data.word;
+  var suggestions = data.suggestions;
   var found = false;
   l("We are looking for: ".concat(word));
 
   function iterate(current) {
     if (found) return;
-    var text = current.textContent; // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+    var text = current.textContent; //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
 
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
-      // Check if its already underlined
-      if (current.parentNode.tagName.toLowerCase() === 'span' && current.parentNode.classList.contains(CLASS_NAME)) return; // console.log(`There is a "${word}" in this: "${text}"`);
+      //Check if its already underlined
+      if (current.parentNode.tagName.toLowerCase() === "span" && current.parentNode.classList.contains(CSS_CLASS_NAME)) return; //console.log(`There is a "${word}" in this: "${text}"`);
 
       l("isIncluded(".concat(word, ", ").concat(text, "): ").concat(isIncluded(word, text))); //Divide text
 
@@ -47140,7 +47176,7 @@ var underline = function underline(word, element, cb) {
       //Create nodes
 
       var nodeBefore = textBefore ? createTextElement(textBefore) : undefined;
-      var nodeUnderlined = createSpanElementWithUnderlinedClass(word);
+      var nodeUnderlined = createSpanElementWithUnderlinedClass(word, suggestions, cb);
       var nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
       var nodes = [nodeBefore !== undefined ? nodeBefore : "", nodeUnderlined, nodeAfter !== undefined ? nodeAfter : ""];
       current.replaceWith.apply(current, nodes); //current.parentNode.focus();
@@ -47160,9 +47196,7 @@ var underline = function underline(word, element, cb) {
   return element;
 };
 
-exports.underline = underline;
-
-function createRange(node, chars) {
+var createRange = function createRange(node, chars) {
   var range = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document.createRange();
 
   if (!range) {
@@ -47192,24 +47226,26 @@ function createRange(node, chars) {
   }
 
   return range;
-}
+};
 
-var getCurrentCursorPosition = function getCurrentCursorPosition(node) {
+var getCurrentCursorPositionInDOMNode = function getCurrentCursorPositionInDOMNode(node) {
   var range = document.getSelection().getRangeAt(0);
   range = range.cloneRange();
   range.selectNodeContents(node);
   range.setEnd(range.endContainer, range.endOffset);
-  return range.toString().length;
+  var position = range.toString().length;
+  l("stored: ".concat(position));
+  return position;
 };
 
-exports.getCurrentCursorPosition = getCurrentCursorPosition;
+exports.getCurrentCursorPositionInDOMNode = getCurrentCursorPositionInDOMNode;
 
-function setCurrentCursorPosition(chars, container) {
+var setCursorAtPositionInDOMNode = function setCursorAtPositionInDOMNode(chars, node) {
   l("restored: ".concat(chars));
 
   if (chars >= 0 && chars !== undefined) {
     var selection = window.getSelection();
-    var range = createRange(container, {
+    var range = createRange(node, {
       count: chars
     });
 
@@ -47219,8 +47255,12 @@ function setCurrentCursorPosition(chars, container) {
       selection.addRange(range);
     }
   }
-}
-},{"../../config":"../config.js"}],"components/component-widget.js":[function(require,module,exports) {
+};
+
+exports.setCursorAtPositionInDOMNode = setCursorAtPositionInDOMNode;
+var _default = underline;
+exports.default = _default;
+},{}],"components/component-widget.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47242,7 +47282,7 @@ var _config = _interopRequireDefault(require("../../config"));
 
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
 
-var _underline = require("../scripts/underline");
+var _underline = _interopRequireWildcard(require("../scripts/underline"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -47299,18 +47339,28 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(ComponentWidget).call(this, props));
     _this.state = {
-      id: count += 1,
+      id: count,
       currentCursorPosition: 0,
       amount: 0
     };
+    count = count + 1;
     return _this;
   }
 
   _createClass(ComponentWidget, [{
+    key: "componentWillReceiveProps",
+    value: function componentWillReceiveProps(props) {
+      console.log('&&&&&&&' + this.state.id);
+      if (props.textElements[this.state.id] !== undefined && props.textElements[this.state.id]) this.setState({
+        amount: this.props.textElements[this.state.id].detectedWords.length
+      });
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this2 = this;
 
+      //alert(this.state.id)
       // Add to global state
       this.props.addText(this.state.id);
       var compStyles = window.getComputedStyle(this.props.textElement);
@@ -47334,13 +47384,11 @@ function (_Component) {
 
         if (event.keyCode === 32 // Space
         || event.keyCode === 8 // Backslash
-        || event.keyCode === 188 // ,
-        || event.keyCode === 190 // .
+        || event.keyCode === 188 // , (Comma)
+        || event.keyCode === 190 // . (Point)
         ) {
             // Save prev cursor position
-            _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPosition)(container); //console.log(range.toString());
-            //console.log(`saved: ${saved}`);
-
+            _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(container);
             axios.get("".concat(url)).then(function (response) {
               _this2.setState({
                 amount: response.data.length
@@ -47349,9 +47397,18 @@ function (_Component) {
               if (response.data.length > 0) {
                 var words = response.data;
                 words.forEach(function (word) {
-                  (0, _underline.underline)(word.string, container, function () {
-                    (0, _underline.setCurrentCursorPosition)(_this2.state.currentCursorPosition, container);
+                  // console.log(word)
+                  var data = {
+                    word: word.string,
+                    suggestions: word.suggestions.option
+                  };
+                  (0, _underline.default)(data, container, function () {
+                    (0, _underline.setCursorAtPositionInDOMNode)(_this2.state.currentCursorPosition, container);
                   });
+                  /*
+                  *TODO:
+                  *  Export the counting!
+                  */
                 });
               }
             }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
@@ -47424,13 +47481,6 @@ function (_Component) {
       }, _react.default.createElement("div", {
         style: circleCaption
       }, this.state.amount))), this.props.containerElement);
-    }
-  }, {
-    key: "amount",
-    get: function get() {
-      var res = this.props && this.props.textElements && this.props.textElements[this.state.id] ? this.props.textElements[this.state.id].detectedWords.length : 0;
-      console.log(res);
-      return res;
     }
   }]);
 
@@ -47804,7 +47854,7 @@ var zalando = function zalando(elementClickedOn) {
 
 var _default = zalando;
 exports.default = _default;
-},{}],"../controller/storage.js":[function(require,module,exports) {
+},{}],"controller/storage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -48089,12 +48139,12 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../../manifest.json":[function(require,module,exports) {
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../manifest.json":[function(require,module,exports) {
 module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.8.6",
+  "version": "0.8.9",
   "browser_action": {
     "default_icon": "icon-transparent.png",
     "default_popup": "popup.html"
@@ -48636,7 +48686,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"../controller/storage.js","./index.css":"index.css","../manifest.json":"../../manifest.json"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"controller/storage.js","./index.css":"index.css","../manifest.json":"../manifest.json"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -48703,7 +48753,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59543" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64611" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

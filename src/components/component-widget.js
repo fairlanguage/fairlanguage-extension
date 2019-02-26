@@ -10,7 +10,10 @@ import config from '../../config';
 
 import log from '../helpers/helper-logger';
 
-import { underline, setCurrentCursorPosition, getCurrentCursorPosition } from '../scripts/underline';
+import underline, {
+  getCurrentCursorPositionInDOMNode,
+  setCursorAtPositionInDOMNode,
+} from '../scripts/underline';
 
 const axios = require('axios');
 
@@ -37,20 +40,26 @@ class ComponentWidget extends Component {
     super(props);
 
     this.state = {
-      id: count += 1,
+      id: count,
       currentCursorPosition: 0,
       amount: 0,
     };
 
+    count = count + 1;
+
   }
 
-  get amount() {
-    const res = this.props&&this.props.textElements&&this.props.textElements[this.state.id]?this.props.textElements[this.state.id].detectedWords.length:0
-    console.log(res)
-    return res;
+  componentWillReceiveProps(props) {
+    console.log('&&&&&&&'+this.state.id)
+    if(props.textElements[this.state.id]!==undefined&&props.textElements[this.state.id])
+    this.setState({
+      amount: this.props.textElements[this.state.id].detectedWords.length
+    })
   }
 
   componentDidMount() {
+
+    //alert(this.state.id)
 
     // Add to global state
     this.props.addText(this.state.id)
@@ -74,7 +83,7 @@ class ComponentWidget extends Component {
       const text = textContent != undefined && textContent != null && textContent != '' ? textContent : (value != undefined && value != null && value != '' ? value : '');
 
       const url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(
-        text
+        text,
       )}`;
 
       const container = this.props.textElement;
@@ -82,15 +91,12 @@ class ComponentWidget extends Component {
       if (
         event.keyCode === 32 // Space
         || event.keyCode === 8 // Backslash
-        || event.keyCode === 188 // ,
-        || event.keyCode === 190 // .
+        || event.keyCode === 188 // , (Comma)
+        || event.keyCode === 190 // . (Point)
       ) {
 
         // Save prev cursor position
-        this.state.currentCursorPosition = getCurrentCursorPosition(container);
-  
-        //console.log(range.toString());
-        //console.log(`saved: ${saved}`);
+        this.state.currentCursorPosition = getCurrentCursorPositionInDOMNode(container);
 
         axios
           .get(`${url}`)
@@ -99,9 +105,18 @@ class ComponentWidget extends Component {
             if (response.data.length > 0) {
               const words = response.data;
               words.forEach((word) => {
-                underline(word.string, container, () => {
-                  setCurrentCursorPosition(this.state.currentCursorPosition, container);
+                // console.log(word)
+                const data = {
+                  word: word.string,
+                  suggestions: word.suggestions.option
+                };
+                underline(data, container, () => {
+                  setCursorAtPositionInDOMNode(this.state.currentCursorPosition, container);
                 });
+                /*
+                *TODO:
+                *  Export the counting!
+                */
               });
             }
           })

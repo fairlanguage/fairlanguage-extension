@@ -1,8 +1,16 @@
-import config from '../../config';
-
 const _DEV_ = false;
 const l = i => {
   if (_DEV_) return console.log(i);
+};
+
+function dec2hex(dec) {
+  return ("0" + dec.toString(16)).substr(-2);
+}
+
+const generateRandomString = length => {
+  const arr = new Uint8Array((length || 40) / 2);
+  window.crypto.getRandomValues(arr);
+  return Array.from(arr, dec2hex).join("");
 };
 
 const isChildlessTextNode = node =>
@@ -37,19 +45,50 @@ const getTextAfterWord = (word, text) => {
   return textAfter;
 };
 
+const UNDERLINE_COLOR = "red";
+
+const CSS_CLASS_NAME = `fl-${generateRandomString(10)}`;
+const CSS_CLASS_STYLE = `.${CSS_CLASS_NAME} 
+{ 
+  border-color: ${UNDERLINE_COLOR}; 
+  border-bottom-width: 2.5px;
+  border-bottom-style: solid;
+  cursor: pointer;
+  user-select:none;
+}`;
+
 const createTextElement = word => document.createTextNode(word);
 
-const CLASS_NAME = 'fl-underline';
+const style = document.createElement("style");
+style.type = "text/css";
+style.innerHTML = CSS_CLASS_STYLE;
+document.getElementsByTagName("head")[0].appendChild(style);
 
-const style = document.createElement('style');
-style.type = 'text/css';
-style.innerHTML = `.${CLASS_NAME} { border-color: ${config.colors.primary[2]}; border-bottom-width: 2.5px; border-bottom-style: solid; }`;
-document.getElementsByTagName('head')[0].appendChild(style);
-
-const createSpanElementWithUnderlinedClass = (word) => {
-  const replacement = document.createElement('span');
-  replacement.className = CLASS_NAME;
+/* const createSpanElementWithUnderlinedClass = word => {
+  const replacement = document.createElement("span");
+  replacement.className = CSS_CLASS_NAME;
   replacement.innerHTML = word;
+  return replacement;
+}; */
+
+const createSpanElementWithUnderlinedClass = (word, suggestions, cb) => {
+  suggestions.unshift(word);
+  console.log(suggestions);
+
+  const replacement = document.createElement("span");
+  replacement.className = CSS_CLASS_NAME;
+  replacement.innerHTML = word;
+
+  let index = 1;
+
+  replacement.addEventListener("mousedown", e => e.preventDefault(), false);
+
+  replacement.addEventListener("mouseup", event => {
+    replacement.textContent = suggestions[index];
+    replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
+    index = suggestions.length - 1 > index ? (index += 1) : 0;
+    cb();
+  });
   return replacement;
 };
 
@@ -57,20 +96,25 @@ const createSpanElementWithUnderlinedClass = (word) => {
  *
  */
 
-const underline = (word, element, cb) => {
+const underline = (data, element, cb) => {
+  const word = data.word;
+  const suggestions = data.suggestions;
+
   let found = false;
   l(`We are looking for: ${word}`);
   function iterate(current) {
     if (found) return;
     const text = current.textContent;
-    // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+    //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
-      // Check if its already underlined
+      //Check if its already underlined
       if (
-        current.parentNode.tagName.toLowerCase() === 'span' &&
-        current.parentNode.classList.contains(CLASS_NAME)
-      ) return;
-      // console.log(`There is a "${word}" in this: "${text}"`);
+        current.parentNode.tagName.toLowerCase() === "span" &&
+        current.parentNode.classList.contains(CSS_CLASS_NAME)
+      )
+        return;
+
+      //console.log(`There is a "${word}" in this: "${text}"`);
 
       l(`isIncluded(${word}, ${text}): ${isIncluded(word, text)}`);
 
@@ -82,7 +126,11 @@ const underline = (word, element, cb) => {
 
       //Create nodes
       const nodeBefore = textBefore ? createTextElement(textBefore) : undefined;
-      const nodeUnderlined = createSpanElementWithUnderlinedClass(word);
+      const nodeUnderlined = createSpanElementWithUnderlinedClass(
+        word,
+        suggestions,
+        cb,
+      );
       const nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
 
       const nodes = [
@@ -108,7 +156,7 @@ const underline = (word, element, cb) => {
   return element;
 };
 
-function createRange(node, chars, range = document.createRange()) {
+const createRange = (node, chars, range = document.createRange()) => {
   if (!range) {
     range.selectNode(node);
     range.setStart(node, 0);
@@ -135,26 +183,25 @@ function createRange(node, chars, range = document.createRange()) {
   }
 
   return range;
-}
+};
 
-const getCurrentCursorPosition = (node) => {
+const getCurrentCursorPositionInDOMNode = (node) => {
   let range = document.getSelection().getRangeAt(0);
   range = range.cloneRange();
   range.selectNodeContents(node);
   range.setEnd(range.endContainer, range.endOffset);
-  return range.toString().length;
-}
+  const position = range.toString().length;
+  l(`stored: ${position}`);
+  return position;
+};
 
-function setCurrentCursorPosition(chars, container) {
-  
+const setCursorAtPositionInDOMNode = (chars, node) => {
   l(`restored: ${chars}`);
-  
   if (chars >= 0 && chars !== undefined) {
-    
     const selection = window.getSelection();
 
-    const range = createRange(container, {
-      count: chars,
+    const range = createRange(node, {
+      count: chars
     });
 
     if (range) {
@@ -163,9 +210,11 @@ function setCurrentCursorPosition(chars, container) {
       selection.addRange(range);
     }
   }
+};
 
-}
-
+export default underline;
 export {
-  underline, createRange, getCurrentCursorPosition, setCurrentCursorPosition, 
+  CSS_CLASS_NAME,
+  getCurrentCursorPositionInDOMNode,
+  setCursorAtPositionInDOMNode,
 };
