@@ -47318,7 +47318,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var axios = require('axios');
 
-var __DEV__ = true;
+var __DEV__ = false;
 
 var l = function l(i) {
   if (__DEV__) return (0, _helperLogger.default)(i);
@@ -47367,8 +47367,6 @@ function (_Component) {
   _createClass(ComponentWidget, [{
     key: "componentWillReceiveProps",
     value: function componentWillReceiveProps(props) {
-      l('&&&&&&&' + this.state.id);
-
       if (props.textElements[this.state.id] !== undefined && props.textElements[this.state.id]) {
         this.setState({
           amount: this.props.textElements[this.state.id].detectedWords.length
@@ -48144,7 +48142,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.8.9",
+  "version": "0.8.95",
   "browser_action": {
     "default_icon": "icon-transparent.png",
     "default_popup": "popup.html"
@@ -48757,7 +48755,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61542" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49921" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

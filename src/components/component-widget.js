@@ -17,7 +17,7 @@ import underline, {
 
 const axios = require('axios');
 
-const __DEV__ = true;
+const __DEV__ = false;
 
 const l = (i) => {
   if(__DEV__) 
@@ -58,7 +58,6 @@ class ComponentWidget extends Component {
   }
 
   componentWillReceiveProps(props) {
-    l('&&&&&&&'+this.state.id)
     if(props.textElements[this.state.id]!==undefined&&props.textElements[this.state.id]){
       this.setState({
         amount: this.props.textElements[this.state.id].detectedWords.length
