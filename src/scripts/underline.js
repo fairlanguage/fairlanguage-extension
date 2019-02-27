@@ -73,11 +73,11 @@ document.getElementsByTagName("head")[0].appendChild(style);
   return replacement;
 }; */
 
-const createSpanElementWithUnderlinedClass = (word, suggestions, cb) => {
+const createSpanElementWithUnderlinedClass = (word, suggestions, onChanged) => {
   suggestions.unshift(word);
-  console.log(suggestions);
+  l(suggestions);
 
-  const replacement = document.createElement("span");
+  const replacement = document.createElement("strong");
   replacement.className = CSS_CLASS_NAME;
   replacement.innerHTML = word;
 
@@ -89,16 +89,20 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, cb) => {
     replacement.textContent = suggestions[index];
     replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
     index = suggestions.length - 1 > index ? (index += 1) : 0;
-    cb();
+    onChanged();
   });
+
   return replacement;
 };
+
+const isAlreadyModified = node => node.parentNode.tagName.toLowerCase() === "strong" &&
+node.parentNode.classList.contains(CSS_CLASS_NAME);
 
 /**
  *
  */
 
-const underline = (data, element, cb) => {
+const underline = (data, element, onModified, onChanged) => {
   const word = data.word;
   const suggestions = data.suggestions;
 
@@ -109,12 +113,9 @@ const underline = (data, element, cb) => {
     const text = current.textContent;
     //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
-      //Check if its already underlined
-      if (
-        current.parentNode.tagName.toLowerCase() === "span" &&
-        current.parentNode.classList.contains(CSS_CLASS_NAME)
-      )
-        return;
+     
+      // Check if DOMNode is already underlined
+      if (isAlreadyModified(current)) return;
 
       //console.log(`There is a "${word}" in this: "${text}"`);
 
@@ -131,7 +132,7 @@ const underline = (data, element, cb) => {
       const nodeUnderlined = createSpanElementWithUnderlinedClass(
         word,
         suggestions,
-        cb,
+        onChanged,
       );
       const nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
 
@@ -144,7 +145,10 @@ const underline = (data, element, cb) => {
       current.replaceWith(...nodes);
       //current.parentNode.focus();
       found = true;
-      if (cb !== undefined) cb();
+
+      // onModified
+      if (onModified !== undefined) onModified();
+
     } else {
       const children = current.childNodes;
       for (let i = 0, len = children.length; i < len; i++) {

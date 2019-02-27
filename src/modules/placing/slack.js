@@ -7,7 +7,16 @@ const slack = (elementClickedOn) => {
 
   element.prepend(container);
 
-  const textElement = elementClickedOn;
+  let textElement;
+
+  if(elementClickedOn.tagName == 'DIV'){
+    textElement = elementClickedOn;
+  }
+
+  if(elementClickedOn.tagName == 'P'){
+    textElement = elementClickedOn.parentNode;
+  }
+
   const widgetContainer = container;
 
   return [textElement, widgetContainer]

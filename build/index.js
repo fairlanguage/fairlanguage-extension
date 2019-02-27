@@ -27345,7 +27345,7 @@ var _reducers = _interopRequireDefault(require("./reducers"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var middleware = (0, _redux.applyMiddleware)(_reduxThunk.default, (0, _reduxLogger.createLogger)());
+var middleware = (0, _redux.applyMiddleware)(_reduxThunk.default);
 
 var _default = (0, _redux.createStore)(_reducers.default, middleware);
 
@@ -27393,7 +27393,7 @@ var _default = {
     dev: true
   },
   colors: {
-    primary: ['#40B3FF', '#6652FF', '#F022EB', '#EBEBFF'],
+    primary: ['#40B3FF', '#6652FF', '#F022EB', '#d43aff'],
     gradient: 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)'
   },
   toolbar: {
@@ -47070,11 +47070,18 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.setCursorAtPositionInDOMNode = exports.getCurrentCursorPositionInDOMNode = exports.CSS_CLASS_NAME = exports.default = void 0;
+
+var _config = _interopRequireDefault(require("../../config"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var _DEV_ = false;
 
 var l = function l(i) {
   if (_DEV_) return console.log(i);
 };
+
+var UNDERLINE_COLOR = _config.default.colors.primary[3];
 
 function dec2hex(dec) {
   return ("0" + dec.toString(16)).substr(-2);
@@ -47112,15 +47119,13 @@ var getTextAfterWord = function getTextAfterWord(word, text) {
   return textAfter;
 };
 
-var UNDERLINE_COLOR = "red";
-var CSS_CLASS_NAME = "fl-".concat(generateRandomString(10));
-exports.CSS_CLASS_NAME = CSS_CLASS_NAME;
-var CSS_CLASS_STYLE = ".".concat(CSS_CLASS_NAME, " \n{ \n  border-color: ").concat(UNDERLINE_COLOR, "; \n  border-bottom-width: 2.5px;\n  border-bottom-style: solid;\n  cursor: pointer;\n  user-select:none;\n}");
-
 var createTextElement = function createTextElement(word) {
   return document.createTextNode(word);
 };
 
+var CSS_CLASS_NAME = "fl-".concat(generateRandomString(10));
+exports.CSS_CLASS_NAME = CSS_CLASS_NAME;
+var CSS_CLASS_STYLE = ".".concat(CSS_CLASS_NAME, " \n{ \n  border-color: ").concat(UNDERLINE_COLOR, "; \n  border-bottom-width: 2.5px;\n  border-bottom-style: solid;\n  cursor: pointer;\n  user-select:none;\n}");
 var style = document.createElement("style");
 style.type = "text/css";
 style.innerHTML = CSS_CLASS_STYLE;
@@ -47132,10 +47137,10 @@ document.getElementsByTagName("head")[0].appendChild(style);
   return replacement;
 }; */
 
-var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word, suggestions, cb) {
+var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word, suggestions, onChanged) {
   suggestions.unshift(word);
-  console.log(suggestions);
-  var replacement = document.createElement("span");
+  l(suggestions);
+  var replacement = document.createElement("strong");
   replacement.className = CSS_CLASS_NAME;
   replacement.innerHTML = word;
   var index = 1;
@@ -47146,16 +47151,20 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
     replacement.textContent = suggestions[index];
     replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
     index = suggestions.length - 1 > index ? index += 1 : 0;
-    cb();
+    onChanged();
   });
   return replacement;
+};
+
+var isAlreadyModified = function isAlreadyModified(node) {
+  return node.parentNode.tagName.toLowerCase() === "strong" && node.parentNode.classList.contains(CSS_CLASS_NAME);
 };
 /**
  *
  */
 
 
-var underline = function underline(data, element, cb) {
+var underline = function underline(data, element, onModified, onChanged) {
   var word = data.word;
   var suggestions = data.suggestions;
   var found = false;
@@ -47166,8 +47175,8 @@ var underline = function underline(data, element, cb) {
     var text = current.textContent; //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
 
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
-      //Check if its already underlined
-      if (current.parentNode.tagName.toLowerCase() === "span" && current.parentNode.classList.contains(CSS_CLASS_NAME)) return; //console.log(`There is a "${word}" in this: "${text}"`);
+      // Check if DOMNode is already underlined
+      if (isAlreadyModified(current)) return; //console.log(`There is a "${word}" in this: "${text}"`);
 
       l("isIncluded(".concat(word, ", ").concat(text, "): ").concat(isIncluded(word, text))); //Divide text
 
@@ -47176,13 +47185,14 @@ var underline = function underline(data, element, cb) {
       //Create nodes
 
       var nodeBefore = textBefore ? createTextElement(textBefore) : undefined;
-      var nodeUnderlined = createSpanElementWithUnderlinedClass(word, suggestions, cb);
+      var nodeUnderlined = createSpanElementWithUnderlinedClass(word, suggestions, onChanged);
       var nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
       var nodes = [nodeBefore !== undefined ? nodeBefore : "", nodeUnderlined, nodeAfter !== undefined ? nodeAfter : ""];
       current.replaceWith.apply(current, nodes); //current.parentNode.focus();
 
-      found = true;
-      if (cb !== undefined) cb();
+      found = true; // onModified
+
+      if (onModified !== undefined) onModified();
     } else {
       var children = current.childNodes;
 
@@ -47260,7 +47270,7 @@ var setCursorAtPositionInDOMNode = function setCursorAtPositionInDOMNode(chars, 
 exports.setCursorAtPositionInDOMNode = setCursorAtPositionInDOMNode;
 var _default = underline;
 exports.default = _default;
-},{}],"components/component-widget.js":[function(require,module,exports) {
+},{"../../config":"../config.js"}],"components/component-widget.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47308,6 +47318,12 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var axios = require('axios');
 
+var __DEV__ = true;
+
+var l = function l(i) {
+  if (__DEV__) return (0, _helperLogger.default)(i);
+};
+
 var STRING_GRADIENT = _config.default.colors.gradient;
 var URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
 var URL_ICON_OFF = 'https://a.icons8.com/MVhZihaX/0yohoZ/oval.png';
@@ -47341,7 +47357,8 @@ function (_Component) {
     _this.state = {
       id: count,
       currentCursorPosition: 0,
-      amount: 0
+      amount: 0,
+      text: ''
     };
     count = count + 1;
     return _this;
@@ -47350,45 +47367,50 @@ function (_Component) {
   _createClass(ComponentWidget, [{
     key: "componentWillReceiveProps",
     value: function componentWillReceiveProps(props) {
-      console.log('&&&&&&&' + this.state.id);
-      if (props.textElements[this.state.id] !== undefined && props.textElements[this.state.id]) this.setState({
-        amount: this.props.textElements[this.state.id].detectedWords.length
-      });
+      l('&&&&&&&' + this.state.id);
+
+      if (props.textElements[this.state.id] !== undefined && props.textElements[this.state.id]) {
+        this.setState({
+          amount: this.props.textElements[this.state.id].detectedWords.length
+        });
+      }
     }
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this2 = this;
 
-      //alert(this.state.id)
-      // Add to global state
       this.props.addText(this.state.id);
-      var compStyles = window.getComputedStyle(this.props.textElement);
-      this.setState({
-        height: compStyles.getPropertyValue('height')
-      });
+      var element = this.props.textElement;
+      l(element);
+      setInterval(function () {
+        l(element.textContent);
 
-      var keyDown = function keyDown(e) {
-        return console.log(e.which);
-      }; // Test
+        if (element.textContent == '') {
+          _this2.props.textElements[_this2.state.id].detectedWords = [];
 
+          _this2.setState({
+            amount: _this2.props.textElements[_this2.state.id].detectedWords.length
+          });
+        }
+      }, 125);
+      element.addEventListener('keyup', function (event) {
+        var text = element.textContent;
+        l(text);
 
-      var keyUp = function keyUp(event) {
-        var textContent = _this2.props.textElement.textContent;
-        var value = _this2.props.textElement.value;
-        (0, _helperLogger.default)(textContent);
-        (0, _helperLogger.default)(value);
-        var text = textContent != undefined && textContent != null && textContent != '' ? textContent : value != undefined && value != null && value != '' ? value : '';
-        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text));
-        var container = _this2.props.textElement;
+        _this2.props.checkText(text, _this2.state.id);
+
+        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text)); // Save prev cursor position
+
+        _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(element);
 
         if (event.keyCode === 32 // Space
         || event.keyCode === 8 // Backslash
+        || event.keyCode === 49 // !
+        || event.keyCode === 219 // ?
         || event.keyCode === 188 // , (Comma)
         || event.keyCode === 190 // . (Point)
         ) {
-            // Save prev cursor position
-            _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(container);
             axios.get("".concat(url)).then(function (response) {
               _this2.setState({
                 amount: response.data.length
@@ -47397,56 +47419,25 @@ function (_Component) {
               if (response.data.length > 0) {
                 var words = response.data;
                 words.forEach(function (word) {
-                  // console.log(word)
                   var data = {
                     word: word.string,
                     suggestions: word.suggestions.option
                   };
-                  (0, _underline.default)(data, container, function () {
-                    (0, _underline.setCursorAtPositionInDOMNode)(_this2.state.currentCursorPosition, container);
+                  (0, _underline.default)(data, element, function () {
+                    (0, _underline.setCursorAtPositionInDOMNode)(_this2.state.currentCursorPosition, element);
+                  }, function () {
+                    _this2.props.checkText(element.textContent, _this2.state.id);
                   });
                   /*
                   *TODO:
-                  *  Export the counting!
+                  *  well, you know ;)
                   */
                 });
               }
             }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
             });
           }
-
-        _this2.props.checkText(text, _this2.state.id);
-      };
-
-      (function checkForNewIframe(doc) {
-        if (!doc) return; // document does not exist. Cya
-        // Note: It is important to use "true", to bind events to the capturing
-        // phase. If omitted or set to false, the event listener will be bound
-        // to the bubbling phase, where the event is not visible any more when
-        // Gmail calls event.stopPropagation().
-        // Calling addEventListener with the same arguments multiple times bind
-        // the listener only once, so we don't have to set a guard for that.
-
-        doc.addEventListener('keydown', keyDown, true);
-        doc.addEventListener('keyup', keyUp, true);
-        doc.hasSeenDocument = true;
-
-        for (var i = 0, contentDocument; i < frames.length; i++) {
-          try {
-            contentDocument = iframes[i].document;
-          } catch (e) {
-            continue; // Same-origin policy violation?
-          }
-
-          if (contentDocument && !contentDocument.hasSeenDocument) {
-            // Add poller to the new iframe
-            checkForNewIframe(iframes[i].contentDocument);
-          }
-        }
-
-        setTimeout(checkForNewIframe, 250); // <-- delay of 1/4 second
-      })(document); // Initiate recursive function for the document.
-
+      });
     }
   }, {
     key: "render",
@@ -47612,7 +47603,16 @@ var slack = function slack(elementClickedOn) {
   container.style.marginLeft = '-28px';
   container.style.marginTop = '-2px';
   element.prepend(container);
-  var textElement = elementClickedOn;
+  var textElement;
+
+  if (elementClickedOn.tagName == 'DIV') {
+    textElement = elementClickedOn;
+  }
+
+  if (elementClickedOn.tagName == 'P') {
+    textElement = elementClickedOn.parentNode;
+  }
+
   var widgetContainer = container;
   return [textElement, widgetContainer];
 };
@@ -48201,6 +48201,8 @@ var _zalando = _interopRequireDefault(require("./modules/placing/zalando"));
 
 var _storage = _interopRequireDefault(require("./controller/storage"));
 
+var _underline = require("./scripts/underline");
+
 require("./index.css");
 
 var manifest = _interopRequireWildcard(require("../manifest.json"));
@@ -48425,7 +48427,8 @@ function (_Component) {
 
         (0, _helperLogger.default)("isParentElementContentIsEditable (".concat(depth, "): ").concat(isParentElementContentIsEditable)); // If none of that is the case it just wasn't a txt field (sorry :/).
 
-        if (!isTextArea && !isIn && !isInput && !isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
+        if (isInput || isIn || isTextArea) return;
+        if (!isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
         /*
         *  Third, we decide where to place the fucking widget!
         */
@@ -48546,6 +48549,7 @@ function (_Component) {
 
 
         elementClickedOn.setAttribute('fl', 'lala');
+        elementClickedOn.parentElement.setAttribute('fl', 'lala');
         (0, _helperLogger.default)("Set widget #".concat(textFields.length));
       });
     }
@@ -48686,7 +48690,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"controller/storage.js","./index.css":"index.css","../manifest.json":"../manifest.json"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"controller/storage.js","./scripts/underline":"scripts/underline.js","./index.css":"index.css","../manifest.json":"../manifest.json"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -48753,7 +48757,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64611" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61542" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

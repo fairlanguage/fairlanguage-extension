@@ -17,6 +17,13 @@ import underline, {
 
 const axios = require('axios');
 
+const __DEV__ = true;
+
+const l = (i) => {
+  if(__DEV__) 
+    return log(i);
+}
+
 const STRING_GRADIENT = config.colors.gradient;
 
 const URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
@@ -43,6 +50,7 @@ class ComponentWidget extends Component {
       id: count,
       currentCursorPosition: 0,
       amount: 0,
+      text: '',
     };
 
     count = count + 1;
@@ -50,53 +58,53 @@ class ComponentWidget extends Component {
   }
 
   componentWillReceiveProps(props) {
-    console.log('&&&&&&&'+this.state.id)
-    if(props.textElements[this.state.id]!==undefined&&props.textElements[this.state.id])
-    this.setState({
-      amount: this.props.textElements[this.state.id].detectedWords.length
-    })
+    l('&&&&&&&'+this.state.id)
+    if(props.textElements[this.state.id]!==undefined&&props.textElements[this.state.id]){
+      this.setState({
+        amount: this.props.textElements[this.state.id].detectedWords.length
+      })
+    }
   }
 
   componentDidMount() {
 
-    //alert(this.state.id)
-
-    // Add to global state
     this.props.addText(this.state.id)
 
-    let compStyles = window.getComputedStyle(this.props.textElement);
+    const element = this.props.textElement;
+    l(element);
 
-    this.setState({
-      height:compStyles.getPropertyValue('height')
-    })
+    setInterval(() => {
+      l(element.textContent)
+      if(element.textContent == ''){
+        this.props.textElements[this.state.id].detectedWords = [];
+        this.setState({
+          amount: this.props.textElements[this.state.id].detectedWords.length
+        })
+      }
+    },125)
 
-    const keyDown = e => console.log(e.which); // Test
+    element.addEventListener('keyup', (event) => {
 
-    const keyUp = (event) => {
+      const text = element.textContent;
+      l(text);
 
-      const textContent = this.props.textElement.textContent;
-      const value = this.props.textElement.value;
-
-      log(textContent);
-      log(value);
-
-      const text = textContent != undefined && textContent != null && textContent != '' ? textContent : (value != undefined && value != null && value != '' ? value : '');
+      this.props.checkText(text, this.state.id);
 
       const url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(
         text,
       )}`;
 
-      const container = this.props.textElement;
+      // Save prev cursor position
+      this.state.currentCursorPosition = getCurrentCursorPositionInDOMNode(element);
 
       if (
         event.keyCode === 32 // Space
         || event.keyCode === 8 // Backslash
+        || event.keyCode === 49 // !
+        || event.keyCode === 219 // ?
         || event.keyCode === 188 // , (Comma)
         || event.keyCode === 190 // . (Point)
       ) {
-
-        // Save prev cursor position
-        this.state.currentCursorPosition = getCurrentCursorPositionInDOMNode(container);
 
         axios
           .get(`${url}`)
@@ -105,13 +113,14 @@ class ComponentWidget extends Component {
             if (response.data.length > 0) {
               const words = response.data;
               words.forEach((word) => {
-                // console.log(word)
                 const data = {
                   word: word.string,
                   suggestions: word.suggestions.option
                 };
-                underline(data, container, () => {
-                  setCursorAtPositionInDOMNode(this.state.currentCursorPosition, container);
+                underline(data, element, () => {
+                  setCursorAtPositionInDOMNode(this.state.currentCursorPosition, element);
+                }, () => {
+                  this.props.checkText(element.textContent, this.state.id);
                 });
                 /*
                 *TODO:
@@ -126,35 +135,7 @@ class ComponentWidget extends Component {
         
       }
 
-      this.props.checkText(text, this.state.id);
-
-    }; 
-   
-    (function checkForNewIframe(doc) {
-        if (!doc) return; // document does not exist. Cya
-
-        // Note: It is important to use "true", to bind events to the capturing
-        // phase. If omitted or set to false, the event listener will be bound
-        // to the bubbling phase, where the event is not visible any more when
-        // Gmail calls event.stopPropagation().
-        // Calling addEventListener with the same arguments multiple times bind
-        // the listener only once, so we don't have to set a guard for that.
-        doc.addEventListener('keydown', keyDown, true);
-        doc.addEventListener('keyup', keyUp, true);
-        doc.hasSeenDocument = true;
-        for (var i = 0, contentDocument; i<frames.length; i++) {
-            try {
-                contentDocument = iframes[i].document;
-            } catch (e) {
-                continue; // Same-origin policy violation?
-            }
-            if (contentDocument && !contentDocument.hasSeenDocument) {
-                // Add poller to the new iframe
-                checkForNewIframe(iframes[i].contentDocument);
-            }
-        }
-        setTimeout(checkForNewIframe, 250) // <-- delay of 1/4 second
-    })(document); // Initiate recursive function for the document.
+    })
 
   }
 

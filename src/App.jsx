@@ -25,6 +25,8 @@ import ModulePlacingZalando from './modules/placing/zalando';
 
 import StorageController from './controller/storage';
 
+import { CSS_CLASS_NAME } from './scripts/underline'
+
 import './index.css';
 
 import * as manifest from '../manifest.json';
@@ -212,7 +214,8 @@ export default class App extends Component {
       log(`isParentElementContentIsEditable (${depth}): ${isParentElementContentIsEditable}`);
 
       // If none of that is the case it just wasn't a txt field (sorry :/).
-      if (!isTextArea && !isIn && !isInput && !isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
+      if (isInput || isIn || isTextArea) return;
+      if (!isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
 
       /*
       *  Third, we decide where to place the fucking widget!
@@ -366,6 +369,7 @@ export default class App extends Component {
       */
 
       elementClickedOn.setAttribute('fl', 'lala');
+      elementClickedOn.parentElement.setAttribute('fl', 'lala');
 
       log(`Set widget #${textFields.length}`);
 
