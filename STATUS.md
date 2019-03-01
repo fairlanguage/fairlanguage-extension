@@ -1,19 +1,19 @@
-## (Updated 1/30/19)
+## (Updated 3/01/19)
 
 # 🎉 Compatibility Status
 
 |             Web App                             | widget | marking | replacing |
 |-------------------------------------------------|:------:|:-------:|:---------:|
 | Mail                                            |        |         |           |
-| [![badge12]](https://web.telegram.org)          | custom |         |           |
-| [![badge13]](https://web.whatsapp.google.com)   | custom |         |           | 
+| [![badge12]](https://web.telegram.org)          | custom | works   | works     |
+| [![badge13]](https://web.whatsapp.google.com)   | custom | works   | works     | 
 | [![badge14]](https://messenger.com)             | custom |         |           |
 | Mail                                            |        |         |           |
-| [![badge4]](https://mail.google.com)            | custom |         |           |
-| [![badge5]](https://mail.yahoo.com)             | custom |         |           |
-| [![badge6]](https://outlook.live.com)           | custom |         |           |
+| [![badge4]](https://mail.google.com)            | custom | works   | works     |
+| [![badge5]](https://mail.yahoo.com)             | custom | works   | works     |
+| [![badge6]](https://outlook.live.com)           | custom | works   | works     |
 | Work                                            |        |         |           |
-| [![badge10]](https://slack.org)                 | custom |         |           |
+| [![badge10]](https://slack.org)                 | custom | works   | works     |
 | [![badge11]](https://meet.google.com)           | custom |         |           |
 | [![badge111]](https://meet.google.com)          | custom |         |           |
 | Social Media                                    |        |         |           |
