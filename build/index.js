@@ -47176,20 +47176,19 @@ var underline = function underline(data, element, onModified, onChanged) {
 
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
       // Check if DOMNode is already underlined
-      if (isAlreadyModified(current)) return; //console.log(`There is a "${word}" in this: "${text}"`);
+      if (isAlreadyModified(current)) return; // console.log(`There is a "${word}" in this: "${text}"`);
 
-      l("isIncluded(".concat(word, ", ").concat(text, "): ").concat(isIncluded(word, text))); //Divide text
+      l("isIncluded(".concat(word, ", ").concat(text, "): ").concat(isIncluded(word, text))); // Divide text
 
       var textBefore = getTextBeforeWord(word, text);
-      var textAfter = getTextAfterWord(word, text); //l(`(${word}, "${text}") before: ${textBefore}, after: ${textAfter}`);
-      //Create nodes
+      var textAfter = getTextAfterWord(word, text); // l(`(${word}, "${text}") before: ${textBefore}, after: ${textAfter}`);
+      // Create nodes
 
       var nodeBefore = textBefore ? createTextElement(textBefore) : undefined;
       var nodeUnderlined = createSpanElementWithUnderlinedClass(word, suggestions, onChanged);
       var nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
-      var nodes = [nodeBefore !== undefined ? nodeBefore : "", nodeUnderlined, nodeAfter !== undefined ? nodeAfter : ""];
-      current.replaceWith.apply(current, nodes); //current.parentNode.focus();
-
+      var nodes = [nodeBefore !== undefined ? nodeBefore : '', nodeUnderlined, nodeAfter !== undefined ? nodeAfter : ''];
+      current.replaceWith.apply(current, nodes);
       found = true; // onModified
 
       if (onModified !== undefined) onModified();
@@ -47205,6 +47204,13 @@ var underline = function underline(data, element, onModified, onChanged) {
   iterate(element);
   return element;
 };
+/**
+ * 
+ * @param {*} node 
+ * @param {*} chars 
+ * @param {*} range 
+ */
+
 
 var createRange = function createRange(node, chars) {
   var range = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document.createRange();
@@ -47212,14 +47218,14 @@ var createRange = function createRange(node, chars) {
   if (!range) {
     range.selectNode(node);
     range.setStart(node, 0);
+    range.setEnd(node, chars.count);
   }
 
   if (chars.count === 0) {
     range.setEnd(node, chars.count);
   } else if (node && chars.count > 0) {
     if (node.nodeType === Node.TEXT_NODE) {
-      if (node.textContent.length < chars.count) {
-        chars.count -= node.textContent.length;
+      if (node.textContent.length < chars.count) {//chars.count -= node.textContent.length;
       } else {
         range.setEnd(node, chars.count);
         chars.count = 0;
@@ -47233,7 +47239,8 @@ var createRange = function createRange(node, chars) {
         }
       }
     }
-  }
+  } // console.log(range)
+
 
   return range;
 };
@@ -47247,24 +47254,41 @@ var getCurrentCursorPositionInDOMNode = function getCurrentCursorPositionInDOMNo
   l("stored: ".concat(position));
   return position;
 };
+/**
+ * setCursorAtPositionInDOMNode
+ * @param {Position to take withing node} chars 
+ * @param {DOM Node to set cursor} node 
+ */
+
 
 exports.getCurrentCursorPositionInDOMNode = getCurrentCursorPositionInDOMNode;
 
 var setCursorAtPositionInDOMNode = function setCursorAtPositionInDOMNode(chars, node) {
-  l("restored: ".concat(chars));
+  /**
+   * https://developer.mozilla.org/en-US/docs/Web/API/Range
+   * https://developer.mozilla.org/en-US/docs/Web/API/Selection
+   */
+  // [DEPRECATED (but maybe useful in the future)]
+  //l(`restored: ${chars}`);
+  console.log('selection:');
+  var selection = window.getSelection();
+  console.log(selection);
+  console.log('node:');
+  console.log(node.childNodes.length);
+  var range = document.createRange(); //range.selectNode(node.childNodes[node.childNodes.length - 1]);
+  // Equivalent to:
 
-  if (chars >= 0 && chars !== undefined) {
-    var selection = window.getSelection();
-    var range = createRange(node, {
-      count: chars
-    });
+  range.selectNodeContents(node); //range.setStart(node.childNodes[node.childNodes.length - 1], 0);
+  //range.setEnd(node.childNodes[node.childNodes.length - 1], node.childNodes[node.childNodes.length - 1].childNodes.length);
+  // Info: true = Select everything in range / false = Select nothing in range
 
-    if (range) {
-      range.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  }
+  range.collapse(false);
+  console.log('range:');
+  console.log(range);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  console.log('selection:');
+  console.log(selection);
 };
 
 exports.setCursorAtPositionInDOMNode = setCursorAtPositionInDOMNode;
@@ -47380,11 +47404,10 @@ function (_Component) {
 
       this.props.addText(this.state.id);
       var element = this.props.textElement;
-      l(element);
+      console.log(element);
       setInterval(function () {
-        l(element.textContent);
-
-        if (element.textContent == '') {
+        // l(element.textContent);
+        if (element.textContent === '') {
           _this2.props.textElements[_this2.state.id].detectedWords = [];
 
           _this2.setState({
@@ -47392,22 +47415,27 @@ function (_Component) {
           });
         }
       }, 125);
-      element.addEventListener('keyup', function (event) {
-        var text = element.textContent;
-        l(text);
+      element.addEventListener('keydown', function (event) {//event.preventDefault();
+      });
+      element.addEventListener('keyup', function (event) {//event.preventDefault();
+      });
+      element.addEventListener('input', function (event) {
+        console.log(event);
+        var text = element.textContent; //console.log(text);
 
         _this2.props.checkText(text, _this2.state.id);
 
-        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text)); // Save prev cursor position
+        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text)); // [DEPRECATED at this state of ev, might be helpful in the future] Save prev cursor position
 
-        _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(element);
+        _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(element); //console.log('saved:'+this.state.currentCursorPosition)
 
-        if (event.keyCode === 32 // Space
-        || event.keyCode === 8 // Backslash
-        || event.keyCode === 49 // !
-        || event.keyCode === 219 // ?
-        || event.keyCode === 188 // , (Comma)
-        || event.keyCode === 190 // . (Point)
+        if (event.data === ' ' // Space
+
+        /*  || event.keyCode === 8 // Backslash
+         || event.keyCode === 49 // !
+         || event.keyCode === 219 // ?
+         || event.keyCode === 188 // , (Comma)
+         || event.keyCode === 190 // . (Point) */
         ) {
             axios.get("".concat(url)).then(function (response) {
               _this2.setState({
@@ -47422,6 +47450,7 @@ function (_Component) {
                     suggestions: word.suggestions.option
                   };
                   (0, _underline.default)(data, element, function () {
+                    //console.log('restored:'+this.state.currentCursorPosition)
                     (0, _underline.setCursorAtPositionInDOMNode)(_this2.state.currentCursorPosition, element);
                   }, function () {
                     _this2.props.checkText(element.textContent, _this2.state.id);
@@ -47684,7 +47713,7 @@ var messenger = function messenger(elementClickedOn) {
   container.style.alignItems = 'center';
   container.style.justifyContent = 'center';
   con.prepend(container);
-  var textElement = elementClickedOn;
+  var textElement = document.querySelectorAll('[aria-label="Type a message..."]')[0];
   var widgetContainer = container;
   return [textElement, widgetContainer];
 };
@@ -48755,7 +48784,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49921" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50644" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

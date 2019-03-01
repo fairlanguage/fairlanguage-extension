@@ -70,11 +70,11 @@ class ComponentWidget extends Component {
     this.props.addText(this.state.id)
 
     const element = this.props.textElement;
-    l(element);
+    console.log(element);
 
     setInterval(() => {
-      l(element.textContent)
-      if(element.textContent == ''){
+      // l(element.textContent);
+      if (element.textContent === '') {
         this.props.textElements[this.state.id].detectedWords = [];
         this.setState({
           amount: this.props.textElements[this.state.id].detectedWords.length
@@ -82,10 +82,20 @@ class ComponentWidget extends Component {
       }
     },125)
 
+    element.addEventListener('keydown', (event) => {
+      //event.preventDefault();
+    })
+
     element.addEventListener('keyup', (event) => {
+      //event.preventDefault();
+    })
+
+    element.addEventListener('input', (event) => {
+
+      console.log(event)
 
       const text = element.textContent;
-      l(text);
+      //console.log(text);
 
       this.props.checkText(text, this.state.id);
 
@@ -93,16 +103,17 @@ class ComponentWidget extends Component {
         text,
       )}`;
 
-      // Save prev cursor position
+      // [DEPRECATED at this state of ev, might be helpful in the future] Save prev cursor position
       this.state.currentCursorPosition = getCurrentCursorPositionInDOMNode(element);
+      //console.log('saved:'+this.state.currentCursorPosition)
 
       if (
-        event.keyCode === 32 // Space
-        || event.keyCode === 8 // Backslash
+        event.data === ' ' // Space
+       /*  || event.keyCode === 8 // Backslash
         || event.keyCode === 49 // !
         || event.keyCode === 219 // ?
         || event.keyCode === 188 // , (Comma)
-        || event.keyCode === 190 // . (Point)
+        || event.keyCode === 190 // . (Point) */
       ) {
 
         axios
@@ -116,8 +127,10 @@ class ComponentWidget extends Component {
                   word: word.string,
                   suggestions: word.suggestions.option
                 };
-                underline(data, element, () => {
-                  setCursorAtPositionInDOMNode(this.state.currentCursorPosition, element);
+                underline(data, element, 
+                  () => {
+                  //console.log('restored:'+this.state.currentCursorPosition)
+                  setCursorAtPositionInDOMNode(this.state.currentCursorPosition, element);  
                 }, () => {
                   this.props.checkText(element.textContent, this.state.id);
                 });

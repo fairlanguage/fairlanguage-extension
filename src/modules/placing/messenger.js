@@ -11,7 +11,7 @@ const messenger = (elementClickedOn) => {
 
   con.prepend(container);
 
-  const textElement = elementClickedOn;
+  const textElement = document.querySelectorAll('[aria-label="Type a message..."]')[0];
   const widgetContainer = container;
 
   return [textElement, widgetContainer];

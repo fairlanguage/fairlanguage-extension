@@ -103,6 +103,7 @@ node.parentNode.classList.contains(CSS_CLASS_NAME);
  */
 
 const underline = (data, element, onModified, onChanged) => {
+  
   const word = data.word;
   const suggestions = data.suggestions;
 
@@ -117,17 +118,17 @@ const underline = (data, element, onModified, onChanged) => {
       // Check if DOMNode is already underlined
       if (isAlreadyModified(current)) return;
 
-      //console.log(`There is a "${word}" in this: "${text}"`);
+      // console.log(`There is a "${word}" in this: "${text}"`);
 
       l(`isIncluded(${word}, ${text}): ${isIncluded(word, text)}`);
 
-      //Divide text
+      // Divide text
       const textBefore = getTextBeforeWord(word, text);
       const textAfter = getTextAfterWord(word, text);
 
-      //l(`(${word}, "${text}") before: ${textBefore}, after: ${textAfter}`);
+      // l(`(${word}, "${text}") before: ${textBefore}, after: ${textAfter}`);
 
-      //Create nodes
+      // Create nodes
       const nodeBefore = textBefore ? createTextElement(textBefore) : undefined;
       const nodeUnderlined = createSpanElementWithUnderlinedClass(
         word,
@@ -137,13 +138,13 @@ const underline = (data, element, onModified, onChanged) => {
       const nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
 
       const nodes = [
-        nodeBefore !== undefined ? nodeBefore : "",
+        nodeBefore !== undefined ? nodeBefore : '',
         nodeUnderlined,
-        nodeAfter !== undefined ? nodeAfter : ""
+        nodeAfter !== undefined ? nodeAfter : '',
       ];
 
       current.replaceWith(...nodes);
-      //current.parentNode.focus();
+      
       found = true;
 
       // onModified
@@ -162,10 +163,18 @@ const underline = (data, element, onModified, onChanged) => {
   return element;
 };
 
+/**
+ * 
+ * @param {*} node 
+ * @param {*} chars 
+ * @param {*} range 
+ */
 const createRange = (node, chars, range = document.createRange()) => {
+
   if (!range) {
     range.selectNode(node);
     range.setStart(node, 0);
+    range.setEnd(node, chars.count);
   }
 
   if (chars.count === 0) {
@@ -173,7 +182,7 @@ const createRange = (node, chars, range = document.createRange()) => {
   } else if (node && chars.count > 0) {
     if (node.nodeType === Node.TEXT_NODE) {
       if (node.textContent.length < chars.count) {
-        chars.count -= node.textContent.length;
+        //chars.count -= node.textContent.length;
       } else {
         range.setEnd(node, chars.count);
         chars.count = 0;
@@ -188,6 +197,8 @@ const createRange = (node, chars, range = document.createRange()) => {
     }
   }
 
+  // console.log(range)
+
   return range;
 };
 
@@ -201,21 +212,50 @@ const getCurrentCursorPositionInDOMNode = (node) => {
   return position;
 };
 
+/**
+ * setCursorAtPositionInDOMNode
+ * @param {Position to take withing node} chars 
+ * @param {DOM Node to set cursor} node 
+ */
 const setCursorAtPositionInDOMNode = (chars, node) => {
-  l(`restored: ${chars}`);
-  if (chars >= 0 && chars !== undefined) {
-    const selection = window.getSelection();
 
-    const range = createRange(node, {
-      count: chars
-    });
+  /**
+   * https://developer.mozilla.org/en-US/docs/Web/API/Range
+   * https://developer.mozilla.org/en-US/docs/Web/API/Selection
+   */
 
-    if (range) {
-      range.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  }
+  // [DEPRECATED (but maybe useful in the future)]
+  //l(`restored: ${chars}`);
+
+  console.log('selection:');
+  const selection = window.getSelection();
+  console.log(selection);
+
+  console.log('node:');
+  console.log(node.childNodes.length);
+
+  const range = document.createRange();
+  
+  //range.selectNode(node.childNodes[node.childNodes.length - 1]);
+
+  // Equivalent to:
+  range.selectNodeContents(node);
+
+  //range.setStart(node.childNodes[node.childNodes.length - 1], 0);
+  //range.setEnd(node.childNodes[node.childNodes.length - 1], node.childNodes[node.childNodes.length - 1].childNodes.length);
+
+  // Info: true = Select everything in range / false = Select nothing in range
+  range.collapse(false);
+
+  console.log('range:');
+  console.log(range);
+
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  console.log('selection:');
+  console.log(selection);
+
 };
 
 export default underline;
