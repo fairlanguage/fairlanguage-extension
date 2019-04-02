@@ -2,10 +2,10 @@
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.8.96",
+  "version": "0.9.12",
 
   "browser_action": {
-    "default_icon": "icon-transparent.png",
+    "default_icon": "flam.png",
     "default_popup": "popup.html"
   },
 
@@ -24,9 +24,15 @@
   ],
 
   "web_accessible_resources":[
-    "icon-off.png",
-    "icon-transparent.png",
-    "icon-white.png",
+    "flam.png",
+    "flam.png",
+    "flam.png",
     "close.png"
-  ]
+  ],
+  "icons": {
+    "16": "flam.png",
+    "32": "flam.png",
+    "48": "flam.png",
+    "128": "flam.png"
+  }
 }

@@ -27394,7 +27394,8 @@ var _default = {
   },
   colors: {
     primary: ['#40B3FF', '#6652FF', '#F022EB', '#d43aff'],
-    gradient: 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)'
+    gradient: 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)',
+    gradientHorizontal: 'linear-gradient(to right, #4a9fe0 0%,#e102ff 100%)'
   },
   toolbar: {
     height: '150px',
@@ -47063,7 +47064,21 @@ var circle = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentToolbar);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../../config":"../config.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js","webfontloader":"../node_modules/webfontloader/webfontloader.js"}],"scripts/underline.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../../config":"../config.js","../actions/actions-text":"actions/actions-text.js","../helpers/helper-logger":"helpers/helper-logger.js","webfontloader":"../node_modules/webfontloader/webfontloader.js"}],"modules/markingElement/whatsapp.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var formatMarkingElement = function formatMarkingElement(markingElement) {
+  markingElement.style.bottom = '2.5px';
+};
+
+var _default = formatMarkingElement;
+exports.default = _default;
+},{}],"scripts/underline.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47072,6 +47087,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.setCursorAtPositionInDOMNode = exports.getCurrentCursorPositionInDOMNode = exports.CSS_CLASS_NAME = exports.default = void 0;
 
 var _config = _interopRequireDefault(require("../../config"));
+
+var _whatsapp = _interopRequireDefault(require("../modules/markingElement/whatsapp"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -47125,7 +47142,7 @@ var createTextElement = function createTextElement(word) {
 
 var CSS_CLASS_NAME = "fl-".concat(generateRandomString(10));
 exports.CSS_CLASS_NAME = CSS_CLASS_NAME;
-var CSS_CLASS_STYLE = ".".concat(CSS_CLASS_NAME, " \n{ \n  border-color: ").concat(UNDERLINE_COLOR, "; \n  border-bottom-width: 2.5px;\n  border-bottom-style: solid;\n  cursor: pointer;\n  user-select:none;\n}");
+var CSS_CLASS_STYLE = ".".concat(CSS_CLASS_NAME, " \n{ \n  border-color: ").concat(UNDERLINE_COLOR, "; \n  border-bottom-width: 2.5px;\n  border-bottom-style: solid;\n  cursor: pointer;\n  user-select:none;\n  font-weight: normal;\n  color: 'black';\n}");
 var style = document.createElement("style");
 style.type = "text/css";
 style.innerHTML = CSS_CLASS_STYLE;
@@ -47137,21 +47154,60 @@ document.getElementsByTagName("head")[0].appendChild(style);
   return replacement;
 }; */
 
-var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word, suggestions, onChanged) {
+var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderlinedClass(word, suggestions, onReplaced) {
   suggestions.unshift(word);
   l(suggestions);
-  var replacement = document.createElement("strong");
-  replacement.className = CSS_CLASS_NAME;
-  replacement.innerHTML = word;
+  var replacement = document.createElement('span'); // replacement.className = CSS_CLASS_NAME;
+
+  replacement.style.position = 'relative';
+  replacement.style.zIndex = '2';
+  replacement.style.cursor = 'pointer';
+  replacement.style.userSelect = 'none';
+  replacement.style.borderColor = '#6652FF'; // replacement.style.borderColor = config.colors.gradientHorizontal; 
+
+  replacement.style.borderBottomWidth = '2.5px';
+  replacement.style.borderBottomStyle = 'solid';
+  replacement.style.margin = 0;
+
+  if (window.location.href.includes('web.whatsapp.com')) {
+    (0, _whatsapp.default)(replacement);
+  } else if (window.location.href.includes('twitter.com')) {} else if (window.location.href.includes('outlook.live.com')) {} else {} // replacement.style.background = 'blue'
+  // replacement.style.position = 'absolute';
+
+
+  replacement.innerText = word;
   var index = 1;
-  replacement.addEventListener("mousedown", function (e) {
+  replacement.addEventListener('mousedown', function (e) {
     return e.preventDefault();
   }, false);
-  replacement.addEventListener("mouseup", function (event) {
-    replacement.textContent = suggestions[index];
-    replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
+  var wordToReplace = word;
+  var wordReplacement = suggestions[index];
+  replacement.addEventListener('mouseup', function (event) {
+    //event.preventDefault();
+    console.log("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); // Change text
+
+    replacement.textContent = wordReplacement;
+    document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
+    var current = document.getElementById('fl-original').childNodes[0]; // let found = false;
+
+    /*  while(current.hasChildNodes()){
+        //if(found) return;
+        if(current.hasAttribute('data-text')){
+         // console.log(current.textContent)
+         // console.log(current.textContent)
+        // found = true;
+       }
+       
+       current = current.childNodes[0]
+     }
+      current.textContent =  current.textContent.replace(wordToReplace, wordReplacement) */
+
+    wordToReplace = wordReplacement;
     index = suggestions.length - 1 > index ? index += 1 : 0;
-    onChanged();
+    wordReplacement = suggestions[index]; // Change style 
+    // replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
+
+    onReplaced();
   });
   return replacement;
 };
@@ -47164,7 +47220,7 @@ var isAlreadyModified = function isAlreadyModified(node) {
  */
 
 
-var underline = function underline(data, element, onModified, onChanged) {
+var underline = function underline(data, element, onModified, onReplaced) {
   var word = data.word;
   var suggestions = data.suggestions;
   var found = false;
@@ -47172,7 +47228,7 @@ var underline = function underline(data, element, onModified, onChanged) {
 
   function iterate(current) {
     if (found) return;
-    var text = current.textContent; //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+    var text = current.textContent; // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
 
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
       // Check if DOMNode is already underlined
@@ -47185,7 +47241,7 @@ var underline = function underline(data, element, onModified, onChanged) {
       // Create nodes
 
       var nodeBefore = textBefore ? createTextElement(textBefore) : undefined;
-      var nodeUnderlined = createSpanElementWithUnderlinedClass(word, suggestions, onChanged);
+      var nodeUnderlined = createSpanElementWithUnderlinedClass(word, suggestions, onReplaced);
       var nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
       var nodes = [nodeBefore !== undefined ? nodeBefore : '', nodeUnderlined, nodeAfter !== undefined ? nodeAfter : ''];
       current.replaceWith.apply(current, nodes);
@@ -47195,7 +47251,7 @@ var underline = function underline(data, element, onModified, onChanged) {
     } else {
       var children = current.childNodes;
 
-      for (var i = 0, len = children.length; i < len; i++) {
+      for (var i = 0, len = children.length; i < len; i += 1) {
         iterate(children[i]);
       }
     }
@@ -47270,11 +47326,11 @@ var setCursorAtPositionInDOMNode = function setCursorAtPositionInDOMNode(chars, 
    */
   // [DEPRECATED (but maybe useful in the future)]
   //l(`restored: ${chars}`);
-  console.log('selection:');
-  var selection = window.getSelection();
-  console.log(selection);
-  console.log('node:');
-  console.log(node.childNodes.length);
+  //console.log('selection:');
+  var selection = window.getSelection(); //console.log(selection);
+  //console.log('node:');
+  //console.log(node.childNodes.length);
+
   var range = document.createRange(); //range.selectNode(node.childNodes[node.childNodes.length - 1]);
   // Equivalent to:
 
@@ -47282,19 +47338,119 @@ var setCursorAtPositionInDOMNode = function setCursorAtPositionInDOMNode(chars, 
   //range.setEnd(node.childNodes[node.childNodes.length - 1], node.childNodes[node.childNodes.length - 1].childNodes.length);
   // Info: true = Select everything in range / false = Select nothing in range
 
-  range.collapse(false);
-  console.log('range:');
-  console.log(range);
+  range.collapse(false); //console.log('range:');
+  //console.log(range);
+
   selection.removeAllRanges();
-  selection.addRange(range);
-  console.log('selection:');
-  console.log(selection);
+  selection.addRange(range); //console.log('selection:');
+  //console.log(selection);
 };
 
 exports.setCursorAtPositionInDOMNode = setCursorAtPositionInDOMNode;
 var _default = underline;
 exports.default = _default;
-},{"../../config":"../config.js"}],"components/component-widget.js":[function(require,module,exports) {
+},{"../../config":"../config.js","../modules/markingElement/whatsapp":"modules/markingElement/whatsapp.js"}],"modules/textElements/google-mail.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var formatTextElements = function formatTextElements(originalTextElement, clonedtextElement) {
+  originalTextElement.style.top = '10px';
+};
+
+var _default = formatTextElements;
+exports.default = _default;
+},{}],"modules/textElements/twitter.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var formatTextElements = function formatTextElements(originalTextElement, clonedTextElement) {
+  originalTextElement.style.top = '0px';
+  clonedTextElement.addEventListener('click', function () {
+    originalTextElement.focus();
+  });
+  clonedTextElement.addEventListener('focus', function () {
+    originalTextElement.focus();
+  });
+  originalTextElement.setAttribute('data-placeholder-default', '');
+  clonedTextElement.setAttribute('data-placeholder-default', '');
+  originalTextElement.setAttribute('data-placeholder-reply', '');
+  clonedTextElement.setAttribute('data-placeholder-reply', '');
+};
+
+var _default = formatTextElements;
+exports.default = _default;
+},{}],"modules/textElements/outlook.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function removeAttributes(el) {
+  // get its attributes and cast to array, then loop through
+  Array.prototype.slice.call(el.attributes).forEach(function (attr) {
+    // remove each attribute
+    el.removeAttribute(attr.name);
+  });
+}
+
+function synchronizeCssStyles(src, destination, recursively) {
+  // if recursively = true, then we assume the src dom structure and destination dom structure are identical (ie: cloneNode was used)
+  // window.getComputedStyle vs document.defaultView.getComputedStyle 
+  // @TBD: also check for compatibility on IE/Edge 
+  destination.style.cssText = document.defaultView.getComputedStyle(src, "").cssText;
+
+  if (recursively) {
+    var vSrcElements = src.getElementsByTagName("*");
+    var vDstElements = destination.getElementsByTagName("*");
+
+    for (var i = vSrcElements.length; i--;) {
+      var vSrcElement = vSrcElements[i];
+      var vDstElement = vDstElements[i]; //          console.log(i + " >> " + vSrcElement + " :: " + vDstElement);
+
+      vDstElement.style.cssText = document.defaultView.getComputedStyle(vSrcElement, "").cssText;
+    }
+  }
+}
+
+var formatTextElements = function formatTextElements(originalTextElement, clonedtextElement) {
+  originalTextElement.style.top = '15px';
+  originalTextElement.style.width = window.getComputedStyle(clonedtextElement).width;
+  clonedtextElement.style.fontFamily = 'Calibri, Arial, Helvetica, sans-serif';
+  clonedtextElement.style.fontSize = '12pt';
+  originalTextElement.style.fontFamily = 'Calibri, Arial, Helvetica, sans-serif';
+  originalTextElement.style.fontSize = '12pt';
+};
+
+var _default = formatTextElements;
+exports.default = _default;
+},{}],"modules/onKeyDown/twitter.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var onKeyDown = function onKeyDown(originalTextElement, clonedTextElement) {
+  clonedTextElement.setAttribute('data-placeholder-default', '');
+  clonedTextElement.setAttribute('data-placeholder-reply', '');
+  originalTextElement.setAttribute('data-placeholder-default', '');
+  originalTextElement.setAttribute('data-placeholder-reply', '');
+};
+
+var _default = onKeyDown;
+exports.default = _default;
+},{}],"components/component-widget.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47317,6 +47473,14 @@ var _config = _interopRequireDefault(require("../../config"));
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
 
 var _underline = _interopRequireWildcard(require("../scripts/underline"));
+
+var _googleMail = _interopRequireDefault(require("../modules/textElements/google-mail"));
+
+var _twitter = _interopRequireDefault(require("../modules/textElements/twitter"));
+
+var _outlook = _interopRequireDefault(require("../modules/textElements/outlook"));
+
+var _twitter2 = _interopRequireDefault(require("../modules/onKeyDown/twitter"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -47367,6 +47531,10 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 var count = 0;
 
+var copyTextFromElementToElement = function copyTextFromElementToElement(origin, target) {
+  target.innerText = origin.innerText;
+};
+
 var ComponentWidget =
 /*#__PURE__*/
 function (_Component) {
@@ -47403,11 +47571,57 @@ function (_Component) {
       var _this2 = this;
 
       this.props.addText(this.state.id);
-      var element = this.props.textElement;
-      console.log(element);
+      var originalTextElement = this.props.textElement;
+      var clonedTextElement = originalTextElement.cloneNode(true); // (#0000FF) [TYPING] : ORIGINAL Text Element
+
+      originalTextElement.id = 'fl-original';
+      originalTextElement.setAttribute('fl', 'original');
+      originalTextElement.style.boxSizing = 'border-box';
+      originalTextElement.style.background = 'transparent';
+      originalTextElement.style.border = '0px solid rgba(0,0,255,0)';
+      originalTextElement.style.color = '#000000';
+
+      if (__DEV__) {
+        originalTextElement.style.border = '2px solid rgba(0,0,255,0.5)';
+        originalTextElement.style.color = '#0000FF';
+      } // (#FF0000) [MARKING] : CLONED Text Element
+
+
+      clonedTextElement.id = 'fl-clone';
+      clonedTextElement.setAttribute('fl', 'clone');
+      clonedTextElement.style.userSelect = 'none';
+      clonedTextElement.style.boxSizing = 'border-box';
+      clonedTextElement.style.background = 'transparent';
+      clonedTextElement.style.border = '0px solid rgba(0,0,255,0)';
+      clonedTextElement.style.color = 'transparent';
+
+      if (__DEV__) {
+        clonedTextElement.style.border = '2px solid rgba(255,0,0,0.5)';
+        clonedTextElement.style.color = '#FF0000';
+      }
+
+      originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
+      originalTextElement.style.position = 'absolute';
+      clonedTextElement.style.position = 'absolut';
+      originalTextElement.style.zIndex = '0';
+      clonedTextElement.style.zIndex = '1';
+      /*
+        [CUSTOM] Final Formatting
+      */
+
+      if (window.location.href.includes('mail.google.com')) {
+        (0, _googleMail.default)(originalTextElement, clonedTextElement);
+      } else if (window.location.href.includes('twitter.com')) {
+        (0, _twitter.default)(originalTextElement, clonedTextElement);
+      } else if (window.location.href.includes('outlook.live.com')) {
+        (0, _outlook.default)(originalTextElement, clonedTextElement);
+      } else {
+        originalTextElement.style.top = '0px';
+      }
+
       setInterval(function () {
         // l(element.textContent);
-        if (element.textContent === '') {
+        if (clonedTextElement.textContent === '') {
           _this2.props.textElements[_this2.state.id].detectedWords = [];
 
           _this2.setState({
@@ -47415,56 +47629,60 @@ function (_Component) {
           });
         }
       }, 125);
-      element.addEventListener('keydown', function (event) {//event.preventDefault();
-      });
-      element.addEventListener('keyup', function (event) {//event.preventDefault();
-      });
-      element.addEventListener('input', function (event) {
-        console.log(event);
-        var text = element.textContent; //console.log(text);
+
+      var keyUp = function keyUp(event) {
+        if (window.location.href.includes('mail.google.com')) {} else if (window.location.href.includes('twitter.com')) {
+          (0, _twitter2.default)(originalTextElement, clonedTextElement);
+        } else if (window.location.href.includes('outlook.live.com')) {} else {}
+
+        clonedTextElement.innerText = originalTextElement.innerText;
+        var text = clonedTextElement.textContent;
 
         _this2.props.checkText(text, _this2.state.id);
 
-        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text)); // [DEPRECATED at this state of ev, might be helpful in the future] Save prev cursor position
+        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text)); // [DEPRECATED] at this state of ev, might be helpful in the future] Save prev cursor position
 
-        _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(element); //console.log('saved:'+this.state.currentCursorPosition)
+        _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(originalTextElement); // console.log('saved:'+this.state.currentCursorPosition)
 
-        if (event.data === ' ' // Space
+        axios.get("".concat(url)).then(function (response) {
+          _this2.setState({
+            amount: response.data.length
+          });
 
-        /*  || event.keyCode === 8 // Backslash
-         || event.keyCode === 49 // !
-         || event.keyCode === 219 // ?
-         || event.keyCode === 188 // , (Comma)
-         || event.keyCode === 190 // . (Point) */
-        ) {
-            axios.get("".concat(url)).then(function (response) {
-              _this2.setState({
-                amount: response.data.length
+          if (response.data.length > 0) {
+            var words = response.data;
+            words.forEach(function (word) {
+              var data = {
+                word: word.string,
+                suggestions: word.suggestions.option
+              };
+              (0, _underline.default)(data, clonedTextElement, function () {// *onMarked* 
+                // console.log('restored:'+this.state.currentCursorPosition)
+
+                /* setCursorAtPositionInDOMNode(this.state.currentCursorPosition, originalTextElement);  
+                originalTextElement.focus() */
+              }, function () {
+                // *onReplaced* 
+                (0, _underline.setCursorAtPositionInDOMNode)(_this2.state.currentCursorPosition, originalTextElement);
+                originalTextElement.focus();
+
+                _this2.props.checkText(originalTextElement.textContent, _this2.state.id);
               });
-
-              if (response.data.length > 0) {
-                var words = response.data;
-                words.forEach(function (word) {
-                  var data = {
-                    word: word.string,
-                    suggestions: word.suggestions.option
-                  };
-                  (0, _underline.default)(data, element, function () {
-                    //console.log('restored:'+this.state.currentCursorPosition)
-                    (0, _underline.setCursorAtPositionInDOMNode)(_this2.state.currentCursorPosition, element);
-                  }, function () {
-                    _this2.props.checkText(element.textContent, _this2.state.id);
-                  });
-                  /*
-                  *TODO:
-                  *  well, you know ;)
-                  */
-                });
-              }
-            }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+              /*
+              *TODO:
+              *  well, you know ;)
+              */
             });
           }
-      });
+        }).catch(function (err) {//dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+        });
+      };
+
+      originalTextElement.addEventListener('keyup', keyUp, true);
+      originalTextElement.addEventListener('focus', keyUp, true);
+      originalTextElement.addEventListener('click', keyUp, true);
+      originalTextElement.parentNode.addEventListener('click', keyUp, true);
+      clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
     }
   }, {
     key: "render",
@@ -47538,7 +47756,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","axios":"../node_modules/axios/index.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js","axios":"../node_modules/axios/index.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47806,19 +48024,29 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var twitter = function twitter(elementClickedOn) {
-  var con = document.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0].parentNode;
   var container = document.createElement('div');
   container.style.marginLeft = '12px';
-  container.style.marginRight = '8px'; //container.style.marginTop = '-4px';
-
+  container.style.marginRight = '8px';
   container.style.width = '46px';
   container.style.height = '38px';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
-  container.style.justifyContent = 'center'; //con.appendChild(container)
+  container.style.justifyContent = 'center';
+  var textElement;
+  var con;
 
-  con.insertBefore(container, con.childNodes[1]);
-  var textElement = elementClickedOn;
+  if (elementClickedOn.parentNode === document.getElementById('tweet-box-global')) {
+    con = document.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[1].parentNode;
+    con.insertBefore(container, con.childNodes[1]);
+    textElement = elementClickedOn.parentNode;
+  } else {
+    con = document.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0].parentNode;
+    con.insertBefore(container, con.childNodes[1]);
+    textElement = document.getElementById('tweet-box-home-timeline');
+  }
+
+  textElement.setAttribute('data-placeholder-default', '');
+  textElement.setAttribute('data-placeholder-reply', '');
   var widgetContainer = container;
   return [textElement, widgetContainer];
 };
@@ -48171,9 +48399,9 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.8.95",
+  "version": "0.9.12",
   "browser_action": {
-    "default_icon": "icon-transparent.png",
+    "default_icon": "flam.png",
     "default_popup": "popup.html"
   },
   "permissions": ["activeTab", "*://fairlanguage-api-dev.dev-star.de/*", "storage"],
@@ -48182,7 +48410,13 @@ module.exports = {
     "js": ["build/index.js"],
     "run_at": "document_end"
   }],
-  "web_accessible_resources": ["icon-off.png", "icon-transparent.png", "icon-white.png", "close.png"]
+  "web_accessible_resources": ["flam.png", "flam.png", "flam.png", "close.png"],
+  "icons": {
+    "16": "flam.png",
+    "32": "flam.png",
+    "48": "flam.png",
+    "128": "flam.png"
+  }
 };
 },{}],"App.jsx":[function(require,module,exports) {
 "use strict";
@@ -48732,6 +48966,8 @@ var _App = _interopRequireDefault(require("./App"));
 
 var _helperLogger = _interopRequireDefault(require("./helpers/helper-logger"));
 
+var _twitter = require("./modules/placing/twitter");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 window.onload = function () {
@@ -48739,10 +48975,17 @@ window.onload = function () {
   var containerElement = document.createElement('div');
   containerElement.id = 'fairlanguage-container';
   /*     containerElement.style.position = 'absolute';
-      containerElement.style.width = '100%';
-      containerElement.style.zIndex = '1';
+    containerElement.style.width = '100%';
+    containerElement.style.zIndex = '1';
+  */
+
+  /**
+   * Detection Hacks
    */
-  // Append container element to parent element
+
+  if (document.getElementById('tweet-box-home-timeline')) document.getElementById('tweet-box-home-timeline').addEventListener('focus', function () {
+    document.getElementById('tweet-box-home-timeline').click(); //document.getElementById('fl-original').focus()
+  }); // Append container element to parent element
   // document.body.appendChild(containerElement);
   // Different approach: Take the body's pole position.
 
@@ -48757,7 +49000,7 @@ window.onload = function () {
     store: _store.default
   }, _react.default.createElement(_App.default, null)), containerElement);
 };
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","react-redux":"../node_modules/react-redux/es/index.js","./store":"store.js","./App":"App.jsx","./helpers/helper-logger":"helpers/helper-logger.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","react-redux":"../node_modules/react-redux/es/index.js","./store":"store.js","./App":"App.jsx","./helpers/helper-logger":"helpers/helper-logger.js","./modules/placing/twitter":"modules/placing/twitter.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -48784,7 +49027,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50644" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52032" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

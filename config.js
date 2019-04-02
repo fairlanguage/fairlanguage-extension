@@ -17,6 +17,7 @@ export default {
   colors: {
     primary: ['#40B3FF', '#6652FF', '#F022EB', '#d43aff'],
     gradient: 'linear-gradient(to bottom, #4a9fe0 0%,#e102ff 100%)',
+    gradientHorizontal: 'linear-gradient(to right, #4a9fe0 0%,#e102ff 100%)',
   },
   toolbar: {
     height: '150px',

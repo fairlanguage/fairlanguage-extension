@@ -9,34 +9,46 @@ import App from './App';
 
 import log from './helpers/helper-logger';
 
-  window.onload = () => {
+import {twitter} from './modules/placing/twitter';
 
-    // Create container element
-    const containerElement = document.createElement('div');
-    containerElement.id = 'fairlanguage-container';
+window.onload = () => {
+
+  // Create container element
+  const containerElement = document.createElement('div');
+  containerElement.id = 'fairlanguage-container';
 /*     containerElement.style.position = 'absolute';
-    containerElement.style.width = '100%';
-    containerElement.style.zIndex = '1';
- */
+  containerElement.style.width = '100%';
+  containerElement.style.zIndex = '1';
+*/
 
+  /**
+   * Detection Hacks
+   */
 
-    // Append container element to parent element
-    // document.body.appendChild(containerElement);
+  if (document.getElementById('tweet-box-home-timeline'))
+  document.getElementById('tweet-box-home-timeline').addEventListener('focus', () => {
+    document.getElementById('tweet-box-home-timeline').click()
+    //document.getElementById('fl-original').focus()
+    
+  });
 
-    // Different approach: Take the body's pole position.
-    const prependChild = (parentEle, newFirstChildEle) => {
-      parentEle.insertBefore(newFirstChildEle, parentEle.firstChild);
-    };
+  // Append container element to parent element
+  // document.body.appendChild(containerElement);
 
-    // Prepend container element as very first element in body
-    prependChild(document.body, containerElement);
-
-    ReactDOM.render(
-      <Provider store={store}>
-        <App />
-      </Provider>,
-      containerElement,
-    );
-
+  // Different approach: Take the body's pole position.
+  const prependChild = (parentEle, newFirstChildEle) => {
+    parentEle.insertBefore(newFirstChildEle, parentEle.firstChild);
   };
+
+  // Prepend container element as very first element in body
+  prependChild(document.body, containerElement);
+
+  ReactDOM.render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    containerElement,
+  );
+
+};
 

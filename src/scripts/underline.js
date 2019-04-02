@@ -1,5 +1,7 @@
 import config from '../../config';
 
+import formatMarkingElementForWhatsapp from '../modules/markingElement/whatsapp';
+
 const _DEV_ = false;
 const l = i => {
   if (_DEV_) return console.log(i);
@@ -59,6 +61,8 @@ const CSS_CLASS_STYLE = `.${CSS_CLASS_NAME}
   border-bottom-style: solid;
   cursor: pointer;
   user-select:none;
+  font-weight: normal;
+  color: 'black';
 }`;
 
 const style = document.createElement("style");
@@ -73,23 +77,90 @@ document.getElementsByTagName("head")[0].appendChild(style);
   return replacement;
 }; */
 
-const createSpanElementWithUnderlinedClass = (word, suggestions, onChanged) => {
+const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => {
   suggestions.unshift(word);
   l(suggestions);
 
-  const replacement = document.createElement("strong");
-  replacement.className = CSS_CLASS_NAME;
-  replacement.innerHTML = word;
+  const replacement = document.createElement('span');
+  // replacement.className = CSS_CLASS_NAME;
+
+  replacement.style.position = 'relative';
+  replacement.style.zIndex = '2';
+
+  replacement.style.cursor = 'pointer';
+  replacement.style.userSelect = 'none';
+  
+  replacement.style.borderColor = '#6652FF';
+  // replacement.style.borderColor = config.colors.gradientHorizontal; 
+
+  replacement.style.borderBottomWidth = '2.5px';
+  
+  replacement.style.borderBottomStyle = 'solid';
+
+  replacement.style.margin = 0;
+  
+  if (window.location.href.includes('web.whatsapp.com')) {
+    formatMarkingElementForWhatsapp(replacement);
+  } else 
+  if (window.location.href.includes('twitter.com')) {
+  } else 
+  if (window.location.href.includes('outlook.live.com')) {
+  } else {
+    
+  }
+
+
+
+  // replacement.style.background = 'blue'
+  // replacement.style.position = 'absolute';
+  replacement.innerText = word;
 
   let index = 1;
 
-  replacement.addEventListener("mousedown", e => e.preventDefault(), false);
+  replacement.addEventListener('mousedown', e => e.preventDefault(), false);
 
-  replacement.addEventListener("mouseup", event => {
-    replacement.textContent = suggestions[index];
-    replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
-    index = suggestions.length - 1 > index ? (index += 1) : 0;
-    onChanged();
+  let wordToReplace = word;
+  let wordReplacement = suggestions[index];
+
+  replacement.addEventListener('mouseup', (event) => {
+
+    //event.preventDefault();
+
+    console.log(`wordToReplace: ${wordToReplace} with wordReplacement: ${wordReplacement}`);
+    
+    // Change text
+    replacement.textContent = wordReplacement;
+
+    document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
+
+    let current = document.getElementById('fl-original').childNodes[0];
+    
+    // let found = false;
+   /*  while(current.hasChildNodes()){
+
+      //if(found) return;
+
+      if(current.hasAttribute('data-text')){
+        // console.log(current.textContent)
+        // console.log(current.textContent)
+       // found = true;
+      }
+      
+      current = current.childNodes[0]
+    }
+
+    current.textContent =  current.textContent.replace(wordToReplace, wordReplacement) */
+
+    wordToReplace = wordReplacement;
+
+    index = suggestions.length - 1 > index ? index += 1 : 0;
+
+    wordReplacement = suggestions[index];
+
+    // Change style 
+    // replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
+
+    onReplaced();
   });
 
   return replacement;
@@ -102,7 +173,7 @@ node.parentNode.classList.contains(CSS_CLASS_NAME);
  *
  */
 
-const underline = (data, element, onModified, onChanged) => {
+const underline = (data, element, onModified, onReplaced) => {
   
   const word = data.word;
   const suggestions = data.suggestions;
@@ -112,7 +183,7 @@ const underline = (data, element, onModified, onChanged) => {
   function iterate(current) {
     if (found) return;
     const text = current.textContent;
-    //console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+    // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
      
       // Check if DOMNode is already underlined
@@ -133,7 +204,7 @@ const underline = (data, element, onModified, onChanged) => {
       const nodeUnderlined = createSpanElementWithUnderlinedClass(
         word,
         suggestions,
-        onChanged,
+        onReplaced,
       );
       const nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
 
@@ -152,7 +223,7 @@ const underline = (data, element, onModified, onChanged) => {
 
     } else {
       const children = current.childNodes;
-      for (let i = 0, len = children.length; i < len; i++) {
+      for (let i = 0, len = children.length; i < len; i += 1) {
         iterate(children[i]);
       }
     }
@@ -227,12 +298,12 @@ const setCursorAtPositionInDOMNode = (chars, node) => {
   // [DEPRECATED (but maybe useful in the future)]
   //l(`restored: ${chars}`);
 
-  console.log('selection:');
+  //console.log('selection:');
   const selection = window.getSelection();
-  console.log(selection);
+  //console.log(selection);
 
-  console.log('node:');
-  console.log(node.childNodes.length);
+  //console.log('node:');
+  //console.log(node.childNodes.length);
 
   const range = document.createRange();
   
@@ -247,14 +318,14 @@ const setCursorAtPositionInDOMNode = (chars, node) => {
   // Info: true = Select everything in range / false = Select nothing in range
   range.collapse(false);
 
-  console.log('range:');
-  console.log(range);
+  //console.log('range:');
+  //console.log(range);
 
   selection.removeAllRanges();
   selection.addRange(range);
 
-  console.log('selection:');
-  console.log(selection);
+  //console.log('selection:');
+  //console.log(selection);
 
 };
 

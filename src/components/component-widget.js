@@ -15,6 +15,12 @@ import underline, {
   setCursorAtPositionInDOMNode,
 } from '../scripts/underline';
 
+import formatForGoogleMail from '../modules/textElements/google-mail';
+import formatForTwitter from '../modules/textElements/twitter';
+import formatForOutlook from '../modules/textElements/outlook';
+
+import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
+
 const axios = require('axios');
 
 const __DEV__ = false;
@@ -39,6 +45,10 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 let count = 0;
+
+const copyTextFromElementToElement = (origin, target) => {
+  target.innerText = origin.innerText;
+}; 
 
 class ComponentWidget extends Component {
 
@@ -69,85 +79,143 @@ class ComponentWidget extends Component {
 
     this.props.addText(this.state.id)
 
-    const element = this.props.textElement;
-    console.log(element);
+    const originalTextElement = this.props.textElement;
+    const clonedTextElement = originalTextElement.cloneNode(true);
+
+    // (#0000FF) [TYPING] : ORIGINAL Text Element
+    originalTextElement.id = 'fl-original'; 
+    originalTextElement.setAttribute('fl', 'original');
+
+    originalTextElement.style.boxSizing = 'border-box';
+    originalTextElement.style.background = 'transparent';
+    originalTextElement.style.border = '0px solid rgba(0,0,255,0)';
+    originalTextElement.style.color = '#000000';
+    if (__DEV__) {
+      originalTextElement.style.border = '2px solid rgba(0,0,255,0.5)';
+      originalTextElement.style.color = '#0000FF';
+    }
+
+    // (#FF0000) [MARKING] : CLONED Text Element
+    clonedTextElement.id = 'fl-clone'; 
+    clonedTextElement.setAttribute('fl', 'clone');
+
+    clonedTextElement.style.userSelect = 'none';
+
+    clonedTextElement.style.boxSizing = 'border-box';
+    clonedTextElement.style.background = 'transparent';
+    clonedTextElement.style.border = '0px solid rgba(0,0,255,0)';
+    clonedTextElement.style.color = 'transparent';
+    if (__DEV__) {
+      clonedTextElement.style.border = '2px solid rgba(255,0,0,0.5)';
+      clonedTextElement.style.color = '#FF0000';
+    }
+
+    originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
+    
+    originalTextElement.style.position = 'absolute';
+    clonedTextElement.style.position = 'absolut';
+
+    originalTextElement.style.zIndex = '0';
+    clonedTextElement.style.zIndex = '1';
+
+    /*
+      [CUSTOM] Final Formatting
+    */
+
+    if (window.location.href.includes('mail.google.com')) {
+      formatForGoogleMail(originalTextElement, clonedTextElement);
+    } else 
+    if (window.location.href.includes('twitter.com')) {
+      formatForTwitter(originalTextElement, clonedTextElement);
+    } else 
+    if (window.location.href.includes('outlook.live.com')) {
+      formatForOutlook(originalTextElement, clonedTextElement);
+    } else {
+      originalTextElement.style.top = '0px';
+    }
 
     setInterval(() => {
       // l(element.textContent);
-      if (element.textContent === '') {
+      if (clonedTextElement.textContent === '') {
         this.props.textElements[this.state.id].detectedWords = [];
         this.setState({
           amount: this.props.textElements[this.state.id].detectedWords.length
         })
       }
-    },125)
+    }, 125);
 
-    element.addEventListener('keydown', (event) => {
-      //event.preventDefault();
-    })
 
-    element.addEventListener('keyup', (event) => {
-      //event.preventDefault();
-    })
 
-    element.addEventListener('input', (event) => {
+    const keyUp = (event) => {
 
-      console.log(event)
 
-      const text = element.textContent;
-      //console.log(text);
+      if (window.location.href.includes('mail.google.com')) {
+      } else 
+      if (window.location.href.includes('twitter.com')) {
+        onKeyDownForTwitter(originalTextElement, clonedTextElement);
+      } else 
+      if (window.location.href.includes('outlook.live.com')) {
+      } else {
+      }
+
+      clonedTextElement.innerText = originalTextElement.innerText;
+      
+      const text = clonedTextElement.textContent;
 
       this.props.checkText(text, this.state.id);
 
-      const url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(
-        text,
-      )}`;
+      const url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(text)}`;
 
-      // [DEPRECATED at this state of ev, might be helpful in the future] Save prev cursor position
-      this.state.currentCursorPosition = getCurrentCursorPositionInDOMNode(element);
-      //console.log('saved:'+this.state.currentCursorPosition)
+      // [DEPRECATED] at this state of ev, might be helpful in the future] Save prev cursor position
+      this.state.currentCursorPosition = getCurrentCursorPositionInDOMNode(originalTextElement);
+      // console.log('saved:'+this.state.currentCursorPosition)
 
-      if (
-        event.data === ' ' // Space
-       /*  || event.keyCode === 8 // Backslash
-        || event.keyCode === 49 // !
-        || event.keyCode === 219 // ?
-        || event.keyCode === 188 // , (Comma)
-        || event.keyCode === 190 // . (Point) */
-      ) {
-
-        axios
-          .get(`${url}`)
-          .then((response) => {
-            this.setState({ amount: response.data.length });
-            if (response.data.length > 0) {
-              const words = response.data;
-              words.forEach((word) => {
-                const data = {
-                  word: word.string,
-                  suggestions: word.suggestions.option
-                };
-                underline(data, element, 
-                  () => {
-                  //console.log('restored:'+this.state.currentCursorPosition)
-                  setCursorAtPositionInDOMNode(this.state.currentCursorPosition, element);  
+      axios
+        .get(`${url}`)
+        .then((response) => {
+          this.setState({ amount: response.data.length });
+          if (response.data.length > 0) {
+            const words = response.data;
+            words.forEach((word) => {
+              const data = {
+                word: word.string,
+                suggestions: word.suggestions.option,
+              };
+              underline(data, clonedTextElement, 
+                () => {
+                  // *onMarked* 
+                  // console.log('restored:'+this.state.currentCursorPosition)
+                  /* setCursorAtPositionInDOMNode(this.state.currentCursorPosition, originalTextElement);  
+                  originalTextElement.focus() */
                 }, () => {
-                  this.props.checkText(element.textContent, this.state.id);
+                  // *onReplaced* 
+                  setCursorAtPositionInDOMNode(this.state.currentCursorPosition, originalTextElement);
+                  originalTextElement.focus();
+                  this.props.checkText(originalTextElement.textContent, this.state.id);
                 });
-                /*
-                *TODO:
-                *  well, you know ;)
-                */
-              });
-            }
-          })
-          .catch((err) => {
-            //dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
-          });
-        
-      }
+              /*
+              *TODO:
+              *  well, you know ;)
+              */
+            });
+          }
+        })
+        .catch((err) => {
+          //dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+        });
 
-    })
+
+    };
+
+    originalTextElement.addEventListener('keyup', keyUp, true);
+
+    originalTextElement.addEventListener('focus', keyUp, true);
+
+    originalTextElement.addEventListener('click', keyUp, true);
+
+    originalTextElement.parentNode.addEventListener('click', keyUp, true);
+
+    clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
 
   }
 
