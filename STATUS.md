@@ -10,8 +10,8 @@
 |                                                 | custom | cloning | Feed - Reply              | DIV  |              |
 |                                                 | custom | cloning | Status - Reply            | DIV  |              |
 | [![badge9]](https://instagram.com)              |        |         |                           |      |              |
-|                                                 | custom | cloning | Feed - Add Comment        | TXTA | improve widget placing |
-|                                                 | custom | cloning | Post - Add Comment        | TXTA | improve widget placing |
+|                                                 | custom | cloning | Feed - Add Comment        | TXTA | focus ghosting required, improve widget placing |
+|                                                 | custom | cloning | Post - Add Comment        | TXTA | focus ghosting required,improve widget placing |
 | [![badge7]](https://facebook.com)               |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |
 | [![badge12]](https://web.telegram.org)          | custom | cloning | Send Message              | DIV |              |
