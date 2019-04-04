@@ -2,7 +2,7 @@ import config from '../../config';
 
 import formatMarkingElementForWhatsapp from '../modules/markingElement/whatsapp';
 
-const _DEV_ = false;
+const _DEV_ = true;
 const l = i => {
   if (_DEV_) return console.log(i);
 };
@@ -111,7 +111,7 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
 
   // replacement.style.background = 'blue'
   // replacement.style.position = 'absolute';
-  replacement.innerText = word;
+  replacement.innerText = `${word}`;
 
   let index = 1;
 
@@ -127,8 +127,14 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
     // Change text
     replacement.textContent = wordReplacement;
 
-    document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
-
+    if (document.getElementById('fl-original').tagName === 'DIV') {
+      document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
+    }
+    
+    if (document.getElementById('fl-original').tagName === 'TEXTAREA') {
+      document.getElementById('fl-original').value = document.getElementById('fl-clone').textContent;
+    }
+    
     wordToReplace = wordReplacement;
 
     index = suggestions.length - 1 > index ? index += 1 : 0;

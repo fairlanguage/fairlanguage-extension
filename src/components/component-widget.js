@@ -21,6 +21,8 @@ import formatForGoogleMail from '../modules/textElements/google-mail';
 import formatForTwitter from '../modules/textElements/twitter';
 import formatForOutlook from '../modules/textElements/outlook';
 
+import formatForInstagram from '../modules/textElements/instagram';
+
 import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
 
 const __DEV__ = false;
@@ -49,7 +51,9 @@ const copyTextFromElementToElement = (origin, target) => {
   if (origin.nodeName === 'DIV') {
     target.innerText = origin.innerText;
   }else{
-    target.innerText = origin.value;
+    let text = origin.value;
+    text = text.replace(new RegExp(/\s/, 'g'), '&nbsp;')
+    target.innerHTML = text;
   }
   
 }; 
@@ -143,6 +147,9 @@ class ComponentWidget extends Component {
     } else 
     if (window.location.href.includes('twitter.com')) {
       formatForTwitter(originalTextElement, clonedTextElement);
+    } else 
+    if (window.location.href.includes('instagram.com')) {
+      formatForInstagram(originalTextElement, clonedTextElement);
     } else 
     if (window.location.href.includes('outlook.live.com')) {
       formatForOutlook(originalTextElement, clonedTextElement);

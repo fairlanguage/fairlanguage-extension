@@ -2,19 +2,19 @@
 
 # 🎉 Compatibility Status
 
-|             Web App                             | widget | method  | textElement               |     | knownIssues  |
-|-------------------------------------------------|:------:|:-------:|:-------------------------:|:---:|:------------:| 
-| Social Media                                    |        |         |                           |     |              |
-| [![badge8]](https://twitter.com)                |        |         |                           |     |              |
-|                                                 | custom | cloning | Feed - Tweet [DIV]        |  X  |              |
-|                                                 | custom | cloning | Feed - Reply [DIV]        |  X  |              |
-|                                                 | custom | cloning | Status - Reply [DIV]      |  0  |              |
-| [![badge9]](https://instagram.com)              |        |         |                           |     |              |
-|                                                 | custom | cloning | Feed - Add Comment [TXA]  |  0  | deletes spaces on marking -> underline script|
-|                                                 | custom | cloning | Post - Add Comment [TXA]  |  0  | deletes spaces on marking -> |
+|             Web App                             | widget | method  | textElement               | type | knownIssues  |
+|-------------------------------------------------|:------:|:-------:|:-------------------------:|:----:|:------------:| 
+| Social Media                                    |        |         |                           |      |              |
+| [![badge8]](https://twitter.com)                |        |         |                           |      |              |
+|                                                 | custom | cloning | Feed - Tweet              | DIV  |              |
+|                                                 | custom | cloning | Feed - Reply              | DIV  |              |
+|                                                 | custom | cloning | Status - Reply            | DIV  |              |
+| [![badge9]](https://instagram.com)              |        |         |                           |      |              |
+|                                                 | custom | cloning | Feed - Add Comment        | TXTA | improve widget placing |
+|                                                 | custom | cloning | Post - Add Comment        | TXTA | improve widget placing |
 | [![badge7]](https://facebook.com)               |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |
-| [![badge12]](https://web.telegram.org)          | custom | cloning |                           |     |              |
+| [![badge12]](https://web.telegram.org)          | custom | cloning | Send Message              | DIV |              |
 | [![badge13]](https://web.whatsapp.google.com)   | custom | cloning |                           |     |              |
 | [![badge14]](https://messenger.com)             | custom | cloning |                           |     |              |
 | Mail                                            |        |         |                           |     |              |

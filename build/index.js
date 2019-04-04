@@ -47092,7 +47092,7 @@ var _whatsapp = _interopRequireDefault(require("../modules/markingElement/whatsa
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _DEV_ = false;
+var _DEV_ = true;
 
 var l = function l(i) {
   if (_DEV_) return console.log(i);
@@ -47175,7 +47175,7 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   // replacement.style.position = 'absolute';
 
 
-  replacement.innerText = word;
+  replacement.innerText = "".concat(word);
   var index = 1;
   replacement.addEventListener('mousedown', function (e) {
     return e.preventDefault();
@@ -47186,7 +47186,15 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
     console.log("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); // Change text
 
     replacement.textContent = wordReplacement;
-    document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
+
+    if (document.getElementById('fl-original').tagName === 'DIV') {
+      document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
+    }
+
+    if (document.getElementById('fl-original').tagName === 'TEXTAREA') {
+      document.getElementById('fl-original').value = document.getElementById('fl-clone').textContent;
+    }
+
     wordToReplace = wordReplacement;
     index = suggestions.length - 1 > index ? index += 1 : 0;
     wordReplacement = suggestions[index];
@@ -47416,6 +47424,23 @@ var formatTextElements = function formatTextElements(originalTextElement, cloned
 
 var _default = formatTextElements;
 exports.default = _default;
+},{}],"modules/textElements/instagram.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var formatTextElements = function formatTextElements(originalTextElement, clonedtextElement) {
+  originalTextElement.style.position = 'absolute';
+  originalTextElement.style.left = '0';
+  originalTextElement.style.width = '554.83px';
+  clonedtextElement.style.width = '554.83px';
+};
+
+var _default = formatTextElements;
+exports.default = _default;
 },{}],"modules/onKeyDown/twitter.js":[function(require,module,exports) {
 "use strict";
 
@@ -47464,6 +47489,8 @@ var _googleMail = _interopRequireDefault(require("../modules/textElements/google
 var _twitter = _interopRequireDefault(require("../modules/textElements/twitter"));
 
 var _outlook = _interopRequireDefault(require("../modules/textElements/outlook"));
+
+var _instagram = _interopRequireDefault(require("../modules/textElements/instagram"));
 
 var _twitter2 = _interopRequireDefault(require("../modules/onKeyDown/twitter"));
 
@@ -47520,7 +47547,9 @@ var copyTextFromElementToElement = function copyTextFromElementToElement(origin,
   if (origin.nodeName === 'DIV') {
     target.innerText = origin.innerText;
   } else {
-    target.innerText = origin.value;
+    var text = origin.value;
+    text = text.replace(new RegExp(/\s/, 'g'), '&nbsp;');
+    target.innerHTML = text;
   }
 };
 
@@ -47613,6 +47642,8 @@ function (_Component) {
         (0, _googleMail.default)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('twitter.com')) {
         (0, _twitter.default)(originalTextElement, clonedTextElement);
+      } else if (window.location.href.includes('instagram.com')) {
+        (0, _instagram.default)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('outlook.live.com')) {
         (0, _outlook.default)(originalTextElement, clonedTextElement);
       } else {
@@ -47757,7 +47788,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/textElements/instagram":"modules/textElements/instagram.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
