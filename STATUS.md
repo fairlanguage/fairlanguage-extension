@@ -21,7 +21,13 @@
 | [![badge11]](https://meet.google.com)           | custom | cloning |                           |
 | [![badge111]](https://meet.google.com)          | custom | cloning |                           |
 
+[badge8]: https://img.shields.io/badge/twitter.com-supported-green.svg
+[badge9]: https://img.shields.io/badge/instagram.com-supported-green.svg
+[badge7]: https://img.shields.io/badge/facebook.com-in%20progress-red.svg
 
+[badge12]: https://img.shields.io/badge/telegram.com-supported-green.svg
+[badge13]: https://img.shields.io/badge/whatsapp.com-supported-green.svg
+[badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
 
 [badge0]: https://img.shields.io/badge/single--tab-in%20progress-red.svg
 
@@ -37,11 +43,9 @@
 
 [badge6]: https://img.shields.io/badge/outlook.live.com-supported-green.svg
 
-[badge7]: https://img.shields.io/badge/facebook.com-in%20progress-red.svg
 
-[badge8]: https://img.shields.io/badge/twitter.com-in%20progress-red.svg
 
-[badge9]: https://img.shields.io/badge/instagram.com-supported-green.svg
+
 
 [badge10]: https://img.shields.io/badge/slack.com-supported-green.svg
 
@@ -50,9 +54,4 @@
 [badge111]: https://img.shields.io/badge/teams.microsoft.com-supported-green.svg
 
 
-[badge12]: https://img.shields.io/badge/telegram.com-supported-green.svg
-
-[badge13]: https://img.shields.io/badge/whatsapp.com-supported-green.svg
-
-[badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
 
