@@ -2,24 +2,25 @@
 
 # 🎉 Compatibility Status
 
-|             Web App                             | widget | marking | replacing |
-|-------------------------------------------------|:------:|:-------:|:---------:|
-| Mail                                            |        |         |           |
-| [![badge12]](https://web.telegram.org)          | custom | works   | works     |
-| [![badge13]](https://web.whatsapp.google.com)   | custom | works   | works     | 
-| [![badge14]](https://messenger.com)             | custom |         |           |
-| Mail                                            |        |         |           |
-| [![badge4]](https://mail.google.com)            | custom | works   | works     |
-| [![badge5]](https://mail.yahoo.com)             | custom | works   | works     |
-| [![badge6]](https://outlook.live.com)           | custom | works   | works     |
-| Work                                            |        |         |           |
-| [![badge10]](https://slack.org)                 | custom | works   | works     |
-| [![badge11]](https://meet.google.com)           | custom |         |           |
-| [![badge111]](https://meet.google.com)          | custom |         |           |
-| Social Media                                    |        |         |           |
-| [![badge9]](https://instagram.com)              | custom |         |           |
-| [![badge8]](https://twitter.com)                | custom |         |           |
-| [![badge7]](https://facebook.com)               | custom |         |           |
+|             Web App                             | widget | method  | know issues               |
+|-------------------------------------------------|:------:|:-------:|:-------------------------:|
+| Social Media                                    |        |         |                           |
+| [![badge8]](https://twitter.com)                | custom | cloning |                           |
+| [![badge9]](https://instagram.com)              | custom | cloning |                           |
+| [![badge7]](https://facebook.com)               | custom | cloning |                           |
+| Messenging                                      |        |         |                           |
+| [![badge12]](https://web.telegram.org)          | custom | cloning |                           |
+| [![badge13]](https://web.whatsapp.google.com)   | custom | cloning |                           |
+| [![badge14]](https://messenger.com)             | custom | cloning |                           |
+| Mail                                            |        |         |                           |
+| [![badge4]](https://mail.google.com)            | custom | cloning |                           |
+| [![badge5]](https://mail.yahoo.com)             | custom | cloning |                           |
+| [![badge6]](https://outlook.live.com)           | custom | cloning |                           |
+| Work                                            |        |         |                           |
+| [![badge10]](https://slack.org)                 | custom | cloning |                           |
+| [![badge11]](https://meet.google.com)           | custom | cloning |                           |
+| [![badge111]](https://meet.google.com)          | custom | cloning |                           |
+
 
 
 [badge0]: https://img.shields.io/badge/single--tab-in%20progress-red.svg
@@ -55,20 +56,3 @@
 
 [badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
 
-## Messenger
-
-[![screen-messenger]](https://messenger.com)
-
-[screen-messenger]: screens/messenger.png
-
-## Instagram
-
-[![screen-insta]](https://instagram.com)
-
-[screen-insta]: screens/instagram.png
-
-## Telegram
-
-[![screen-telegram]](https://telegram.org)
-
-[screen-telegram]: screens/telegram.png
