@@ -2,24 +2,29 @@
 
 # 🎉 Compatibility Status
 
-|             Web App                             | widget | method  | know issues               |
-|-------------------------------------------------|:------:|:-------:|:-------------------------:|
-| Social Media                                    |        |         |                           |
-| [![badge8]](https://twitter.com)                | custom | cloning |                           |
-| [![badge9]](https://instagram.com)              | custom | cloning |                           |
-| [![badge7]](https://facebook.com)               | custom | cloning |                           |
-| Messenging                                      |        |         |                           |
-| [![badge12]](https://web.telegram.org)          | custom | cloning |                           |
-| [![badge13]](https://web.whatsapp.google.com)   | custom | cloning |                           |
-| [![badge14]](https://messenger.com)             | custom | cloning |                           |
-| Mail                                            |        |         |                           |
-| [![badge4]](https://mail.google.com)            | custom | cloning |                           |
-| [![badge5]](https://mail.yahoo.com)             | custom | cloning |                           |
-| [![badge6]](https://outlook.live.com)           | custom | cloning |                           |
-| Work                                            |        |         |                           |
-| [![badge10]](https://slack.org)                 | custom | cloning |                           |
-| [![badge11]](https://meet.google.com)           | custom | cloning |                           |
-| [![badge111]](https://meet.google.com)          | custom | cloning |                           |
+|             Web App                             | widget | method  | textElements              |     |
+|-------------------------------------------------|:------:|:-------:|:-------------------------:|:---:| 
+| Social Media                                    |        |         |                           |     |
+| [![badge8]](https://twitter.com)                |        |         |                           |     |
+|                                                 | custom | cloning | Feed - Tweet [DIV]        |  X  |
+|                                                 | custom | cloning | Feed - Reply [DIV]        |  X  |
+|                                                 | custom | cloning | Status - Reply [DIV]      |  0  |
+| [![badge9]](https://instagram.com)              |        |         |                           |     |
+|                                                 | custom | cloning | Feed - Add Comment [TXA]  |  0  |
+|                                                 | custom | cloning | Post - Add Comment [TXA]  |  0  |
+| [![badge7]](https://facebook.com)               |        |         |                           |     |
+| Messenging                                      |        |         |                           |     |
+| [![badge12]](https://web.telegram.org)          | custom | cloning |                           |     |
+| [![badge13]](https://web.whatsapp.google.com)   | custom | cloning |                           |     |
+| [![badge14]](https://messenger.com)             | custom | cloning |                           |     |
+| Mail                                            |        |         |                           |     |
+| [![badge4]](https://mail.google.com)            | custom | cloning |                           |     |
+| [![badge5]](https://mail.yahoo.com)             | custom | cloning |                           |     |
+| [![badge6]](https://outlook.live.com)           | custom | cloning |                           |     |
+| Work                                            |        |         |                           |     |
+| [![badge10]](https://slack.org)                 | custom | cloning |                           |     |
+| [![badge11]](https://meet.google.com)           | custom | cloning |                           |     |
+| [![badge111]](https://meet.google.com)          | custom | cloning |                           |     |
 
 [badge8]: https://img.shields.io/badge/twitter.com-supported-green.svg
 [badge9]: https://img.shields.io/badge/instagram.com-supported-green.svg

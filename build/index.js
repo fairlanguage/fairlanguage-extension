@@ -47175,7 +47175,7 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   // replacement.style.position = 'absolute';
 
 
-  replacement.innerText = word;
+  replacement.innerHTML = " ".concat(word, " ");
   var index = 1;
   replacement.addEventListener('mousedown', function (e) {
     return e.preventDefault();
@@ -47489,7 +47489,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var __DEV__ = false;
+var __DEV__ = true;
 
 var l = function l(i) {
   if (__DEV__) {
@@ -47517,7 +47517,11 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var count = 0;
 
 var copyTextFromElementToElement = function copyTextFromElementToElement(origin, target) {
-  target.innerText = origin.innerText;
+  if (origin.nodeName === 'DIV') {
+    target.innerText = origin.innerText;
+  } else {
+    target.innerText = origin.value;
+  }
 };
 
 var ComponentWidget =
@@ -47534,9 +47538,9 @@ function (_Component) {
     _this.state = {
       id: count,
       currentCursorPosition: 0,
-      amount: 0,
-      text: ''
+      amount: 0
     };
+    _this.textElementType = '';
     count = count + 1;
     return _this;
   }
@@ -47557,7 +47561,15 @@ function (_Component) {
 
       this.props.addText(this.state.id);
       var originalTextElement = this.props.textElement;
-      var clonedTextElement = originalTextElement.cloneNode(true); // (#0000FF) [TYPING] : ORIGINAL Text Element
+      var clonedTextElement;
+
+      if (originalTextElement.nodeName === 'DIV') {
+        clonedTextElement = originalTextElement.cloneNode(true);
+      } else {
+        this.textElementType = 'TEXTAREA';
+        clonedTextElement = document.createElement('DIV'); //clonedTextElement.style.cssText = document.defaultView.getComputedStyle(originalTextElement, "").cssText;
+      } // (#0000FF) [TYPING] : ORIGINAL Text Element
+
 
       originalTextElement.id = 'fl-original';
       originalTextElement.setAttribute('fl', 'original');
@@ -47575,6 +47587,7 @@ function (_Component) {
       clonedTextElement.id = 'fl-clone';
       clonedTextElement.setAttribute('fl', 'clone');
       clonedTextElement.style.userSelect = 'none';
+      clonedTextElement.style.flexDirection = 'row';
       clonedTextElement.style.boxSizing = 'border-box';
       clonedTextElement.style.background = 'transparent';
       clonedTextElement.style.border = '0px solid rgba(0,0,255,0)';
@@ -47586,12 +47599,16 @@ function (_Component) {
       }
 
       originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
-      originalTextElement.style.position = 'absolute';
-      clonedTextElement.style.position = 'absolut';
-      /* 
-      originalTextElement.style.zIndex = '1';
-      clonedTextElement.style.zIndex = '0'; */
+      originalTextElement.style.position = 'absolut';
 
+      if (__DEV__) {
+        originalTextElement.style.position = 'relative';
+      }
+
+      originalTextElement.parentNode.style.flexDirection = 'column';
+      originalTextElement.style.left = '0';
+      originalTextElement.style.zIndex = '1';
+      clonedTextElement.style.zIndex = '0';
       /*
         [CUSTOM] Final Formatting
       */
@@ -47622,8 +47639,9 @@ function (_Component) {
           (0, _twitter2.default)(originalTextElement, clonedTextElement);
         } else if (window.location.href.includes('outlook.live.com')) {} else {}
 
-        clonedTextElement.innerHTML = originalTextElement.innerHTML;
+        copyTextFromElementToElement(originalTextElement, clonedTextElement);
         var text = clonedTextElement.textContent;
+        l(text);
 
         _this2.props.checkText(text, _this2.state.id);
 
@@ -48640,7 +48658,7 @@ function (_Component) {
         (0, _helperLogger.default)("isAlreadyInjected: ".concat(isAlreadyInjected));
         if (isAlreadyInjected) return;
         /*
-        *  Second, check if the element is any kind of text field.
+        *  Second, detect if the element is any kind of text field.
         */
         // Is the element itself a HTML TextArea element?
 
@@ -48673,10 +48691,14 @@ function (_Component) {
           depth += 1;
         }
 
-        (0, _helperLogger.default)("isParentElementContentIsEditable (".concat(depth, "): ").concat(isParentElementContentIsEditable)); // If none of that is the case it just wasn't a txt field (sorry :/).
+        (0, _helperLogger.default)("isParentElementContentIsEditable (".concat(depth, "): ").concat(isParentElementContentIsEditable));
+        /**
+         * Decide, according to what wr got.
+         */
+        // If none of that is the case it just wasn't a txt field (sorry :/).
+        // if (isInput || isIn || isTextArea) return;
 
-        if (isInput || isIn || isTextArea) return;
-        if (!isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
+        if (!isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
         /*
         *  Third, we decide where to place the fucking widget!
         */
@@ -49014,7 +49036,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49532" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53616" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

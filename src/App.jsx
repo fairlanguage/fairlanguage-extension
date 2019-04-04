@@ -175,7 +175,7 @@ export default class App extends Component {
       if (isAlreadyInjected) return;
 
       /*
-      *  Second, check if the element is any kind of text field.
+      *  Second, detect if the element is any kind of text field.
       */
 
       // Is the element itself a HTML TextArea element?
@@ -215,9 +215,13 @@ export default class App extends Component {
 
       log(`isParentElementContentIsEditable (${depth}): ${isParentElementContentIsEditable}`);
 
+      /**
+       * Decide, according to what wr got.
+       */
+
       // If none of that is the case it just wasn't a txt field (sorry :/).
-      if (isInput || isIn || isTextArea) return;
-      if (!isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
+      // if (isInput || isIn || isTextArea) return;
+      if (!isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
 
       /*
       *  Third, we decide where to place the fucking widget!

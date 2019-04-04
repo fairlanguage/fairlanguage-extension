@@ -109,11 +109,9 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
     
   }
 
-
-
   // replacement.style.background = 'blue'
   // replacement.style.position = 'absolute';
-  replacement.innerText = word;
+  replacement.innerHTML = ` ${word} `;
 
   let index = 1;
 

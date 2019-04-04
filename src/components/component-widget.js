@@ -23,7 +23,7 @@ import formatForOutlook from '../modules/textElements/outlook';
 
 import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
 
-const __DEV__ = false;
+const __DEV__ = true;
 
 const l = (i) => {
   if (__DEV__) {
@@ -46,7 +46,12 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 let count = 0;
 
 const copyTextFromElementToElement = (origin, target) => {
-  target.innerText = origin.innerText;
+  if (origin.nodeName === 'DIV') {
+    target.innerText = origin.innerText;
+  }else{
+    target.innerText = origin.value;
+  }
+  
 }; 
 
 class ComponentWidget extends Component {
@@ -59,8 +64,9 @@ class ComponentWidget extends Component {
       id: count,
       currentCursorPosition: 0,
       amount: 0,
-      text: '',
     };
+
+    this.textElementType = ''
 
     count = count + 1;
 
@@ -79,7 +85,16 @@ class ComponentWidget extends Component {
     this.props.addText(this.state.id)
 
     const originalTextElement = this.props.textElement;
-    const clonedTextElement = originalTextElement.cloneNode(true);
+
+    let clonedTextElement;
+    if (originalTextElement.nodeName === 'DIV') {
+      clonedTextElement = originalTextElement.cloneNode(true);
+    }else{
+      this.textElementType = 'TEXTAREA';
+      clonedTextElement = document.createElement('DIV');
+      //clonedTextElement.style.cssText = document.defaultView.getComputedStyle(originalTextElement, "").cssText;
+    }
+
 
     // (#0000FF) [TYPING] : ORIGINAL Text Element
     originalTextElement.id = 'fl-original'; 
@@ -100,6 +115,8 @@ class ComponentWidget extends Component {
 
     clonedTextElement.style.userSelect = 'none';
 
+    clonedTextElement.style.flexDirection = 'row';
+
     clonedTextElement.style.boxSizing = 'border-box';
     clonedTextElement.style.background = 'transparent';
     clonedTextElement.style.border = '0px solid rgba(0,0,255,0)';
@@ -110,13 +127,17 @@ class ComponentWidget extends Component {
     }
 
     originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
-    
-    originalTextElement.style.position = 'absolute';
-    clonedTextElement.style.position = 'absolut';
 
-    /* 
+    originalTextElement.style.position = 'absolut';
+
+    if (__DEV__) {
+      originalTextElement.style.position = 'relative';
+    }
+    originalTextElement.parentNode.style.flexDirection = 'column';
+    originalTextElement.style.left = '0';
+
     originalTextElement.style.zIndex = '1';
-    clonedTextElement.style.zIndex = '0'; */
+    clonedTextElement.style.zIndex = '0'; 
 
     /*
       [CUSTOM] Final Formatting
@@ -148,7 +169,6 @@ class ComponentWidget extends Component {
 
     const keyUp = (event) => {
 
-
       if (window.location.href.includes('mail.google.com')) {
       } else 
       if (window.location.href.includes('twitter.com')) {
@@ -158,9 +178,10 @@ class ComponentWidget extends Component {
       } else {
       }
 
-      clonedTextElement.innerHTML = originalTextElement.innerHTML;
+      copyTextFromElementToElement(originalTextElement, clonedTextElement)
       
       const text = clonedTextElement.textContent;
+      l(text)
 
       this.props.checkText(text, this.state.id);
 
