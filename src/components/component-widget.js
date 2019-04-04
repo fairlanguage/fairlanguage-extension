@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import axios from 'axios';
+
 import * as actionsText from '../actions/actions-text';
 
 import config from '../../config';
@@ -21,19 +23,16 @@ import formatForOutlook from '../modules/textElements/outlook';
 
 import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
 
-const axios = require('axios');
-
 const __DEV__ = false;
 
 const l = (i) => {
-  if(__DEV__) 
+  if (__DEV__) {
     return log(i);
-}
+  } 
+  return null;
+};
 
 const STRING_GRADIENT = config.colors.gradient;
-
-const URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
-const URL_ICON_OFF = 'https://a.icons8.com/MVhZihaX/0yohoZ/oval.png';
 
 const mapStateToProps = state => ({
   textElements: state.textElements,
@@ -115,8 +114,9 @@ class ComponentWidget extends Component {
     originalTextElement.style.position = 'absolute';
     clonedTextElement.style.position = 'absolut';
 
-    originalTextElement.style.zIndex = '0';
-    clonedTextElement.style.zIndex = '1';
+    /* 
+    originalTextElement.style.zIndex = '1';
+    clonedTextElement.style.zIndex = '0'; */
 
     /*
       [CUSTOM] Final Formatting
@@ -158,7 +158,7 @@ class ComponentWidget extends Component {
       } else {
       }
 
-      clonedTextElement.innerText = originalTextElement.innerText;
+      clonedTextElement.innerHTML = originalTextElement.innerHTML;
       
       const text = clonedTextElement.textContent;
 
@@ -211,9 +211,9 @@ class ComponentWidget extends Component {
 
     originalTextElement.addEventListener('focus', keyUp, true);
 
-    originalTextElement.addEventListener('click', keyUp, true);
+    //originalTextElement.addEventListener('click', keyUp, true);
 
-    originalTextElement.parentNode.addEventListener('click', keyUp, true);
+    //originalTextElement.parentNode.addEventListener('click', keyUp, true);
 
     clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
 

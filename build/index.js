@@ -47183,30 +47183,13 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   var wordToReplace = word;
   var wordReplacement = suggestions[index];
   replacement.addEventListener('mouseup', function (event) {
-    //event.preventDefault();
     console.log("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); // Change text
 
     replacement.textContent = wordReplacement;
-    document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
-    var current = document.getElementById('fl-original').childNodes[0]; // let found = false;
-
-    /*  while(current.hasChildNodes()){
-        //if(found) return;
-        if(current.hasAttribute('data-text')){
-         // console.log(current.textContent)
-         // console.log(current.textContent)
-        // found = true;
-       }
-       
-       current = current.childNodes[0]
-     }
-      current.textContent =  current.textContent.replace(wordToReplace, wordReplacement) */
-
+    document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
     wordToReplace = wordReplacement;
     index = suggestions.length - 1 > index ? index += 1 : 0;
-    wordReplacement = suggestions[index]; // Change style 
-    // replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
-
+    wordReplacement = suggestions[index];
     onReplaced();
   });
   return replacement;
@@ -47466,6 +47449,8 @@ var _redux = require("redux");
 
 var _reactRedux = require("react-redux");
 
+var _axios = _interopRequireDefault(require("axios"));
+
 var actionsText = _interopRequireWildcard(require("../actions/actions-text"));
 
 var _config = _interopRequireDefault(require("../../config"));
@@ -47504,17 +47489,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var axios = require('axios');
-
 var __DEV__ = false;
 
 var l = function l(i) {
-  if (__DEV__) return (0, _helperLogger.default)(i);
+  if (__DEV__) {
+    return (0, _helperLogger.default)(i);
+  }
+
+  return null;
 };
 
 var STRING_GRADIENT = _config.default.colors.gradient;
-var URL_ICON_ON = 'https://a.icons8.com/MVhZihaX/ebBhTF/oval.png';
-var URL_ICON_OFF = 'https://a.icons8.com/MVhZihaX/0yohoZ/oval.png';
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
@@ -47603,8 +47588,10 @@ function (_Component) {
       originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
       originalTextElement.style.position = 'absolute';
       clonedTextElement.style.position = 'absolut';
-      originalTextElement.style.zIndex = '0';
-      clonedTextElement.style.zIndex = '1';
+      /* 
+      originalTextElement.style.zIndex = '1';
+      clonedTextElement.style.zIndex = '0'; */
+
       /*
         [CUSTOM] Final Formatting
       */
@@ -47635,7 +47622,7 @@ function (_Component) {
           (0, _twitter2.default)(originalTextElement, clonedTextElement);
         } else if (window.location.href.includes('outlook.live.com')) {} else {}
 
-        clonedTextElement.innerText = originalTextElement.innerText;
+        clonedTextElement.innerHTML = originalTextElement.innerHTML;
         var text = clonedTextElement.textContent;
 
         _this2.props.checkText(text, _this2.state.id);
@@ -47644,7 +47631,7 @@ function (_Component) {
 
         _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(originalTextElement); // console.log('saved:'+this.state.currentCursorPosition)
 
-        axios.get("".concat(url)).then(function (response) {
+        _axios.default.get("".concat(url)).then(function (response) {
           _this2.setState({
             amount: response.data.length
           });
@@ -47679,9 +47666,9 @@ function (_Component) {
       };
 
       originalTextElement.addEventListener('keyup', keyUp, true);
-      originalTextElement.addEventListener('focus', keyUp, true);
-      originalTextElement.addEventListener('click', keyUp, true);
-      originalTextElement.parentNode.addEventListener('click', keyUp, true);
+      originalTextElement.addEventListener('focus', keyUp, true); //originalTextElement.addEventListener('click', keyUp, true);
+      //originalTextElement.parentNode.addEventListener('click', keyUp, true);
+
       clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
     }
   }, {
@@ -47756,7 +47743,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js","axios":"../node_modules/axios/index.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49027,7 +49014,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52032" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49532" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

@@ -124,32 +124,12 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
 
   replacement.addEventListener('mouseup', (event) => {
 
-    //event.preventDefault();
-
     console.log(`wordToReplace: ${wordToReplace} with wordReplacement: ${wordReplacement}`);
     
     // Change text
     replacement.textContent = wordReplacement;
 
-    document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
-
-    let current = document.getElementById('fl-original').childNodes[0];
-    
-    // let found = false;
-   /*  while(current.hasChildNodes()){
-
-      //if(found) return;
-
-      if(current.hasAttribute('data-text')){
-        // console.log(current.textContent)
-        // console.log(current.textContent)
-       // found = true;
-      }
-      
-      current = current.childNodes[0]
-    }
-
-    current.textContent =  current.textContent.replace(wordToReplace, wordReplacement) */
+    document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
 
     wordToReplace = wordReplacement;
 
@@ -157,10 +137,8 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
 
     wordReplacement = suggestions[index];
 
-    // Change style 
-    // replacement.style.borderBottomWidth = index === 0 ? "3px" : "0px";
-
     onReplaced();
+    
   });
 
   return replacement;
