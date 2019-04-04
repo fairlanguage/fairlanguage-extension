@@ -2,7 +2,7 @@
 
 # 🎉 Compatibility Status
 
-|             Web App                             | widget | method  | textElements              |     | known Issues |
+|             Web App                             | widget | method  | textElement               |     | knownIssues  |
 |-------------------------------------------------|:------:|:-------:|:-------------------------:|:---:|:------------:| 
 | Social Media                                    |        |         |                           |     |              |
 | [![badge8]](https://twitter.com)                |        |         |                           |     |              |
@@ -10,8 +10,8 @@
 |                                                 | custom | cloning | Feed - Reply [DIV]        |  X  |              |
 |                                                 | custom | cloning | Status - Reply [DIV]      |  0  |              |
 | [![badge9]](https://instagram.com)              |        |         |                           |     |              |
-|                                                 | custom | cloning | Feed - Add Comment [TXA]  |  0  | deletes spaces on marking |
-|                                                 | custom | cloning | Post - Add Comment [TXA]  |  0  | deletes spaces on marking |
+|                                                 | custom | cloning | Feed - Add Comment [TXA]  |  0  | deletes spaces on marking -> underline script|
+|                                                 | custom | cloning | Post - Add Comment [TXA]  |  0  | deletes spaces on marking -> |
 | [![badge7]](https://facebook.com)               |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |
 | [![badge12]](https://web.telegram.org)          | custom | cloning |                           |     |              |

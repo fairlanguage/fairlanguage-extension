@@ -47175,7 +47175,7 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   // replacement.style.position = 'absolute';
 
 
-  replacement.innerHTML = " ".concat(word, " ");
+  replacement.innerText = word;
   var index = 1;
   replacement.addEventListener('mousedown', function (e) {
     return e.preventDefault();
@@ -47489,7 +47489,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var __DEV__ = true;
+var __DEV__ = false;
 
 var l = function l(i) {
   if (__DEV__) {
@@ -47599,19 +47599,15 @@ function (_Component) {
       }
 
       originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
-      originalTextElement.style.position = 'absolut';
+      originalTextElement.style.position = 'absolute';
 
       if (__DEV__) {
         originalTextElement.style.position = 'relative';
       }
-
-      originalTextElement.parentNode.style.flexDirection = 'column';
-      originalTextElement.style.left = '0';
-      originalTextElement.style.zIndex = '1';
-      clonedTextElement.style.zIndex = '0';
       /*
         [CUSTOM] Final Formatting
       */
+
 
       if (window.location.href.includes('mail.google.com')) {
         (0, _googleMail.default)(originalTextElement, clonedTextElement);
@@ -49036,7 +49032,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53616" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61217" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

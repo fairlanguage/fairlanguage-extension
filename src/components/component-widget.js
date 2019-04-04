@@ -23,7 +23,7 @@ import formatForOutlook from '../modules/textElements/outlook';
 
 import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
 
-const __DEV__ = true;
+const __DEV__ = false;
 
 const l = (i) => {
   if (__DEV__) {
@@ -128,16 +128,11 @@ class ComponentWidget extends Component {
 
     originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
 
-    originalTextElement.style.position = 'absolut';
+    originalTextElement.style.position = 'absolute';
 
     if (__DEV__) {
       originalTextElement.style.position = 'relative';
     }
-    originalTextElement.parentNode.style.flexDirection = 'column';
-    originalTextElement.style.left = '0';
-
-    originalTextElement.style.zIndex = '1';
-    clonedTextElement.style.zIndex = '0'; 
 
     /*
       [CUSTOM] Final Formatting
