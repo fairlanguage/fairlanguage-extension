@@ -10,8 +10,8 @@
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Reply              | DIV  |              |
 | [twitter.com](https://twitter.com)              | custom | cloning | Status - Reply            | DIV  |              |
 | <b>instagram</b>                                |        |         |                           |      |              |
- |[instagram.com](https://instagram.com)          | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
-||[instagram.com](https://instagram.com)          | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
+| [instagram.com](https://instagram.com)          | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
+| [instagram.com](https://instagram.com)          | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
 | <b>facebook</b>                                 |        |         |                           |     |              |
 | |[facebook.com](https://facebook.com)                         | custom | cloning | Feed - Create Post        | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 |                                                 |        |         |                           |     |              |
