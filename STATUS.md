@@ -20,8 +20,7 @@
 | <b>messenger</b>                                |        |         |                           |     |              |
 | [messenger.com](https://messenger.com)          | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 | [web.whatsapp.com](https://web.whatsapp.com)    | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
-| [web.telegram.org](https://web.telegram.org)    |        |         |                           |     |              |
-|                                                 | custom | cloning | Send Message              | DIV |              |
+| [web.telegram.org](https://web.telegram.org)    | custom | cloning | Send Message              | DIV |              |
 | Mail                                            |        |         |                           |     |              |
 | [![badge4]](https://mail.google.com)            | custom | cloning |                           |     |              |
 | [![badge5]](https://mail.yahoo.com)             | custom | cloning |                           |     |              |
