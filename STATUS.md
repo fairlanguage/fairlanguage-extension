@@ -12,10 +12,13 @@
 | [![badge9]](https://instagram.com)              |        |         |                           |      |              |
 |                                                 | custom | cloning | Feed - Add Comment        | TXTA | focus ghosting required, improve widget placing |
 |                                                 | custom | cloning | Post - Add Comment        | TXTA | focus ghosting required,improve widget placing |
-| [![badge7]](https://facebook.com)               |        |         |                           |     |              |
+| [![badge7]](https://facebook.com)               | custom | cloning | Feed - Create Post        | DIV |              |
+|                                                 |        |         |                           |     |              |
+|                                                 |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |
-| [![badge12]](https://web.telegram.org)          | custom | cloning | Send Message              | DIV |              |
-| [![badge13]](https://web.whatsapp.google.com)   | custom | cloning |                           |     |              |
+| [![badge12]](https://web.telegram.org)          |        |         |                           |     |              |
+|                                                 | custom | cloning | Send Message              | DIV |              |
+| [![badge13]](https://web.whatsapp.google.com)   | custom | cloning | Send Message              | DIV |              |
 | [![badge14]](https://messenger.com)             | custom | cloning |                           |     |              |
 | Mail                                            |        |         |                           |     |              |
 | [![badge4]](https://mail.google.com)            | custom | cloning |                           |     |              |
