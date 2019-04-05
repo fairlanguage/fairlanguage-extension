@@ -17,7 +17,7 @@
 |                                                 |        |         |                           |     |              |
 |                                                 |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |
-| [![badge14]](https://messenger.com)             | custom | cloning |                           |     |              |
+| [![badge14]](https://messenger.com)             |        |         |                           |     |              |
 |                                                 | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 | [![badge12]](https://web.telegram.org)          |        |         |                           |     |              |
 |                                                 | custom | cloning | Send Message              | DIV |              |
@@ -37,7 +37,7 @@
 
 [badge12]: https://img.shields.io/badge/telegram.com-supported-green.svg
 [badge13]: https://img.shields.io/badge/whatsapp.com-supported-green.svg
-[badge14]: https://img.shields.io/badge/messenger.com-supported-green.svg
+[badge14]: https://img.shields.io/badge/messenger.com-in%20progress-red.svg
 
 [badge0]: https://img.shields.io/badge/single--tab-in%20progress-red.svg
 
