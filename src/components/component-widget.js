@@ -25,7 +25,7 @@ import formatForInstagram from '../modules/textElements/instagram';
 
 import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
 
-const __DEV__ = false;
+const __DEV__ = true;
 
 const l = (i) => {
   if (__DEV__) {
@@ -49,7 +49,9 @@ let count = 0;
 
 const copyTextFromElementToElement = (origin, target) => {
   if (origin.nodeName === 'DIV') {
-    target.innerText = origin.innerText;
+    const text =  origin.innerText;
+    console.log(text)
+    target.innerText = text;
   }else{
     let text = origin.value;
     text = text.replace(new RegExp(/\s/, 'g'), '&nbsp;')
@@ -182,7 +184,7 @@ class ComponentWidget extends Component {
 
       copyTextFromElementToElement(originalTextElement, clonedTextElement)
       
-      const text = clonedTextElement.textContent;
+      const text = originalTextElement.textContent;
       l(text)
 
       this.props.checkText(text, this.state.id);
@@ -204,7 +206,7 @@ class ComponentWidget extends Component {
                 word: word.string,
                 suggestions: word.suggestions.option,
               };
-              underline(data, clonedTextElement, 
+              underline(data, originalTextElement, 
                 () => {
                   // *onMarked* 
                   // console.log('restored:'+this.state.currentCursorPosition)
@@ -233,10 +235,6 @@ class ComponentWidget extends Component {
     originalTextElement.addEventListener('keyup', keyUp, true);
 
     originalTextElement.addEventListener('focus', keyUp, true);
-
-    //originalTextElement.addEventListener('click', keyUp, true);
-
-    //originalTextElement.parentNode.addEventListener('click', keyUp, true);
 
     clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
 

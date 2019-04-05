@@ -13,7 +13,7 @@
 |                                                 | custom | cloning | Feed - Add Comment        | TXTA | focus ghosting required, improve widget placing |
 |                                                 | custom | cloning | Post - Add Comment        | TXTA | focus ghosting required,improve widget placing |
 | [![badge7]](https://facebook.com)               |        |         |                           |     |              |
-|                                                 | custom | cloning | Feed - Create Post        | DIV |              |
+|                                                 | custom | cloning | Feed - Create Post        | DIV | unknown script prevents to assign eventlistener             |
 |                                                 |        |         |                           |     |              |
 |                                                 |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |

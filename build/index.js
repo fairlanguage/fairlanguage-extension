@@ -47516,7 +47516,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var __DEV__ = false;
+var __DEV__ = true;
 
 var l = function l(i) {
   if (__DEV__) {
@@ -47545,11 +47545,13 @@ var count = 0;
 
 var copyTextFromElementToElement = function copyTextFromElementToElement(origin, target) {
   if (origin.nodeName === 'DIV') {
-    target.innerText = origin.innerText;
+    var text = origin.innerText;
+    console.log(text);
+    target.innerText = text;
   } else {
-    var text = origin.value;
-    text = text.replace(new RegExp(/\s/, 'g'), '&nbsp;');
-    target.innerHTML = text;
+    var _text = origin.value;
+    _text = _text.replace(new RegExp(/\s/, 'g'), '&nbsp;');
+    target.innerHTML = _text;
   }
 };
 
@@ -47667,7 +47669,7 @@ function (_Component) {
         } else if (window.location.href.includes('outlook.live.com')) {} else {}
 
         copyTextFromElementToElement(originalTextElement, clonedTextElement);
-        var text = clonedTextElement.textContent;
+        var text = originalTextElement.textContent;
         l(text);
 
         _this2.props.checkText(text, _this2.state.id);
@@ -47688,7 +47690,7 @@ function (_Component) {
                 word: word.string,
                 suggestions: word.suggestions.option
               };
-              (0, _underline.default)(data, clonedTextElement, function () {// *onMarked* 
+              (0, _underline.default)(data, originalTextElement, function () {// *onMarked* 
                 // console.log('restored:'+this.state.currentCursorPosition)
 
                 /* setCursorAtPositionInDOMNode(this.state.currentCursorPosition, originalTextElement);  
@@ -47711,9 +47713,7 @@ function (_Component) {
       };
 
       originalTextElement.addEventListener('keyup', keyUp, true);
-      originalTextElement.addEventListener('focus', keyUp, true); //originalTextElement.addEventListener('click', keyUp, true);
-      //originalTextElement.parentNode.addEventListener('click', keyUp, true);
-
+      originalTextElement.addEventListener('focus', keyUp, true);
       clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
     }
   }, {
@@ -48029,7 +48029,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var facebook = function facebook(elementClickedOn) {
-  var con = document.getElementsByClassName('_4vc1 _2j7a')[0];
+  var con = document.getElementsByClassName('notranslate _5rpu')[0];
   con.style.display = 'flex';
   con.style.flexDirection = 'row';
   var container = document.createElement('div');

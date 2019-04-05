@@ -1,6 +1,6 @@
 const facebook = (elementClickedOn) => {
 
-  const con = document.getElementsByClassName('_4vc1 _2j7a')[0]
+  const con = document.getElementsByClassName('notranslate _5rpu')[0]
 
   con.style.display = 'flex';
   con.style.flexDirection = 'row';
