@@ -47188,7 +47188,7 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
     replacement.textContent = wordReplacement;
 
     if (document.getElementById('fl-original').tagName === 'DIV') {
-      document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
+      document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
     }
 
     if (document.getElementById('fl-original').tagName === 'TEXTAREA') {
@@ -47516,7 +47516,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var __DEV__ = true;
+var __DEV__ = false;
 
 var l = function l(i) {
   if (__DEV__) {
@@ -47664,12 +47664,14 @@ function (_Component) {
       }, 125);
 
       var keyUp = function keyUp(event) {
+        l('typing');
+
         if (window.location.href.includes('mail.google.com')) {} else if (window.location.href.includes('twitter.com')) {
           (0, _twitter2.default)(originalTextElement, clonedTextElement);
         } else if (window.location.href.includes('outlook.live.com')) {} else {}
 
         copyTextFromElementToElement(originalTextElement, clonedTextElement);
-        var text = originalTextElement.textContent;
+        var text = clonedTextElement.textContent;
         l(text);
 
         _this2.props.checkText(text, _this2.state.id);
@@ -47690,7 +47692,7 @@ function (_Component) {
                 word: word.string,
                 suggestions: word.suggestions.option
               };
-              (0, _underline.default)(data, originalTextElement, function () {// *onMarked* 
+              (0, _underline.default)(data, clonedTextElement, function () {// *onMarked* 
                 // console.log('restored:'+this.state.currentCursorPosition)
 
                 /* setCursorAtPositionInDOMNode(this.state.currentCursorPosition, originalTextElement);  
@@ -47712,9 +47714,56 @@ function (_Component) {
         });
       };
 
-      originalTextElement.addEventListener('keyup', keyUp, true);
       originalTextElement.addEventListener('focus', keyUp, true);
       clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
+      /**
+       * iFrames Hack
+       * Original: https://stackoverflow.com/questions/9424550/how-can-i-detect-keyboard-events-in-gmail
+       */
+
+      var doc;
+
+      function keyDown(e) {
+        console.log(e.which);
+      }
+
+      ; // Test
+
+      function keyUp(e) {
+        console.log(e.keyCode);
+      }
+
+      ; // Test
+
+      (function checkForNewIframe(doc) {
+        if (!doc) return; // document does not exist. Cya
+        // Note: It is important to use "true", to bind events to the capturing
+        // phase. If omitted or set to false, the event listener will be bound
+        // to the bubbling phase, where the event is not visible any more when
+        // Gmail calls event.stopPropagation().
+        // Calling addEventListener with the same arguments multiple times bind
+        // the listener only once, so we don't have to set a guard for that.
+        // doc.addEventListener('keydown', keyUp, true);
+
+        doc.addEventListener('keyup', keyUp, true);
+        doc.hasSeenDocument = true;
+
+        for (var i = 0, contentDocument; i < frames.length; i++) {
+          try {
+            contentDocument = iframes[i].document;
+          } catch (e) {
+            continue; // Same-origin policy violation?
+          }
+
+          if (contentDocument && !contentDocument.hasSeenDocument) {
+            // Add poller to the new iframe
+            checkForNewIframe(iframes[i].contentDocument);
+          }
+        }
+
+        setTimeout(checkForNewIframe, 250); // <-- delay of 1/4 second
+      })(document); // Initiate recursive function for the document.
+
     }
   }, {
     key: "render",
@@ -48029,17 +48078,18 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var facebook = function facebook(elementClickedOn) {
-  var con = document.getElementsByClassName('notranslate _5rpu')[0];
+  if (elementClickedOn.tagName === 'TEXTAREA') return;
+  var con = document.getElementsByClassName('_16vg _1oxv')[0];
   con.style.display = 'flex';
   con.style.flexDirection = 'row';
   var container = document.createElement('div');
-  container.style.width = '50px';
-  container.style.height = '44px';
+  container.style.width = '50px'; //container.style.height = '44px';
+
   container.style.display = 'flex';
   container.style.alignItems = 'center';
-  container.style.justifyContent = 'center';
-  con.parentNode.insertBefore(container, con.nextSibling); //con.insertBefore(container, con.childNodes[0]);
+  container.style.justifyContent = 'center'; //con.appendChild(container);
 
+  con.insertBefore(container, con.childNodes[0]);
   var textElement = elementClickedOn;
   var widgetContainer = container;
   return [textElement, widgetContainer];
@@ -49019,9 +49069,41 @@ window.onload = function () {
    * Detection Hacks
    */
 
+  /*   
+    twitter
+  */
+
   if (document.getElementById('tweet-box-home-timeline')) document.getElementById('tweet-box-home-timeline').addEventListener('focus', function () {
     document.getElementById('tweet-box-home-timeline').click(); //document.getElementById('fl-original').focus()
-  }); // Append container element to parent element
+  });
+  if (document.getElementById('tweet-box-home-timeline')) document.getElementById('tweet-box-home-timeline').addEventListener('focus', function () {
+    document.getElementById('tweet-box-home-timeline').click(); //document.getElementById('fl-original').focus()
+  });
+  /*   
+   facebook
+  */
+
+  if (document.querySelectorAll('textarea[name="xhpc_message"]').length > 0) document.querySelectorAll('textarea[name="xhpc_message"]')[0].addEventListener('focus', function () {
+    var found = false;
+    var timer = setInterval(function () {
+      if (found) {
+        return clearInterval(timer);
+      }
+
+      ;
+
+      if (document.querySelectorAll('div[role="textbox"]')) {
+        document.querySelectorAll('div[role="textbox"]')[0].click();
+        found = true;
+      }
+    }, 50);
+  });
+  /*
+     setTimeout(()=>{
+    document.querySelectorAll('div[role="textbox"]')[0].click()
+  }, 500)
+  */
+  // Append container element to parent element
   // document.body.appendChild(containerElement);
   // Different approach: Take the body's pole position.
 

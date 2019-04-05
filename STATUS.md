@@ -13,7 +13,7 @@
 |                                                 | custom | cloning | Feed - Add Comment        | TXTA | focus ghosting required, improve widget placing |
 |                                                 | custom | cloning | Post - Add Comment        | TXTA | focus ghosting required,improve widget placing |
 | [![badge7]](https://facebook.com)               |        |         |                           |     |              |
-|                                                 | custom | cloning | Feed - Create Post        | DIV | unknown script prevents to assign eventlistener             |
+|                                                 | custom | cloning | Feed - Create Post        | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 |                                                 |        |         |                           |     |              |
 |                                                 |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |

@@ -128,7 +128,7 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
     replacement.textContent = wordReplacement;
 
     if (document.getElementById('fl-original').tagName === 'DIV') {
-      document.getElementById('fl-original').innerHTML = document.getElementById('fl-clone').innerHTML;
+      document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
     }
     
     if (document.getElementById('fl-original').tagName === 'TEXTAREA') {

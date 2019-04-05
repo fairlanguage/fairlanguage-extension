@@ -25,12 +25,52 @@ window.onload = () => {
    * Detection Hacks
    */
 
+  /*   
+    twitter
+  */
+
   if (document.getElementById('tweet-box-home-timeline'))
   document.getElementById('tweet-box-home-timeline').addEventListener('focus', () => {
     document.getElementById('tweet-box-home-timeline').click()
     //document.getElementById('fl-original').focus()
     
   });
+
+  if (document.getElementById('tweet-box-home-timeline'))
+  document.getElementById('tweet-box-home-timeline').addEventListener('focus', () => {
+    document.getElementById('tweet-box-home-timeline').click()
+    //document.getElementById('fl-original').focus()
+    
+  });
+
+
+  /*   
+   facebook
+  */
+
+  if(document.querySelectorAll('textarea[name="xhpc_message"]').length>0)
+  document.querySelectorAll('textarea[name="xhpc_message"]')[0].addEventListener('focus', () => {
+    
+    let found = false;
+    const timer = setInterval(() => {
+      if(found){
+        return clearInterval(timer);
+      };
+      if( document.querySelectorAll('div[role="textbox"]') ){
+        document.querySelectorAll('div[role="textbox"]')[0].click()
+        found = true;
+      }
+    }, 50)
+    
+  })
+  
+
+    /*
+       setTimeout(()=>{
+      document.querySelectorAll('div[role="textbox"]')[0].click()
+    }, 500)
+  */
+
 
   // Append container element to parent element
   // document.body.appendChild(containerElement);
