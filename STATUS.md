@@ -5,13 +5,13 @@
 |             Web App                             | widget | method  | textElement               | type | knownIssues  |
 |-------------------------------------------------|:------:|:-------:|:-------------------------:|:----:|:------------:| 
 | Social Media                                    |        |         |                           |      |              |
-|                                                 |        |         |                           |      |              |
+| <b>twitter</b>                                  |        |         |                           |      |              |
 | twitter.com                                     | custom | cloning | Feed - Tweet              | DIV  |              |
 | twitter.com                                     | custom | cloning | Feed - Reply              | DIV  |              |
 | twitter.com                                     | custom | cloning | Status - Reply            | DIV  |              |
-| [![badge9]](https://instagram.com)              |        |         |                           |      |              |
-|                                                 | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
-|                                                 | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
+| <b>instagram</b>                                |        |         |                           |      |              |
+| instagram.com                                   | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
+|  instagram.com                                  | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
 | [![badge7]](https://facebook.com)               |        |         |                           |     |              |
 |                                                 | custom | cloning | Feed - Create Post        | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 |                                                 |        |         |                           |     |              |
