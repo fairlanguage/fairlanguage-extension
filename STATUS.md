@@ -10,17 +10,18 @@
 |                                                 | custom | cloning | Feed - Reply              | DIV  |              |
 |                                                 | custom | cloning | Status - Reply            | DIV  |              |
 | [![badge9]](https://instagram.com)              |        |         |                           |      |              |
-|                                                 | custom | cloning | Feed - Add Comment        | TXTA | focus ghosting required, improve widget placing |
-|                                                 | custom | cloning | Post - Add Comment        | TXTA | focus ghosting required,improve widget placing |
+|                                                 | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
+|                                                 | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
 | [![badge7]](https://facebook.com)               |        |         |                           |     |              |
 |                                                 | custom | cloning | Feed - Create Post        | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 |                                                 |        |         |                           |     |              |
 |                                                 |        |         |                           |     |              |
 | Messenging                                      |        |         |                           |     |              |
+| [![badge14]](https://messenger.com)             | custom | cloning |                           |     |              |
+|                                                 | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 | [![badge12]](https://web.telegram.org)          |        |         |                           |     |              |
 |                                                 | custom | cloning | Send Message              | DIV |              |
 | [![badge13]](https://web.whatsapp.google.com)   | custom | cloning | Send Message              | DIV |              |
-| [![badge14]](https://messenger.com)             | custom | cloning |                           |     |              |
 | Mail                                            |        |         |                           |     |              |
 | [![badge4]](https://mail.google.com)            | custom | cloning |                           |     |              |
 | [![badge5]](https://mail.yahoo.com)             | custom | cloning |                           |     |              |
