@@ -5,10 +5,10 @@
 |             Web App                             | widget | method  | textElement               | type | knownIssues  |
 |-------------------------------------------------|:------:|:-------:|:-------------------------:|:----:|:------------:| 
 | Social Media                                    |        |         |                           |      |              |
-| [![badge8]](https://twitter.com)                |        |         |                           |      |              |
-|                                                 | custom | cloning | Feed - Tweet              | DIV  |              |
-|                                                 | custom | cloning | Feed - Reply              | DIV  |              |
-|                                                 | custom | cloning | Status - Reply            | DIV  |              |
+|                                                 |        |         |                           |      |              |
+| twitter.com                                     | custom | cloning | Feed - Tweet              | DIV  |              |
+| twitter.com                                     | custom | cloning | Feed - Reply              | DIV  |              |
+| twitter.com                                     | custom | cloning | Status - Reply            | DIV  |              |
 | [![badge9]](https://instagram.com)              |        |         |                           |      |              |
 |                                                 | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
 |                                                 | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
