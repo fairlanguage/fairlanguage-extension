@@ -23,6 +23,13 @@
     }
   ],
 
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
+
   "web_accessible_resources":[
     "flam.png",
     "flam.png",
@@ -34,5 +41,12 @@
     "32": "flam.png",
     "48": "flam.png",
     "128": "flam.png"
+  },
+  "commands": {
+    "_execute_browser_action": {
+        "suggested_key": {
+              "default": "Ctrl+Shift+Y"
+            }
+    }
   }
 }

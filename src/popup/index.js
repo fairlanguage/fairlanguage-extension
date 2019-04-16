@@ -4,6 +4,11 @@ import config from '../../config';
 
 import StorageController from '../controller/storage';
 
+const logo = document.getElementById('logo');
+logo.src = chrome.extension.getURL('flam.png')
+logo.style.width = '100px';
+logo.style.height = '100px';
+
 const captionSettings = document.getElementById('caption-settings');
 const displaySettings = document.getElementById('string-settings');
 
@@ -60,6 +65,7 @@ const displayVersion = document.getElementById('display-version');
 captionVersion.style.display = config.options.dev ? 'flex' : 'none';
 displayVersion.style.display = config.options.dev ? 'flex' : 'none';
 
+
 /**
  * Settings
  */
@@ -68,7 +74,7 @@ const getSettings = () => {
     .then((settings) => {
       displaySettings.value = JSON.stringify(settings);
 
-      statusEnabled.textContent = settings.enabled;
+      statusEnabled.textContent = settings.enabled===null?'null':settings.enabled;
       buttonEnabled.textContent = settings.enabled ? 'disable' : 'enable';
 
       statusToolbar.textContent = settings.toolbar;
@@ -130,17 +136,22 @@ buttonEnabled.addEventListener('click', () => {
 
 });
 
-chrome.runtime.onMessage.addListener((settings) => {
-  if (settings.enabled === undefined) return;
-  StorageController.getSettings()
-    .then((_settings) => {
-      displaySettings.value = JSON.stringify(_settings);
-      statusEnabled.textContent = _settings.enabled;
-      buttonEnabled.textContent = _settings.enabled ? 'disable' : 'enable';
-    })
-    .catch((error) => {
-      displaySettings.value = (error);
-    });
+chrome.runtime.onMessage.addListener((data) => {
+
+  if (data.settings === undefined) return;
+
+  const { settings } = data;
+
+  displaySettings.value = JSON.stringify(settings);
+  statusEnabled.textContent = settings.settings === null?'null':settings.enabled;
+  buttonEnabled.textContent = settings.enabled ? 'disable' : 'enable';
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+
+    tabs[0].reload()
+
+  });
+
 });
 
 /**
@@ -157,6 +168,7 @@ buttonConsent.addEventListener('click', () => {
 });
 
 chrome.runtime.onMessage.addListener((settings) => {
+
   if (settings.consent === undefined) return;
   StorageController.getSettings()
     .then((_settings) => {

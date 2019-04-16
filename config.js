@@ -1,14 +1,11 @@
 export default {
   default: {
-    enabled: true,
-    consent: true,
-    active: null,
-    toolbar: true,
+    enabled: null,
   },
   options: {
-    settingsString: false,
+    settingsString: true,
     hostString: false,
-    enabled: false,
+    enabled: true,
     consent: false,
     host: true,
     toolbar: false,

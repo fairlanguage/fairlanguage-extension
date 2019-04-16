@@ -25,7 +25,9 @@ import ModulePlacingZalando from './modules/placing/zalando';
 
 import StorageController from './controller/storage';
 
-import { CSS_CLASS_NAME } from './scripts/underline'
+import Button from './components/component-button';
+
+import { CSS_CLASS_NAME } from './scripts/underline';
 
 import './index.css';
 
@@ -33,9 +35,11 @@ import * as manifest from '../manifest.json';
 
 const dev = true;
 
-const TEXT_PROMPT_ACTIVATE = 'Do you want to use fairlanguage on this website? (Terms and Policy)';
-const TEXT_ACTIVATE = 'Yes, I\'m super flamingo with that, sign me up. (ENABLE)';
-const TEXT_DEACTIVATE = 'No, I\'m already pretty aware of my language. (DISABLE)';
+const TEXT_PROMPT_ENABLE = 'Toll, dass du Fairlanguage verwenden möchtest! Bitte lies unsere Nutzungsbedingungen, um die Extension zu aktivieren.';
+const TEXT_ENABLE = 'Ja, damit bin ich einverstanden.';
+const TEXT_DISABLE = 'Nein, ich bin nicht einverstanden.';
+
+
 
 /**
  * I am flamingo.
@@ -51,7 +55,7 @@ export default class App extends Component {
 
   componentWillMount() {
 
-    log(`${manifest.version} initialising`);
+    log(`${manifest.version} initialising...`);
 
     const localStorage = [
       StorageController.getSettings(), 
@@ -64,7 +68,6 @@ export default class App extends Component {
         const hostSettings = results[1];
         this.setState({
           enabled: generalSettings.enabled,
-          consent: generalSettings.consent,
           active: hostSettings.enabled,
           toolbar: generalSettings.consent === false ? true : generalSettings.toolbar,
         }, () => {
@@ -75,9 +78,6 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-
-   
-
     /*
     * Just gimme ONE call - they'll all be gone.
     */
@@ -88,9 +88,9 @@ export default class App extends Component {
           case 'enabled':
           
             StorageController.setEnabled()
-              .then((state) => {
-                this.setState({ enabled: state });
-                chrome.runtime.sendMessage({ enabled: state });
+              .then((settings) => {
+                this.setState({ enabled: settings.enabled });
+                chrome.runtime.sendMessage({ settings: settings });
               });
 
             break;
@@ -147,7 +147,7 @@ export default class App extends Component {
       const enabled = this.getOverallState();
 
       if (dev) console.log(this.state);
-      if (!enabled) return log('Detection disabled');
+      if (!enabled) return log('Extension disabled');
       
       /*
       * So, Where did this actually go?
@@ -385,74 +385,18 @@ export default class App extends Component {
 
   getOverallState() {
 
-    let enabled = false;
-
-    if (this.state.enabled) {
-      if (this.state.active === null) {
-        enabled = this.state.consent;
-      } else {
-        enabled = this.state.active;
-      }
-    } 
-
-    return enabled;
+    return this.state.enabled;
 
   }
 
-  /**
-   * Sets website / web apps status (enabled: boolean)
-   * @param {*} mode 
-   */
-  setSiteStatus(mode = true) {
+  handleClickEnabled(mode) {
 
-    chrome.storage.local.get(['hosts'], (storage) => {
-
-      const hosts = storage.hosts;
-
-      if (storage.hosts.length > 0) {
-
-        let hostInStorage = null;
-
-        storage.hosts.forEach((host, index) => {
-
-          hostInStorage = host.name == window.location.hostname ? host : hostInStorage;
-
+    StorageController.setEnabled(mode)
+      .then(() => {
+        this.setState({
+          enabled: mode,
         });
-
-        if (hostInStorage) {
-          hosts[hosts.indexOf(hostInStorage)].enabled = !hosts[hosts.indexOf(hostInStorage)].enabled;
-          this.setState({ active: hosts[hosts.indexOf(hostInStorage)].enabled });
-        } else {
-          hosts.push({
-            name: window.location.hostname,
-            enabled: true,
-          });
-          this.setState({ active: true });
-        }
-
-      } else {
-
-        hosts.push({
-          name: window.location.hostname,
-          enabled: true,
-        });
-        this.setState({ active: true });
-      }
-
-      if (mode === false) {
-        hosts.push({
-          name: window.location.hostname,
-          enabled: false,
-        });
-        this.setState({ active: false });
-      }
-
-
-      chrome.storage.local.set({ hosts });
-
-      console.log(storage.hosts);
-    
-    });
+      });
 
   }
 
@@ -470,58 +414,41 @@ export default class App extends Component {
     return (
       <Fragment>
         {
-          this.state.enabled 
+          true 
           
             ? (
               <ComponentToolbar
-                open={false}
+                open={this.state.enabled === null ? true : false}
               >
-                <div style={{ fontSize: '20px', marginBottom: '8px' }}>
-                  {TEXT_PROMPT_ACTIVATE}
-                </div>
                 <div
                   style={{
-                    borderRadius: '5px',
-                    borderWidth: '2px',
-                    borderColor: 'white',
-                    padding: '5px',
-                    textAlign: 'center',
-                  }}
-
-                  onClick={() => {
-                    this.setSiteStatus();
+                    margin: '25px',
                   }}
                 >
-                  {
-                    !this.state.active ? TEXT_ACTIVATE : TEXT_DEACTIVATE
-                  }
-
+                  <div style={{ 
+                    fontSize: '20px', 
+                    marginBottom: '8px',
+                    lineHeight: '24px', 
+                  }}
+                  >
+                    {TEXT_PROMPT_ENABLE}
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                    }}
+                  >
+                    <Button
+                      caption={TEXT_ENABLE}
+                      onClick={() => this.handleClickEnabled(true)}
+                    />
+                    <Button
+                      caption={TEXT_DISABLE}
+                      onClick={() => this.handleClickEnabled(false)}
+                    />
+                  </div>
                 </div>
-
-                {
-                  this.state.active === null
-                    ? (
-                      <div
-                        style={{
-                          borderRadius: '5px',
-                          borderWidth: '2px',
-                          borderColor: 'white',
-                          padding: '5px',
-                          textAlign: 'center',
-                        }}
-
-                        onClick={() => {
-                          this.setSiteStatus(false);
-                        }}
-                      >
-                        {
-                    TEXT_DEACTIVATE
-                  }
-
-                      </div>
-                    )
-                    : null
-                }
 
               </ComponentToolbar>
             )

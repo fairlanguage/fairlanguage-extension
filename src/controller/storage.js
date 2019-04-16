@@ -1,5 +1,9 @@
 import config from "../../config";
 
+import log from '../helpers/helper-logger';
+
+import '@babel/polyfill';
+
 export default class StorageController {
 
   constructor() {
@@ -12,21 +16,27 @@ export default class StorageController {
 
       chrome.storage.local.get(['settings'], (storage) => {
 
+        log('Reading general settings from local storage...')
+
         if (storage.settings) {
+          log('Found general settings:');
+          log(JSON.stringify(storage.settings));
           resolve(storage.settings);
         } else {
           const settings = {
             enabled: config.default.enabled,
-            consent: config.default.consent,
-            toolbar: config.default.toolbar,
           };
     
           chrome.storage.local.set({ settings }, () => {
+            log('Wrote initial settings to local storage:');
+            log(JSON.stringify(settings))
             resolve(settings);
           });
         }
 
-        reject(new Error('Reading settings from local storage'));
+        // We don't have any settings saved yet: Extension was just installed
+
+        // reject(new Error('Reading general settings from local storage'));
       
       });
 
@@ -34,24 +44,138 @@ export default class StorageController {
 
   }
 
+  static getHostSettings(currentHost = window.location.hostname) {
+
+    return new Promise((resolve, reject) => {
+
+      let settings;
+
+      chrome.storage.local.get(['hosts'], async (storage) => {
+
+        log('Reading hosts settings from local storage...')
+
+        //console.log(storage.hosts)
+
+        // If there aren't any entries, start with this one
+        if (!storage.hosts) {
+
+          log('No hosts found.')
+          settings = {
+            enabled: null,
+            name: currentHost,
+          };
+    
+          await chrome.storage.local.set({ hosts: [settings] }, () => {
+            log('Wrote current host settings to local storage:');
+            log(JSON.stringify(settings))
+            return resolve(settings);
+          });
+
+        } else {
+
+          // Look up this host
+          settings = storage.hosts.find(hostInStorage => hostInStorage.name === currentHost);
+
+          if (settings) {
+            log(settings)
+            resolve(settings);
+          } else {
+
+            // No settings for this host yet, make an empty entry
+            settings = {
+              enabled: null,
+              name: currentHost,
+            };
+
+            storage.hosts.push(settings);
+            
+            await chrome.storage.local.set({ hosts: storage.hosts }, () => {
+              resolve(settings);
+            });
+
+          }
+
+        }
+
+        //reject(new Error('Reading host settings from local storage'));
+      
+      });
+
+    });
+
+  }
+
+  static setHost(mode = 'toggle') {
+
+    const currentHost = window.location.hostname;
+
+    return new Promise((resolve, reject) => {
+
+      chrome.storage.local.get(['hosts'], (storage) => {
+
+        if (storage.hosts) {
+
+          const settings = storage.hosts.find(hostInStorage => hostInStorage.name === currentHost);
+
+          const index =  storage.hosts.indexOf(settings);
+
+          storage.hosts[index].enabled = mode === 'toggle' ? !storage.hosts[index].enabled : mode; 
+
+          chrome.storage.local.set({ hosts: storage.hosts }, () => {
+
+            if (settings) resolve(storage.hosts[index]);
+
+          });
+
+        }
+      
+      });
+
+    });
+  }
+
+  static getHosts() {
+
+    return new Promise((resolve, reject) => {
+
+      chrome.storage.local.get(['hosts'], (storage) => {
+
+        if (storage.hosts) resolve(storage.hosts);
+
+        reject(new Error('Reading host settings from local storage'));
+      
+      });
+
+    });
+
+  }
+
+
+
   static setEnabled(mode = 'toggle') {
 
     return new Promise((resolve, reject) => {
 
       chrome.storage.local.get(['settings'], (storage) => {
 
-        const settings = storage.settings;
+        log('Reading current settings from local storage...')
 
-        //console.log(settings)
+        const { settings } = storage;
+
+        log(JSON.stringify(settings))
 
         settings.enabled = mode === 'toggle' ? !settings.enabled : mode;
 
-        //console.log(settings)
+        log('Writing new settings to local storage:')
+
+        log(JSON.stringify(settings))
 
         chrome.storage.local.set({ settings: settings }, () => {
 
           if (settings) {
-            resolve(settings.consent);
+            log('Wrote new settings to local storage:');
+            log(JSON.stringify(settings));
+            resolve(settings)
           } else {
             reject(new Error('Writing enabled settings to local storage'));
           }
@@ -118,102 +242,6 @@ export default class StorageController {
 
         });
 
-      });
-
-    });
-
-  }
-
-  static getHostSettings(currentHost = window.location.hostname) {
-
-    return new Promise((resolve, reject) => {
-
-      let settings;
-
-      chrome.storage.local.get(['hosts'], (storage) => {
-
-        console.log(storage.hosts)
-
-        // If there aren't any entries, start with this one
-        if (!storage.hosts) {
-          settings = {
-            enabled: null,
-            name: currentHost,
-          };
-    
-          chrome.storage.local.set({ hosts: [settings] }, () => {
-            resolve(settings);
-          });
-        }
-
-        // Look up this host
-        settings = storage.hosts.find(hostInStorage => hostInStorage.name === currentHost);
-
-        if (settings) {
-          resolve(settings);
-        } else {
-
-          // No settings for this host yet, make an empty entry
-          settings = {
-            enabled: null,
-            name: currentHost,
-          };
-
-          storage.hosts.push(settings);
-          
-          chrome.storage.local.set({ hosts: storage.hosts }, () => {
-            resolve(settings);
-          });
-
-        }
-
-        reject(new Error('Reading host settings from local storage'));
-      
-      });
-
-    });
-
-  }
-
-  static setHost(mode = 'toggle') {
-
-    const currentHost = window.location.hostname;
-
-    return new Promise((resolve, reject) => {
-
-      chrome.storage.local.get(['hosts'], (storage) => {
-
-        if (storage.hosts) {
-
-          const settings = storage.hosts.find(hostInStorage => hostInStorage.name === currentHost);
-
-          const index =  storage.hosts.indexOf(settings);
-
-          storage.hosts[index].enabled = mode === 'toggle' ? !storage.hosts[index].enabled : mode; 
-
-          chrome.storage.local.set({ hosts: storage.hosts }, () => {
-
-            if (settings) resolve(storage.hosts[index]);
-
-          });
-
-        }
-      
-      });
-
-    });
-  }
-
-  static getHosts() {
-
-    return new Promise((resolve, reject) => {
-
-      chrome.storage.local.get(['hosts'], (storage) => {
-
-        if (storage.hosts) resolve(storage.hosts);
-
-        reject(new Error('Reading host settings from local storage'));
-      
       });
 
     });

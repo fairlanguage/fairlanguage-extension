@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import config from '../../config';
@@ -40,7 +38,7 @@ class ComponentToolbar extends Component {
     super();
 
     this.state = {
-      open: false,
+      open: true,
     };
 
   }
@@ -62,9 +60,9 @@ class ComponentToolbar extends Component {
       <div
       onClick={(event) => {
         //if(!this.state.open)
-        this.setState({
+       /*  this.setState({
           open: !this.state.open,
-        });
+        }); */
       }}
       style={{
         position: "sticky",
@@ -74,25 +72,40 @@ class ComponentToolbar extends Component {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: this.state.open ? config.toolbar.height : '5px',
-        backgroundColor: config.colors.primary[0],
+        height: this.state.open ? 'auto' : '0px',
+        backgroundColor: '#FFF',
+        color: 'black',
         transition: '0.5s all',
         cursor: 'pointer',
         userSelect: 'none',
         fontSize: '16px',
-        fontFamily: 'Arial',
-        fontWeight: '300',
+        fontFamily: 'Montserrat',
+        fontWeight: '200',
         color: 'white',
         top: 0,
         opacity:config.toolbar.opacity,
       }}
       >
+      <img
+        style={{
+          margin: '12.5px',
+          width: '50px',
+          height: '50px',
+          display: this.state.open ? 'flex' : 'none',
+
+        }}
+        src={chrome.extension.getURL("flam.png")}
+      ></img>
         <div
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex:1000000000
+            zIndex:1000000000,
+            color: 'black',
+            fontSize: '16px',
+            fontFamily: 'Montserrat',
+            fontWeight: '200',
           }}
         >
           {this.state.open?this.props.children:null}
@@ -100,9 +113,9 @@ class ComponentToolbar extends Component {
 
         <img
         onClick={(event) => {
-          this.setState({
+         /*  this.setState({
             open: !this.state.open,
-          });
+          }); */
         }}
           style={{
             position: 'absolute',
