@@ -2,12 +2,35 @@ import * as manifest from '../../manifest.json';
 
 import config from '../../config';
 
+import hosts from '../../hosts';
+
 import StorageController from '../controller/storage';
+
+const STRING_ENABLE_HOST = 'Auf dieser Seite aktivieren';
+const STRING_DISABLE_HOST = 'Auf dieser Seite deaktivieren';
+const STRING_READ_MORE = 'Mehr zu Fairlanguage';
+
+const STRING_SUPPORTED = 'Diese Website wird unterst&uuml;tzt. <br/> Sollte dennoch ein Fehler auftreten <br/> schreib uns bitte eine Mal.';
+const STRING_EXPERIMENTAL = 'Es kann auf dieser Website<br/> noch zu Fehlern kommen. <br/> Bitte hab Geduld, wir <br/> arbeiten daran.';
 
 const logo = document.getElementById('logo');
 logo.src = chrome.extension.getURL('flam.png')
-logo.style.width = '100px';
-logo.style.height = '100px';
+logo.style.width = '85px';
+logo.style.height = '85px';
+
+const statusHost = document.getElementById('status-host');
+
+const displaySupported = document.getElementById('status-supported');
+const statusSupportedString = document.getElementById('status-supported-string');
+
+
+chrome.runtime.onMessage.addListener((host) => {
+
+  if (host.name === undefined) return;
+
+  displaySupported.textContent = host.name;
+
+});
 
 const captionSettings = document.getElementById('caption-settings');
 const displaySettings = document.getElementById('string-settings');
@@ -19,9 +42,9 @@ const captionEnabled = document.getElementById('caption-enabled');
 const statusEnabled = document.getElementById('status-enabled');
 const buttonEnabled = document.getElementById('button-enabled');
 
-statusEnabled.style.display = config.options.enabled ? 'flex' : 'none';
-buttonEnabled.style.display = config.options.enabled ? 'flex' : 'none';
-captionEnabled.style.display = config.options.enabled ? 'flex' : 'none';
+statusEnabled.style.display = config.options.settingsEnabled ? 'flex' : 'none';
+buttonEnabled.style.display = config.options.settingsEnabled ? 'flex' : 'none';
+captionEnabled.style.display = config.options.settingsEnabled ? 'flex' : 'none';
 
 const captionConsent = document.getElementById('caption-consent');
 const statusConsent = document.getElementById('status-consent');
@@ -37,11 +60,11 @@ const displayHost = document.getElementById('active-status');
 const buttonHostEnable = document.getElementById('active-button-enable');
 const buttonHostDisable = document.getElementById('active-button-disable');
 
-captionHost.style.display = config.options.host ? 'flex' : 'none';
-stringHost.style.display = config.options.hostString ? 'flex' : 'none';
-displayHost.style.display = config.options.host ? 'flex' : 'none';
-buttonHostEnable.style.display = config.options.host ? 'flex' : 'none';
-buttonHostDisable.style.display = config.options.host ? 'flex' : 'none';
+stringHost.style.display = config.options.hostSettingsString ? 'flex' : 'none';
+captionHost.style.display = config.options.hostSettingsCaption ? 'flex' : 'none';
+displayHost.style.display = config.options.hostSettingsDisplay ? 'flex' : 'none';
+buttonHostEnable.style.display = config.options.buttonHostEnable ? 'flex' : 'none';
+buttonHostDisable.style.display = config.options.buttonHostDisable ? 'flex' : 'none';
 
 const captionToolbar = document.getElementById('caption-toolbar');
 const statusToolbar = document.getElementById('status-toolbar');
@@ -63,8 +86,17 @@ const captionVersion = document.getElementById('caption-version');
 const displayVersion = document.getElementById('display-version');
 
 captionVersion.style.display = config.options.dev ? 'flex' : 'none';
-displayVersion.style.display = config.options.dev ? 'flex' : 'none';
+displayVersion.style.display = config.options.version ? 'flex' : 'none';
 
+const buttonReadMore = document.getElementById('button-read-more');
+buttonReadMore.style.display = config.options.buttonReadMore ? 'flex' : 'none';
+buttonReadMore.textContent = STRING_READ_MORE;
+
+buttonReadMore.addEventListener('click', () => {
+
+  chrome.tabs.create({ url: 'https://fairlanguage.com' });
+
+});
 
 /**
  * Settings
@@ -88,20 +120,41 @@ const getSettings = () => {
     });
 };
 
+const getCurrentHostSupportFromHosts = (currentHost) => {
+  let currentHostSupport = 'experimental';
+  for (const host of hosts){
+    if (currentHost.match(new RegExp(host.host, 'g'))){
+      currentHostSupport = host.support;
+    }
+  }
+  return currentHostSupport;
+}
+
 const getCurrentHostSettings = () => {
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 
-    const currentHostname = new URL(tabs[0].url).hostname;
+    const currentHost = new URL(tabs[0].url).hostname;
 
-    StorageController.getHostSettings(currentHostname)
+    StorageController.getHostSettings(currentHost)
       .then((settings) => {
         stringHost.value = JSON.stringify(settings);
 
         displayHost.textContent = settings.enabled === null ? 'not set' : settings.enabled;
 
-        buttonHostEnable.textContent = 'enable';
+        buttonHostEnable.textContent = settings.enabled === true || settings.enabled === null ? STRING_DISABLE_HOST : STRING_ENABLE_HOST;
+        buttonHostEnable.style.color = settings.enabled === true || settings.enabled === null ? 'grey' : 'black';
+        buttonHostEnable.style.borderColor = settings.enabled === true || settings.enabled === null ? 'grey' : 'black';
+
         buttonHostDisable.textContent = 'disable';
+
+        const currentHostSupport = getCurrentHostSupportFromHosts(currentHost);
+
+        displaySupported.textContent = `${currentHost}`;
+
+        statusHost.style.backgroundColor = currentHostSupport === 'full' ? 'green' : 'red';
+
+        statusSupportedString.innerHTML = currentHostSupport === 'full' ? STRING_SUPPORTED : STRING_EXPERIMENTAL;
 
       })
       .catch((error) => {
@@ -212,9 +265,12 @@ chrome.runtime.onMessage.addListener((settings) => {
  */
 buttonHostEnable.addEventListener('click', () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { command: 'host-enable' });
+    chrome.tabs.sendMessage(tabs[0].id, { command: buttonHostEnable.textContent === STRING_DISABLE_HOST ? 'host-disable' : 'host-enable' });
+    buttonHostEnable.style.color = buttonHostEnable.textContent === STRING_ENABLE_HOST ? 'grey' : 'black';
+    buttonHostEnable.style.borderColor = buttonHostEnable.textContent === STRING_ENABLE_HOST ? 'grey' : 'black';
   });
 });
+
 buttonHostDisable.addEventListener('click', () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, { command: 'host-disable' });
@@ -225,6 +281,7 @@ chrome.runtime.onMessage.addListener((settings) => {
   if (settings.host === undefined) return;
   displayHost.textContent = settings.host.enabled;
   stringHost.value = JSON.stringify(settings.host);
+  buttonHostEnable.textContent = settings.host.enabled ? STRING_DISABLE_HOST : STRING_ENABLE_HOST;
 });
 
 /**
@@ -239,4 +296,4 @@ buttonResetHosts.addEventListener('click', () => {
 /**
  * Version
  */
-displayVersion.textContent = manifest.version;
+displayVersion.textContent = `v${manifest.version}`;

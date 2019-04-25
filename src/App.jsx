@@ -27,8 +27,6 @@ import StorageController from './controller/storage';
 
 import Button from './components/component-button';
 
-import { CSS_CLASS_NAME } from './scripts/underline';
-
 import './index.css';
 
 import * as manifest from '../manifest.json';
@@ -39,11 +37,10 @@ const TEXT_PROMPT_ENABLE = 'Toll, dass du Fairlanguage verwenden möchtest! Bitt
 const TEXT_ENABLE = 'Ja, damit bin ich einverstanden.';
 const TEXT_DISABLE = 'Nein, ich bin nicht einverstanden.';
 
-
-
 /**
  * I am flamingo.
  */
+
 export default class App extends Component {
 
   constructor(props) {
@@ -68,7 +65,7 @@ export default class App extends Component {
         const hostSettings = results[1];
         this.setState({
           enabled: generalSettings.enabled,
-          active: hostSettings.enabled,
+          host: hostSettings.enabled,
           toolbar: generalSettings.consent === false ? true : generalSettings.toolbar,
         }, () => {
           if (dev)console.log(this.state);
@@ -78,9 +75,13 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    
     /*
     * Just gimme ONE call - they'll all be gone.
     */
+
+    chrome.runtime.sendMessage({ host: { name: window.location.host } });
+
     chrome.runtime.onMessage.addListener(
       (message, sender) => {
         log(JSON.stringify(message));
@@ -116,7 +117,7 @@ export default class App extends Component {
             
             StorageController.setHost(true)
               .then((settings) => {
-                this.setState({ active: settings.enabled });
+                this.setState({ host: settings.enabled });
                 chrome.runtime.sendMessage({ host: settings });
               });
 
@@ -125,9 +126,17 @@ export default class App extends Component {
           
             StorageController.setHost(false)
               .then((settings) => {
-                this.setState({ active: settings.enabled });
+                this.setState({ host: settings.enabled });
                 chrome.runtime.sendMessage({ host: settings });
               });
+
+            // Delete clones
+
+            const elements = document.querySelectorAll('[id=fl-clone]');
+            for (const el of elements){
+              if(el && el.style)
+              el.style.opacity = 0;
+            }
 
             break;
 
@@ -227,7 +236,7 @@ export default class App extends Component {
       *  Third, we decide where to place the fucking widget!
       */
 
-      const textFields = this.state.textFields;
+      const { textFields } = this.state;
 
       let textElement;
       let widgetContainer;
@@ -385,6 +394,8 @@ export default class App extends Component {
 
   getOverallState() {
 
+    if (this.state.host === false) return false;
+
     return this.state.enabled;
 
   }
@@ -407,7 +418,6 @@ export default class App extends Component {
   }
 
   render() {
-    const text = dev ? ` (this.state.active: ${this.state.active})` : null;
 
     const enabled = this.getOverallState();
 

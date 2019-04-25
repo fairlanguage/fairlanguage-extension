@@ -95,10 +95,10 @@ class ComponentWidget extends Component {
     let clonedTextElement;
     if (originalTextElement.nodeName === 'DIV') {
       clonedTextElement = originalTextElement.cloneNode(true);
-    }else{
+    } else {
       this.textElementType = 'TEXTAREA';
       clonedTextElement = document.createElement('DIV');
-      //clonedTextElement.style.cssText = document.defaultView.getComputedStyle(originalTextElement, "").cssText;
+      // clonedTextElement.style.cssText = document.defaultView.getComputedStyle(originalTextElement, "").cssText;
     }
 
 
@@ -173,7 +173,7 @@ class ComponentWidget extends Component {
 
     const keyUp = (event) => {
       
-      l('typing')
+      l('typing');
 
       if (window.location.href.includes('mail.google.com')) {
       } else 
