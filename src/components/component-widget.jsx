@@ -1,3 +1,7 @@
+/* eslint-disable import/first */
+// eslint-disable-next-line no-underscore-dangle
+const __DEV__ = false;
+
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -20,19 +24,17 @@ import underline, {
 import formatForGoogleMail from '../modules/textElements/google-mail';
 import formatForTwitter from '../modules/textElements/twitter';
 import formatForOutlook from '../modules/textElements/outlook';
-
+import formatForTelegram from '../modules/textElements/telegram';
 import formatForInstagram from '../modules/textElements/instagram';
 
 import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
 
-const __DEV__ = false;
+import {
+  formatTextElements as formatForSlack, 
+  onKeyDown as onKeyDownForSlack, 
+} from '../modules/slack';
 
-const l = (i) => {
-  if (__DEV__) {
-    return log(i);
-  } 
-  return null;
-};
+const l = i => (__DEV__ ? log(i) : null); 
 
 const STRING_GRADIENT = config.colors.gradient;
 
@@ -47,14 +49,42 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 
 let count = 0;
 
+const addCharacterToElement = (event, element) => {
+  if(event.key === 'Backspace'){
+    element.innerHTML = element.innerText.slice(0, element.innerText.length-1)
+  }else
+  if(event.keyCode === 32){
+    element.innerHTML += "\u00A0";
+  }else{
+    const key = event.key;
+
+    const CONTROL_KEYS = [
+      undefined,
+      'undefined',
+      'Control',
+      'Shift',
+      'Meta',
+      'Alt',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+    ];
+
+    if (CONTROL_KEYS.indexOf(key) !== -1) return;
+    // element.innerHTML += String.fromCharCode((96 <= key && key <= 105) ? key-48 : key);
+    element.innerHTML += key;
+  }
+}
+
 const copyTextFromElementToElement = (origin, target) => {
   if (origin.nodeName === 'DIV') {
-    const text =  origin.innerText;
-    console.log(text)
+    const text = origin.innerText;
+    l(text);
     target.innerText = text;
   }else{
     let text = origin.value;
-    text = text.replace(new RegExp(/\s/, 'g'), '&nbsp;')
+    text = text.replace(new RegExp(/\s/, 'g'), '&nbsp;');
     target.innerHTML = text;
   }
   
@@ -72,7 +102,7 @@ class ComponentWidget extends Component {
       amount: 0,
     };
 
-    this.textElementType = ''
+    this.textElementType = '';
 
     count = count + 1;
 
@@ -98,9 +128,7 @@ class ComponentWidget extends Component {
     } else {
       this.textElementType = 'TEXTAREA';
       clonedTextElement = document.createElement('DIV');
-      // clonedTextElement.style.cssText = document.defaultView.getComputedStyle(originalTextElement, "").cssText;
     }
-
 
     // (#0000FF) [TYPING] : ORIGINAL Text Element
     originalTextElement.id = 'fl-original'; 
@@ -153,6 +181,12 @@ class ComponentWidget extends Component {
     if (window.location.href.includes('instagram.com')) {
       formatForInstagram(originalTextElement, clonedTextElement);
     } else 
+    if (window.location.href.includes('web.telegram.org')) {
+      formatForTelegram(originalTextElement, clonedTextElement);
+    } else 
+    if (window.location.href.includes('slack.com')) {
+      formatForSlack(originalTextElement, clonedTextElement);
+    } else 
     if (window.location.href.includes('outlook.live.com')) {
       formatForOutlook(originalTextElement, clonedTextElement);
     } else {
@@ -169,33 +203,45 @@ class ComponentWidget extends Component {
       }
     }, 125);
 
-
-
     const keyUp = (event) => {
-      
-      l('typing');
+
+      l('typing...');
+
+      // TODO: copies the whole text- better would be to add latest character
+      copyTextFromElementToElement(originalTextElement, clonedTextElement);
+
+      // TODO: Try another approach
+      // addCharacterToElement(event, clonedTextElement);
+
+      /*
+        [CUSTOM] onKeyUp
+      */
 
       if (window.location.href.includes('mail.google.com')) {
       } else 
       if (window.location.href.includes('twitter.com')) {
         onKeyDownForTwitter(originalTextElement, clonedTextElement);
       } else 
+      if (window.location.href.includes('slack.com')) {
+        onKeyDownForSlack(originalTextElement, clonedTextElement);
+      } else 
       if (window.location.href.includes('outlook.live.com')) {
       } else {
       }
-
-      copyTextFromElementToElement(originalTextElement, clonedTextElement)
-      
+   
+      // TODO: Try to get the last word only
       const text = clonedTextElement.textContent;
-      l(text)
+      l(text);
 
       this.props.checkText(text, this.state.id);
 
       const url = `https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=${encodeURI(text)}`;
 
-      // [DEPRECATED] at this state of ev, might be helpful in the future] Save prev cursor position
+      /**
+       * IMPORTANT! Otherwise we use the cursor position after replacing
+       */
       this.state.currentCursorPosition = getCurrentCursorPositionInDOMNode(originalTextElement);
-      // console.log('saved:'+this.state.currentCursorPosition)
+      // l('saved:'+this.state.currentCursorPosition)
 
       axios
         .get(`${url}`)
@@ -216,9 +262,16 @@ class ComponentWidget extends Component {
                   originalTextElement.focus() */
                 }, () => {
                   // *onReplaced* 
+                  originalTextElement.innerText = clonedTextElement.innerText;
+
+                  /**
+                   * IMPORTANT! Otherwise we use the cursor position after replacing
+                   */
                   setCursorAtPositionInDOMNode(this.state.currentCursorPosition, originalTextElement);
                   originalTextElement.focus();
                   this.props.checkText(originalTextElement.textContent, this.state.id);
+
+
                 });
               /*
               *TODO:
@@ -239,48 +292,43 @@ class ComponentWidget extends Component {
 
     clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
 
-    /**
-     * iFrames Hack
-     * Original: https://stackoverflow.com/questions/9424550/how-can-i-detect-keyboard-events-in-gmail
-     */
-    let doc;
-    function keyDown(e) {console.log(e.which);}; // Test
-    function keyUp(e) {console.log(e.keyCode);}; // Test
-    (function checkForNewIframe(doc) {
-        if (!doc) return; // document does not exist. Cya
-    
-        // Note: It is important to use "true", to bind events to the capturing
-        // phase. If omitted or set to false, the event listener will be bound
-        // to the bubbling phase, where the event is not visible any more when
-        // Gmail calls event.stopPropagation().
-        // Calling addEventListener with the same arguments multiple times bind
-        // the listener only once, so we don't have to set a guard for that.
-        // doc.addEventListener('keydown', keyUp, true);
-        doc.addEventListener('keyup', keyUp, true);
+    originalTextElement.addEventListener('keyup', keyUp, true);
 
-
-        doc.hasSeenDocument = true;
-        for (var i = 0, contentDocument; i<frames.length; i++) {
-            try {
-                contentDocument = iframes[i].document;
-            } catch (e) {
-                continue; // Same-origin policy violation?
-            }
-            if (contentDocument && !contentDocument.hasSeenDocument) {
-                // Add poller to the new iframe
-                checkForNewIframe(iframes[i].contentDocument);
-            }
-        }
-        setTimeout(checkForNewIframe, 250); // <-- delay of 1/4 second
-    })(document); // Initiate recursive function for the document.
+    originalTextElement.parentNode.addEventListener('keyup', keyUp, true);
 
   }
 
   render() {
 
+    const circle = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
+      width: '22px',
+      height: '22px',
+      borderRadius: '11px',
+      color: 'white',
+      background: STRING_GRADIENT
+    };
+    
+    const circleCaption = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
+      
+      fontSize: '14px',
+      fontFamily: 'Helvetica, Lato',
+      color: 'white',
+      marginRight: '0px',
+      marginTop: '-1px',
+    };
+
+    const { amount } = this.state;
+
     return ReactDOM.createPortal(
       <div
-        
         id={'fairlanguage-widget-'+this.state.id}
         fl={this.state.id}
         style={{
@@ -292,12 +340,10 @@ class ComponentWidget extends Component {
           
           backgroundColor: 'transparent',
 
-          //borderRadius: '12.5px',
           border: '0px solid #c1c1c1',
       
           fontSize: '14px',
           fontWeight: '500',
-          //lineHeight: '48px',
 
           textTransform: 'uppercase',
 
@@ -307,68 +353,28 @@ class ComponentWidget extends Component {
       
           textAlign: 'center',
 
-          //marginLeft: '14px',
-
-          //position: 'absolute',
-          //top: this.state.height,
-          //marginTop: '-22px',
-
-          //transform: `translate(5px, calc(${this.state.height} - 0px)`,
-      
           cursor: 'pointer',
-          userSelect: 'none'
+          userSelect: 'none',
         }}
       >
         <div style={circle}>
           <div style={circleCaption}>
-            {
-              this.state.amount
-            }
+            {amount}
           </div>
         </div>
       </div>,
       this.props.containerElement
-    )
-    
+    );
   }
 }
 
-const circle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
+const logo = {
   width: '22px',
   height: '22px',
-  borderRadius: '11px',
-  color: 'white',
-
-  background: STRING_GRADIENT
-}
-
-const circleCaption = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
-  
-  fontSize: '14px',
-  fontFamily: 'Helvetica, Lato',
-  color: 'white',
-  //fontWeight: 'bold',
-  marginRight:'0px',
-  marginTop:'-1px',
-
-  //background: 'linear-gradient(to bottom, #4abae2 0%,#db02db 100%)'
-}
-
-const logo = {
-    width: '22px',
-    height: '22px',
-    marginRight: '11px'
-}
+  marginRight: '11px',
+};
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(ComponentWidget);

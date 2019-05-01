@@ -11,10 +11,10 @@ const STRING_DISABLE_HOST = 'Auf dieser Seite deaktivieren';
 const STRING_READ_MORE = 'Mehr zu Fairlanguage';
 
 const STRING_SUPPORTED = 'Diese Website wird unterst&uuml;tzt. <br/> Sollte dennoch ein Fehler auftreten <br/> schreib uns bitte eine Mal.';
-const STRING_EXPERIMENTAL = 'Es kann auf dieser Website<br/> noch zu Fehlern kommen. <br/> Bitte hab Geduld, wir <br/> arbeiten daran.';
+const STRING_EXPERIMENTAL = 'Es kann auf dieser Website noch zu<br/>Fehlern kommen.<br/><br/>Daher haben haben wir die Extension <br/>auf dieser Seite zun&auml;chst deaktiviert.<br/><br/>Du kannst sie jedoch troztem<br/>im EXPERIMENTAL STATE aktivieren.';
 
 const logo = document.getElementById('logo');
-logo.src = chrome.extension.getURL('flam.png')
+logo.src = chrome.extension.getURL('flam.png');
 logo.style.width = '85px';
 logo.style.height = '85px';
 
@@ -128,7 +128,7 @@ const getCurrentHostSupportFromHosts = (currentHost) => {
     }
   }
   return currentHostSupport;
-}
+};
 
 const getCurrentHostSettings = () => {
 
@@ -138,17 +138,18 @@ const getCurrentHostSettings = () => {
 
     StorageController.getHostSettings(currentHost)
       .then((settings) => {
+
         stringHost.value = JSON.stringify(settings);
 
         displayHost.textContent = settings.enabled === null ? 'not set' : settings.enabled;
 
-        buttonHostEnable.textContent = settings.enabled === true || settings.enabled === null ? STRING_DISABLE_HOST : STRING_ENABLE_HOST;
+        const currentHostSupport = getCurrentHostSupportFromHosts(currentHost);
+
+        buttonHostEnable.textContent = settings.enabled === true || settings.enabled === null ? STRING_DISABLE_HOST : STRING_ENABLE_HOST ;
         buttonHostEnable.style.color = settings.enabled === true || settings.enabled === null ? 'grey' : 'black';
         buttonHostEnable.style.borderColor = settings.enabled === true || settings.enabled === null ? 'grey' : 'black';
 
         buttonHostDisable.textContent = 'disable';
-
-        const currentHostSupport = getCurrentHostSupportFromHosts(currentHost);
 
         displaySupported.textContent = `${currentHost}`;
 

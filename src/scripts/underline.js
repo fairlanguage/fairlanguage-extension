@@ -1,6 +1,7 @@
 import config from '../../config';
 
 import formatMarkingElementForWhatsapp from '../modules/markingElement/whatsapp';
+import { formatMarkingElement as formatMarkingElementForSlack } from '../modules/slack';
 
 const _DEV_ = true;
 const l = i => {
@@ -84,6 +85,8 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
   const replacement = document.createElement('span');
   // replacement.className = CSS_CLASS_NAME;
 
+  replacement.setAttribute("bar", "true")
+
   replacement.style.position = 'relative';
   replacement.style.zIndex = '2';
 
@@ -102,7 +105,8 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
   if (window.location.href.includes('web.whatsapp.com')) {
     formatMarkingElementForWhatsapp(replacement);
   } else 
-  if (window.location.href.includes('twitter.com')) {
+  if (window.location.href.includes('slack.com')) {
+    formatMarkingElementForSlack(replacement);
   } else 
   if (window.location.href.includes('outlook.live.com')) {
   } else {
@@ -122,18 +126,10 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
 
   replacement.addEventListener('mouseup', (event) => {
 
-    console.log(`wordToReplace: ${wordToReplace} with wordReplacement: ${wordReplacement}`);
+    l(`wordToReplace: ${wordToReplace} with wordReplacement: ${wordReplacement}`);
     
     // Change text
     replacement.textContent = wordReplacement;
-
-    if (document.getElementById('fl-original').tagName === 'DIV') {
-      document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
-    }
-    
-    if (document.getElementById('fl-original').tagName === 'TEXTAREA') {
-      document.getElementById('fl-original').value = document.getElementById('fl-clone').textContent;
-    }
     
     wordToReplace = wordReplacement;
 
@@ -148,11 +144,14 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
   return replacement;
 };
 
-const isAlreadyModified = node => node.parentNode.tagName.toLowerCase() === "strong" &&
-node.parentNode.classList.contains(CSS_CLASS_NAME);
+const isAlreadyModified = node => {
+  if (node.hasAttribute && node.hasAttribute("bar")) {
+    return true;
+  }
+};
 
 /**
- *
+ * underline text in DOMNode
  */
 
 const underline = (data, element, onModified, onReplaced) => {
@@ -160,19 +159,18 @@ const underline = (data, element, onModified, onReplaced) => {
   const word = data.word;
   const suggestions = data.suggestions;
 
-  let found = false;
   l(`We are looking for: ${word}`);
+
   function iterate(current) {
-    if (found) return;
+
+    // Check if DOMNode is already underlined
+    if (isAlreadyModified(current)) return;
+
     const text = current.textContent;
     // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
-    if (isChildlessTextNode(current) && isIncluded(word, text)) {
-     
-      // Check if DOMNode is already underlined
-      if (isAlreadyModified(current)) return;
+    if (isChildlessTextNode(current) && isIncluded(word, text)) {      
 
-      // console.log(`There is a "${word}" in this: "${text}"`);
-
+      // l(`There is a "${word}" in this: "${text}"`);
       l(`isIncluded(${word}, ${text}): ${isIncluded(word, text)}`);
 
       // Divide text
@@ -198,8 +196,6 @@ const underline = (data, element, onModified, onReplaced) => {
 
       current.replaceWith(...nodes);
       
-      found = true;
-
       // onModified
       if (onModified !== undefined) onModified();
 
@@ -256,13 +252,17 @@ const createRange = (node, chars, range = document.createRange()) => {
 };
 
 const getCurrentCursorPositionInDOMNode = (node) => {
-  let range = document.getSelection().getRangeAt(0);
-  range = range.cloneRange();
-  range.selectNodeContents(node);
-  range.setEnd(range.endContainer, range.endOffset);
-  const position = range.toString().length;
-  l(`stored: ${position}`);
-  return position;
+  try {
+    let range = document.getSelection().getRangeAt(0);
+    range = range.cloneRange();
+    range.selectNodeContents(node);
+    range.setEnd(range.endContainer, range.endOffset);
+    const position = range.toString().length;
+    l(`stored: ${position}`);
+    return position;
+  } catch {
+    return 1;
+  }
 };
 
 /**

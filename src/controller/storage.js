@@ -1,5 +1,7 @@
 import config from "../../config";
 
+import hosts from '../../hosts';
+
 import log from '../helpers/helper-logger';
 
 import '@babel/polyfill';
@@ -46,28 +48,35 @@ export default class StorageController {
 
   static getHostSettings(currentHost = window.location.hostname) {
 
+    /**
+     * TODO: !IMPORTANT! Get custom dev state from hosts
+     */
+
+    const hostDevState = hosts.find(host => currentHost.includes(host.host));
+    const defaultEnabled = hostDevState && hostDevState.support && hostDevState.support === 'full' ? null : false;
+
     return new Promise((resolve, reject) => {
 
       let settings;
 
       chrome.storage.local.get(['hosts'], async (storage) => {
 
-        log('Reading hosts settings from local storage...')
+        log('Reading hosts settings from local storage...');
 
-        //console.log(storage.hosts)
+        // console.log(storage.hosts)
 
         // If there aren't any entries, start with this one
         if (!storage.hosts) {
 
-          log('No hosts found.')
+          log('No hosts found.');
           settings = {
-            enabled: null,
+            enabled: defaultEnabled,
             name: currentHost,
           };
     
           await chrome.storage.local.set({ hosts: [settings] }, () => {
             log('Wrote current host settings to local storage:');
-            log(JSON.stringify(settings))
+            log(JSON.stringify(settings));
             return resolve(settings);
           });
 
@@ -77,13 +86,13 @@ export default class StorageController {
           settings = storage.hosts.find(hostInStorage => hostInStorage.name === currentHost);
 
           if (settings) {
-            log(settings)
+            log(settings);
             resolve(settings);
           } else {
 
             // No settings for this host yet, make an empty entry
             settings = {
-              enabled: null,
+              enabled: defaultEnabled,
               name: currentHost,
             };
 

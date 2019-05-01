@@ -1,15 +1,18 @@
 import React, { Fragment, Component } from 'react';
 
+import hosts from '../hosts';
+
 import log from './helpers/helper-logger';
 
 import ComponentToolbar from './components/component-toolbar';
 import ComponentWidget from './components/component-widget';
 
+import ModulePlacingSlack from './modules/slack';
+
 import ModulePlacingGoogleMail from './modules/placing/google-mail';
 import ModulePlacingYahooMail from './modules/placing/yahoo-mail';
 import ModulePlacingOutlookMail from './modules/placing/outlook-mail';
 
-import ModulePlacingSlack from './modules/placing/slack';
 import ModulePlacingGoogleMeet from './modules/placing/google-meet';
 import ModulePlacingMicrosoftTeams from './modules/placing/microsoft-teams';
 
@@ -65,7 +68,7 @@ export default class App extends Component {
         const hostSettings = results[1];
         this.setState({
           enabled: generalSettings.enabled,
-          host: hostSettings.enabled,
+          hostEnabled: hostSettings.enabled,
           toolbar: generalSettings.consent === false ? true : generalSettings.toolbar,
         }, () => {
           if (dev)console.log(this.state);
@@ -394,8 +397,10 @@ export default class App extends Component {
 
   getOverallState() {
 
-    if (this.state.host === false) return false;
+    // Disabled for current host?
+    if (this.state.hostEnabled === false) return false;
 
+    // Otherwise use general state
     return this.state.enabled;
 
   }

@@ -27350,7 +27350,20 @@ var middleware = (0, _redux.applyMiddleware)(_reduxThunk.default);
 var _default = (0, _redux.createStore)(_reducers.default, middleware);
 
 exports.default = _default;
-},{"redux":"../node_modules/redux/es/redux.js","redux-logger":"../node_modules/redux-logger/dist/redux-logger.js","redux-thunk":"../node_modules/redux-thunk/es/index.js","./reducers":"reducers/index.js"}],"../helpers/helper-logger.js":[function(require,module,exports) {
+},{"redux":"../node_modules/redux/es/redux.js","redux-logger":"../node_modules/redux-logger/dist/redux-logger.js","redux-thunk":"../node_modules/redux-thunk/es/index.js","./reducers":"reducers/index.js"}],"../hosts.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var hosts = [{
+  host: 'slack.com',
+  support: 'full'
+}];
+var _default = hosts;
+exports.default = _default;
+},{}],"../helpers/helper-logger.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29336,6 +29349,248 @@ var formatMarkingElement = function formatMarkingElement(markingElement) {
 
 var _default = formatMarkingElement;
 exports.default = _default;
+},{}],"modules/slack.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.onKeyDown = exports.formatTextElements = exports.formatMarkingElement = exports.default = void 0;
+var type;
+
+var identifyInputElement = function identifyInputElement(elementClickedOn) {
+  /*
+    Find message container element ( attribute: data-q="message_input")
+  */
+  var i = 0;
+  var container;
+  var current = elementClickedOn.parentNode;
+
+  while (container === undefined && i < 50) {
+    if (current && current.hasAttribute && current.hasAttribute('data-qa')) {
+      container = current;
+    }
+
+    current = current.parentNode;
+    i += 1;
+  }
+
+  console.log(container);
+  /*
+    Identify elements position
+  */
+
+  var attribute = container.getAttribute('data-qa');
+
+  if (attribute === 'message_editor') {
+    type = 'editor';
+  } else if (container.hasAttribute && container.hasAttribute('data-view-context') && container.getAttribute('data-view-context') === 'threads-flexpane') {
+    type = 'threads-sidebar';
+  } else if (container.hasAttribute && container.hasAttribute('data-view-context') && container.getAttribute('data-view-context') === 'threads-view') {
+    type = 'threads-view';
+  } else {
+    type = 'main';
+  } // alert(type);
+  // console.log(type);
+
+  /**
+   * Position widget according to type
+   */
+
+
+  var textElement;
+  var widgetContainer;
+  var element;
+  var buttons;
+
+  switch (type) {
+    case 'editor':
+      element = document.createElement('button');
+      element.className = 'c-button-unstyled c-texty_input__button';
+      element.style.position = 'absolute';
+      element.style.top = '9px';
+      element.style.right = '38px';
+      element.style.transform = 'scale(0.8)';
+      element.style.display = 'flex';
+      element.style.justifyContent = 'center';
+      element.addEventListener('click', function () {
+        alert('I am flamingo.');
+      }); // Find Buttons element
+
+      buttons = container.querySelector("div[class='c-message__editor__input_container']");
+      buttons.append(element);
+
+      if (elementClickedOn.tagName === 'DIV') {
+        textElement = elementClickedOn;
+      }
+
+      if (elementClickedOn.tagName === 'P') {
+        textElement = elementClickedOn.parentNode;
+      }
+
+      widgetContainer = element;
+      return [textElement, widgetContainer];
+
+    case 'threads-view':
+      element = document.createElement('button');
+      element.className = "c-button-unstyled c-texty_input__button"; // element.setAttribute("tabindex", 5)
+
+      element.style.transform = 'scale(0.8)'; //element.style.transform = 'scale(0.8)';
+      //element.style.marginRight = '25px';
+
+      element.style.marginTop = '-0.5px'; //element.style.marginLeft = '5px';    
+      // element.style.marginRight = '25px';
+      //element.style.top = '-4px';
+
+      element.style.display = 'flex'; // element.style.position = 'relative';
+
+      element.style.justifyContent = 'center';
+      element.addEventListener('click', function () {
+        alert('I am flamingo.');
+      }); // Find Buttons element
+
+      buttons = container.childNodes[container.childNodes.length - 3];
+      /* buttons.style.display = 'flex';
+      buttons.style.flexDirection = 'column';
+      buttons.style.alignItems = 'center';
+      buttons.style.justifyContent = 'flex-end';
+       buttons.style.height = '100%';
+      //buttons.style.width = '100px';
+       buttons.style.bottom = '6px';
+       buttons.style.border = '0px solid blue'; */
+
+      buttons.append(element);
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = buttons.childNodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var child = _step.value;
+        } //child.style.position = 'relative';
+        //return
+        // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
+
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      if (elementClickedOn.tagName === 'DIV') {
+        textElement = elementClickedOn;
+      }
+
+      if (elementClickedOn.tagName === 'P') {
+        textElement = elementClickedOn.parentNode;
+      }
+
+      widgetContainer = element;
+      return [textElement, widgetContainer];
+
+    case 'threads-sidebar':
+      element = document.createElement('div'); //element.className = "c-button-unstyled c-texty_input__button";
+
+      element.setAttribute("tabindex", 5);
+      element.style.transform = 'scale(0.8)'; //element.style.marginRight = '25px';
+      //element.style.marginTop = 'px';    
+      //element.style.marginLeft = '5px';    
+
+      element.style.marginRight = '25px';
+      element.style.top = '-4px';
+      element.style.display = 'flex';
+      element.style.justifyContent = 'center';
+      element.addEventListener('click', function () {
+        alert('I am flamingo.');
+      }); // Find Buttons element
+
+      buttons = container.childNodes[container.childNodes.length - 3];
+      buttons.style.display = 'flex';
+      buttons.style.flexDirection = 'row';
+      buttons.style.alignItems = 'center';
+      buttons.style.justifyContent = 'flex-end';
+      buttons.style.height = '25px';
+      buttons.style.width = '100px';
+      buttons.style.border = '0px solid blue';
+      buttons.append(element); //return
+      // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
+
+      if (elementClickedOn.tagName === 'DIV') {
+        textElement = elementClickedOn;
+      }
+
+      if (elementClickedOn.tagName === 'P') {
+        textElement = elementClickedOn.parentNode;
+      }
+
+      widgetContainer = element;
+      return [textElement, widgetContainer];
+
+    default:
+      element = document.createElement('div');
+      element.className = "btn_unstyle msg_mentions_button";
+      element.style.transform = 'scale(0.9)';
+      element.style.right = '70px';
+      element.style.paddingTop = '-1px';
+      element.style.marginLeft = '5px';
+      element.style.display = 'flex';
+      element.style.justifyContent = 'center';
+      element.addEventListener('click', function () {
+        alert('I am flamingo.');
+      });
+      container.parentNode.insertBefore(element, container.querySelector('[aria-label="Insert mention"]'));
+
+      if (elementClickedOn.tagName === 'DIV') {
+        textElement = elementClickedOn;
+      }
+
+      if (elementClickedOn.tagName === 'P') {
+        textElement = elementClickedOn.parentNode;
+      }
+
+      widgetContainer = element;
+      return [textElement, widgetContainer];
+  }
+};
+
+var formatTextElements = function formatTextElements(originalTextElement, clonedTextElement) {
+  originalTextElement.style.top = '0';
+  originalTextElement.style.width = '82.5%';
+};
+
+exports.formatTextElements = formatTextElements;
+
+var onKeyDown = function onKeyDown(originalTextElement, clonedTextElement) {
+  /**
+   * Keep width
+   */
+  clonedTextElement.style.width = window.getComputedStyle(originalTextElement).width;
+  /**
+   * Clear placeholder
+   */
+
+  var placeholder = originalTextElement.parentNode.childNodes[originalTextElement.parentNode.childNodes.length - 1];
+  placeholder.innerHTML = '';
+};
+
+exports.onKeyDown = onKeyDown;
+
+var formatMarkingElement = function formatMarkingElement(markingElement) {
+  markingElement.style.borderWidth = '1.5px';
+};
+
+exports.formatMarkingElement = formatMarkingElement;
+var _default = identifyInputElement;
+exports.default = _default;
 },{}],"scripts/underline.js":[function(require,module,exports) {
 "use strict";
 
@@ -29347,6 +29602,8 @@ exports.setCursorAtPositionInDOMNode = exports.getCurrentCursorPositionInDOMNode
 var _config = _interopRequireDefault(require("../../config"));
 
 var _whatsapp = _interopRequireDefault(require("../modules/markingElement/whatsapp"));
+
+var _slack = require("../modules/slack");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29417,6 +29674,7 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   l(suggestions);
   var replacement = document.createElement('span'); // replacement.className = CSS_CLASS_NAME;
 
+  replacement.setAttribute("bar", "true");
   replacement.style.position = 'relative';
   replacement.style.zIndex = '2';
   replacement.style.cursor = 'pointer';
@@ -29429,7 +29687,9 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
 
   if (window.location.href.includes('web.whatsapp.com')) {
     (0, _whatsapp.default)(replacement);
-  } else if (window.location.href.includes('twitter.com')) {} else if (window.location.href.includes('outlook.live.com')) {} else {} // replacement.style.background = 'blue'
+  } else if (window.location.href.includes('slack.com')) {
+    (0, _slack.formatMarkingElement)(replacement);
+  } else if (window.location.href.includes('outlook.live.com')) {} else {} // replacement.style.background = 'blue'
   // replacement.style.position = 'absolute';
 
 
@@ -29441,18 +29701,9 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   var wordToReplace = word;
   var wordReplacement = suggestions[index];
   replacement.addEventListener('mouseup', function (event) {
-    console.log("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); // Change text
+    l("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); // Change text
 
     replacement.textContent = wordReplacement;
-
-    if (document.getElementById('fl-original').tagName === 'DIV') {
-      document.getElementById('fl-original').innerText = document.getElementById('fl-clone').innerText;
-    }
-
-    if (document.getElementById('fl-original').tagName === 'TEXTAREA') {
-      document.getElementById('fl-original').value = document.getElementById('fl-clone').textContent;
-    }
-
     wordToReplace = wordReplacement;
     index = suggestions.length - 1 > index ? index += 1 : 0;
     wordReplacement = suggestions[index];
@@ -29462,27 +29713,27 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
 };
 
 var isAlreadyModified = function isAlreadyModified(node) {
-  return node.parentNode.tagName.toLowerCase() === "strong" && node.parentNode.classList.contains(CSS_CLASS_NAME);
+  if (node.hasAttribute && node.hasAttribute("bar")) {
+    return true;
+  }
 };
 /**
- *
+ * underline text in DOMNode
  */
 
 
 var underline = function underline(data, element, onModified, onReplaced) {
   var word = data.word;
   var suggestions = data.suggestions;
-  var found = false;
   l("We are looking for: ".concat(word));
 
   function iterate(current) {
-    if (found) return;
+    // Check if DOMNode is already underlined
+    if (isAlreadyModified(current)) return;
     var text = current.textContent; // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
 
     if (isChildlessTextNode(current) && isIncluded(word, text)) {
-      // Check if DOMNode is already underlined
-      if (isAlreadyModified(current)) return; // console.log(`There is a "${word}" in this: "${text}"`);
-
+      // l(`There is a "${word}" in this: "${text}"`);
       l("isIncluded(".concat(word, ", ").concat(text, "): ").concat(isIncluded(word, text))); // Divide text
 
       var textBefore = getTextBeforeWord(word, text);
@@ -29493,8 +29744,7 @@ var underline = function underline(data, element, onModified, onReplaced) {
       var nodeUnderlined = createSpanElementWithUnderlinedClass(word, suggestions, onReplaced);
       var nodeAfter = textAfter ? createTextElement(textAfter) : undefined;
       var nodes = [nodeBefore !== undefined ? nodeBefore : '', nodeUnderlined, nodeAfter !== undefined ? nodeAfter : ''];
-      current.replaceWith.apply(current, nodes);
-      found = true; // onModified
+      current.replaceWith.apply(current, nodes); // onModified
 
       if (onModified !== undefined) onModified();
     } else {
@@ -29551,13 +29801,17 @@ var createRange = function createRange(node, chars) {
 };
 
 var getCurrentCursorPositionInDOMNode = function getCurrentCursorPositionInDOMNode(node) {
-  var range = document.getSelection().getRangeAt(0);
-  range = range.cloneRange();
-  range.selectNodeContents(node);
-  range.setEnd(range.endContainer, range.endOffset);
-  var position = range.toString().length;
-  l("stored: ".concat(position));
-  return position;
+  try {
+    var range = document.getSelection().getRangeAt(0);
+    range = range.cloneRange();
+    range.selectNodeContents(node);
+    range.setEnd(range.endContainer, range.endOffset);
+    var position = range.toString().length;
+    l("stored: ".concat(position));
+    return position;
+  } catch (_unused) {
+    return 1;
+  }
 };
 /**
  * setCursorAtPositionInDOMNode
@@ -29598,7 +29852,7 @@ var setCursorAtPositionInDOMNode = function setCursorAtPositionInDOMNode(chars, 
 exports.setCursorAtPositionInDOMNode = setCursorAtPositionInDOMNode;
 var _default = underline;
 exports.default = _default;
-},{"../../config":"../config.js","../modules/markingElement/whatsapp":"modules/markingElement/whatsapp.js"}],"modules/textElements/google-mail.js":[function(require,module,exports) {
+},{"../../config":"../config.js","../modules/markingElement/whatsapp":"modules/markingElement/whatsapp.js","../modules/slack":"modules/slack.js"}],"modules/textElements/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29682,6 +29936,21 @@ var formatTextElements = function formatTextElements(originalTextElement, cloned
 
 var _default = formatTextElements;
 exports.default = _default;
+},{}],"modules/textElements/telegram.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var formatTextElements = function formatTextElements(originalTextElement, clonedtextElement) {
+  originalTextElement.style.top = '0px';
+  originalTextElement.style.width = '100%';
+};
+
+var _default = formatTextElements;
+exports.default = _default;
 },{}],"modules/textElements/instagram.js":[function(require,module,exports) {
 "use strict";
 
@@ -29748,9 +30017,13 @@ var _twitter = _interopRequireDefault(require("../modules/textElements/twitter")
 
 var _outlook = _interopRequireDefault(require("../modules/textElements/outlook"));
 
+var _telegram = _interopRequireDefault(require("../modules/textElements/telegram"));
+
 var _instagram = _interopRequireDefault(require("../modules/textElements/instagram"));
 
 var _twitter2 = _interopRequireDefault(require("../modules/onKeyDown/twitter"));
+
+var _slack = require("../modules/slack");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29777,11 +30050,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 var __DEV__ = false;
 
 var l = function l(i) {
-  if (__DEV__) {
-    return (0, _helperLogger.default)(i);
-  }
-
-  return null;
+  return __DEV__ ? (0, _helperLogger.default)(i) : null;
 };
 
 var STRING_GRADIENT = _config.default.colors.gradient;
@@ -29801,10 +30070,24 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 var count = 0;
 
+var addCharacterToElement = function addCharacterToElement(event, element) {
+  if (event.key === 'Backspace') {
+    element.innerHTML = element.innerText.slice(0, element.innerText.length - 1);
+  } else if (event.keyCode === 32) {
+    element.innerHTML += "\xA0";
+  } else {
+    var key = event.key;
+    var CONTROL_KEYS = [undefined, 'undefined', 'Control', 'Shift', 'Meta', 'Alt', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+    if (CONTROL_KEYS.indexOf(key) !== -1) return; // element.innerHTML += String.fromCharCode((96 <= key && key <= 105) ? key-48 : key);
+
+    element.innerHTML += key;
+  }
+};
+
 var copyTextFromElementToElement = function copyTextFromElementToElement(origin, target) {
   if (origin.nodeName === 'DIV') {
     var text = origin.innerText;
-    console.log(text);
+    l(text);
     target.innerText = text;
   } else {
     var _text = origin.value;
@@ -29890,9 +30173,8 @@ function (_Component) {
       originalTextElement.parentNode.insertBefore(clonedTextElement, originalTextElement);
       originalTextElement.style.position = 'absolute';
 
-      if (__DEV__) {
-        originalTextElement.style.position = 'relative';
-      }
+      if (__DEV__) {} // originalTextElement.style.position = 'relative';
+
       /*
         [CUSTOM] Final Formatting
       */
@@ -29904,6 +30186,10 @@ function (_Component) {
         (0, _twitter.default)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('instagram.com')) {
         (0, _instagram.default)(originalTextElement, clonedTextElement);
+      } else if (window.location.href.includes('web.telegram.org')) {
+        (0, _telegram.default)(originalTextElement, clonedTextElement);
+      } else if (window.location.href.includes('slack.com')) {
+        (0, _slack.formatTextElements)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('outlook.live.com')) {
         (0, _outlook.default)(originalTextElement, clonedTextElement);
       } else {
@@ -29922,21 +30208,33 @@ function (_Component) {
       }, 125);
 
       var keyUp = function keyUp(event) {
-        l('typing');
+        l('typing...'); // TODO: copies the whole text TODO: better would be to add latest character
+
+        copyTextFromElementToElement(originalTextElement, clonedTextElement); // TODO: Try this approach
+        //addCharacterToElement(event, clonedTextElement);
+
+        /*
+          [CUSTOM] onKeyUp
+        */
 
         if (window.location.href.includes('mail.google.com')) {} else if (window.location.href.includes('twitter.com')) {
           (0, _twitter2.default)(originalTextElement, clonedTextElement);
-        } else if (window.location.href.includes('outlook.live.com')) {} else {}
+        } else if (window.location.href.includes('slack.com')) {
+          (0, _slack.onKeyDown)(originalTextElement, clonedTextElement);
+        } else if (window.location.href.includes('outlook.live.com')) {} else {} // TODO: Try to get the last word only
 
-        copyTextFromElementToElement(originalTextElement, clonedTextElement);
+
         var text = clonedTextElement.textContent;
         l(text);
 
         _this2.props.checkText(text, _this2.state.id);
 
-        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text)); // [DEPRECATED] at this state of ev, might be helpful in the future] Save prev cursor position
+        var url = "https://fairlanguage-api-dev.dev-star.de/checkDocument?json&data=".concat(encodeURI(text));
+        /**
+         * IMPORTANT! Otherwise we use the cursor position after replacing
+         */
 
-        _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(originalTextElement); // console.log('saved:'+this.state.currentCursorPosition)
+        _this2.state.currentCursorPosition = (0, _underline.getCurrentCursorPositionInDOMNode)(originalTextElement); // l('saved:'+this.state.currentCursorPosition)
 
         _axios.default.get("".concat(url)).then(function (response) {
           _this2.setState({
@@ -29957,6 +30255,11 @@ function (_Component) {
                 originalTextElement.focus() */
               }, function () {
                 // *onReplaced* 
+                originalTextElement.innerText = clonedTextElement.innerText;
+                /**
+                 * IMPORTANT! Otherwise we use the cursor position after replacing
+                 */
+
                 (0, _underline.setCursorAtPositionInDOMNode)(_this2.state.currentCursorPosition, originalTextElement);
                 originalTextElement.focus();
 
@@ -29974,54 +30277,8 @@ function (_Component) {
 
       originalTextElement.addEventListener('focus', keyUp, true);
       clonedTextElement.parentNode.addEventListener('focus', keyUp, true);
-      /**
-       * iFrames Hack
-       * Original: https://stackoverflow.com/questions/9424550/how-can-i-detect-keyboard-events-in-gmail
-       */
-
-      var doc;
-
-      function keyDown(e) {
-        console.log(e.which);
-      }
-
-      ; // Test
-
-      function keyUp(e) {
-        console.log(e.keyCode);
-      }
-
-      ; // Test
-
-      (function checkForNewIframe(doc) {
-        if (!doc) return; // document does not exist. Cya
-        // Note: It is important to use "true", to bind events to the capturing
-        // phase. If omitted or set to false, the event listener will be bound
-        // to the bubbling phase, where the event is not visible any more when
-        // Gmail calls event.stopPropagation().
-        // Calling addEventListener with the same arguments multiple times bind
-        // the listener only once, so we don't have to set a guard for that.
-        // doc.addEventListener('keydown', keyUp, true);
-
-        doc.addEventListener('keyup', keyUp, true);
-        doc.hasSeenDocument = true;
-
-        for (var i = 0, contentDocument; i < frames.length; i++) {
-          try {
-            contentDocument = iframes[i].document;
-          } catch (e) {
-            continue; // Same-origin policy violation?
-          }
-
-          if (contentDocument && !contentDocument.hasSeenDocument) {
-            // Add poller to the new iframe
-            checkForNewIframe(iframes[i].contentDocument);
-          }
-        }
-
-        setTimeout(checkForNewIframe, 250); // <-- delay of 1/4 second
-      })(document); // Initiate recursive function for the document.
-
+      originalTextElement.addEventListener('keyup', keyUp, true);
+      originalTextElement.parentNode.addEventListener('keyup', keyUp, true);
     }
   }, {
     key: "render",
@@ -30095,7 +30352,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"../helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/textElements/instagram":"modules/textElements/instagram.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../helpers/helper-logger":"../helpers/helper-logger.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/textElements/telegram":"modules/textElements/telegram.js","../modules/textElements/instagram":"modules/textElements/instagram.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js","../modules/slack":"modules/slack.js"}],"modules/placing/google-mail.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30172,36 +30429,6 @@ var outlook = function outlook(elementClickedOn) {
 };
 
 var _default = outlook;
-exports.default = _default;
-},{}],"modules/placing/slack.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var slack = function slack(elementClickedOn) {
-  var element = document.getElementsByClassName('btn_unstyle msg_mentions_button')[0];
-  var container = document.createElement('div');
-  container.style.marginLeft = '-28px';
-  container.style.marginTop = '-2px';
-  element.prepend(container);
-  var textElement;
-
-  if (elementClickedOn.tagName == 'DIV') {
-    textElement = elementClickedOn;
-  }
-
-  if (elementClickedOn.tagName == 'P') {
-    textElement = elementClickedOn.parentNode;
-  }
-
-  var widgetContainer = container;
-  return [textElement, widgetContainer];
-};
-
-var _default = slack;
 exports.default = _default;
 },{}],"modules/placing/google-meet.js":[function(require,module,exports) {
 "use strict";
@@ -37115,6 +37342,8 @@ require("regenerator-runtime/runtime");
 
 var _config = _interopRequireDefault(require("../../config"));
 
+var _hosts = _interopRequireDefault(require("../../hosts"));
+
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -37170,6 +37399,15 @@ function () {
     key: "getHostSettings",
     value: function getHostSettings() {
       var currentHost = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window.location.hostname;
+
+      /**
+       * TODO: !IMPORTANT! Get custom dev state from hosts
+       */
+      var hostDevState = _hosts.default.find(function (host) {
+        return currentHost.includes(host.host);
+      });
+
+      var defaultEnabled = hostDevState && hostDevState.support && hostDevState.support === 'full' ? null : false;
       return new Promise(function (resolve, reject) {
         var settings;
         chrome.storage.local.get(['hosts'],
@@ -37182,7 +37420,7 @@ function () {
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
-                    (0, _helperLogger.default)('Reading hosts settings from local storage...'); //console.log(storage.hosts)
+                    (0, _helperLogger.default)('Reading hosts settings from local storage...'); // console.log(storage.hosts)
                     // If there aren't any entries, start with this one
 
                     if (storage.hosts) {
@@ -37192,7 +37430,7 @@ function () {
 
                     (0, _helperLogger.default)('No hosts found.');
                     settings = {
-                      enabled: null,
+                      enabled: defaultEnabled,
                       name: currentHost
                     };
                     _context.next = 6;
@@ -37227,7 +37465,7 @@ function () {
                   case 14:
                     // No settings for this host yet, make an empty entry
                     settings = {
-                      enabled: null,
+                      enabled: defaultEnabled,
                       name: currentHost
                     };
                     storage.hosts.push(settings);
@@ -37372,7 +37610,7 @@ function () {
 }();
 
 exports.default = StorageController;
-},{"core-js/modules/es6.array.copy-within":"../../node_modules/core-js/modules/es6.array.copy-within.js","core-js/modules/es6.array.fill":"../../node_modules/core-js/modules/es6.array.fill.js","core-js/modules/es6.array.find":"../../node_modules/core-js/modules/es6.array.find.js","core-js/modules/es6.array.find-index":"../../node_modules/core-js/modules/es6.array.find-index.js","core-js/modules/es6.array.from":"../../node_modules/core-js/modules/es6.array.from.js","core-js/modules/es7.array.includes":"../../node_modules/core-js/modules/es7.array.includes.js","core-js/modules/es6.array.iterator":"../../node_modules/core-js/modules/es6.array.iterator.js","core-js/modules/es6.array.of":"../../node_modules/core-js/modules/es6.array.of.js","core-js/modules/es6.array.sort":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es6.array.species":"../../node_modules/core-js/modules/es6.array.species.js","core-js/modules/es6.date.to-primitive":"../../node_modules/core-js/modules/es6.date.to-primitive.js","core-js/modules/es6.function.has-instance":"../../node_modules/core-js/modules/es6.function.has-instance.js","core-js/modules/es6.function.name":"../../node_modules/core-js/modules/es6.function.name.js","core-js/modules/es6.map":"../../node_modules/core-js/modules/es6.map.js","core-js/modules/es6.math.acosh":"../../node_modules/core-js/modules/es6.math.acosh.js","core-js/modules/es6.math.asinh":"../../node_modules/core-js/modules/es6.math.asinh.js","core-js/modules/es6.math.atanh":"../../node_modules/core-js/modules/es6.math.atanh.js","core-js/modules/es6.math.cbrt":"../../node_modules/core-js/modules/es6.math.cbrt.js","core-js/modules/es6.math.clz32":"../../node_modules/core-js/modules/es6.math.clz32.js","core-js/modules/es6.math.cosh":"../../node_modules/core-js/modules/es6.math.cosh.js","core-js/modules/es6.math.expm1":"../../node_modules/core-js/modules/es6.math.expm1.js","core-js/modules/es6.math.fround":"../../node_modules/core-js/modules/es6.math.fround.js","core-js/modules/es6.math.hypot":"../../node_modules/core-js/modules/es6.math.hypot.js","core-js/modules/es6.math.imul":"../../node_modules/core-js/modules/es6.math.imul.js","core-js/modules/es6.math.log1p":"../../node_modules/core-js/modules/es6.math.log1p.js","core-js/modules/es6.math.log10":"../../node_modules/core-js/modules/es6.math.log10.js","core-js/modules/es6.math.log2":"../../node_modules/core-js/modules/es6.math.log2.js","core-js/modules/es6.math.sign":"../../node_modules/core-js/modules/es6.math.sign.js","core-js/modules/es6.math.sinh":"../../node_modules/core-js/modules/es6.math.sinh.js","core-js/modules/es6.math.tanh":"../../node_modules/core-js/modules/es6.math.tanh.js","core-js/modules/es6.math.trunc":"../../node_modules/core-js/modules/es6.math.trunc.js","core-js/modules/es6.number.constructor":"../../node_modules/core-js/modules/es6.number.constructor.js","core-js/modules/es6.number.epsilon":"../../node_modules/core-js/modules/es6.number.epsilon.js","core-js/modules/es6.number.is-finite":"../../node_modules/core-js/modules/es6.number.is-finite.js","core-js/modules/es6.number.is-integer":"../../node_modules/core-js/modules/es6.number.is-integer.js","core-js/modules/es6.number.is-nan":"../../node_modules/core-js/modules/es6.number.is-nan.js","core-js/modules/es6.number.is-safe-integer":"../../node_modules/core-js/modules/es6.number.is-safe-integer.js","core-js/modules/es6.number.max-safe-integer":"../../node_modules/core-js/modules/es6.number.max-safe-integer.js","core-js/modules/es6.number.min-safe-integer":"../../node_modules/core-js/modules/es6.number.min-safe-integer.js","core-js/modules/es6.number.parse-float":"../../node_modules/core-js/modules/es6.number.parse-float.js","core-js/modules/es6.number.parse-int":"../../node_modules/core-js/modules/es6.number.parse-int.js","core-js/modules/es6.object.assign":"../../node_modules/core-js/modules/es6.object.assign.js","core-js/modules/es7.object.define-getter":"../../node_modules/core-js/modules/es7.object.define-getter.js","core-js/modules/es7.object.define-setter":"../../node_modules/core-js/modules/es7.object.define-setter.js","core-js/modules/es7.object.entries":"../../node_modules/core-js/modules/es7.object.entries.js","core-js/modules/es6.object.freeze":"../../node_modules/core-js/modules/es6.object.freeze.js","core-js/modules/es6.object.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.object.get-own-property-descriptor.js","core-js/modules/es7.object.get-own-property-descriptors":"../../node_modules/core-js/modules/es7.object.get-own-property-descriptors.js","core-js/modules/es6.object.get-own-property-names":"../../node_modules/core-js/modules/es6.object.get-own-property-names.js","core-js/modules/es6.object.get-prototype-of":"../../node_modules/core-js/modules/es6.object.get-prototype-of.js","core-js/modules/es7.object.lookup-getter":"../../node_modules/core-js/modules/es7.object.lookup-getter.js","core-js/modules/es7.object.lookup-setter":"../../node_modules/core-js/modules/es7.object.lookup-setter.js","core-js/modules/es6.object.prevent-extensions":"../../node_modules/core-js/modules/es6.object.prevent-extensions.js","core-js/modules/es6.object.is":"../../node_modules/core-js/modules/es6.object.is.js","core-js/modules/es6.object.is-frozen":"../../node_modules/core-js/modules/es6.object.is-frozen.js","core-js/modules/es6.object.is-sealed":"../../node_modules/core-js/modules/es6.object.is-sealed.js","core-js/modules/es6.object.is-extensible":"../../node_modules/core-js/modules/es6.object.is-extensible.js","core-js/modules/es6.object.keys":"../../node_modules/core-js/modules/es6.object.keys.js","core-js/modules/es6.object.seal":"../../node_modules/core-js/modules/es6.object.seal.js","core-js/modules/es6.object.set-prototype-of":"../../node_modules/core-js/modules/es6.object.set-prototype-of.js","core-js/modules/es7.object.values":"../../node_modules/core-js/modules/es7.object.values.js","core-js/modules/es6.promise":"../../node_modules/core-js/modules/es6.promise.js","core-js/modules/es7.promise.finally":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es6.reflect.apply":"../../node_modules/core-js/modules/es6.reflect.apply.js","core-js/modules/es6.reflect.construct":"../../node_modules/core-js/modules/es6.reflect.construct.js","core-js/modules/es6.reflect.define-property":"../../node_modules/core-js/modules/es6.reflect.define-property.js","core-js/modules/es6.reflect.delete-property":"../../node_modules/core-js/modules/es6.reflect.delete-property.js","core-js/modules/es6.reflect.get":"../../node_modules/core-js/modules/es6.reflect.get.js","core-js/modules/es6.reflect.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.reflect.get-own-property-descriptor.js","core-js/modules/es6.reflect.get-prototype-of":"../../node_modules/core-js/modules/es6.reflect.get-prototype-of.js","core-js/modules/es6.reflect.has":"../../node_modules/core-js/modules/es6.reflect.has.js","core-js/modules/es6.reflect.is-extensible":"../../node_modules/core-js/modules/es6.reflect.is-extensible.js","core-js/modules/es6.reflect.own-keys":"../../node_modules/core-js/modules/es6.reflect.own-keys.js","core-js/modules/es6.reflect.prevent-extensions":"../../node_modules/core-js/modules/es6.reflect.prevent-extensions.js","core-js/modules/es6.reflect.set":"../../node_modules/core-js/modules/es6.reflect.set.js","core-js/modules/es6.reflect.set-prototype-of":"../../node_modules/core-js/modules/es6.reflect.set-prototype-of.js","core-js/modules/es6.regexp.constructor":"../../node_modules/core-js/modules/es6.regexp.constructor.js","core-js/modules/es6.regexp.flags":"../../node_modules/core-js/modules/es6.regexp.flags.js","core-js/modules/es6.regexp.match":"../../node_modules/core-js/modules/es6.regexp.match.js","core-js/modules/es6.regexp.replace":"../../node_modules/core-js/modules/es6.regexp.replace.js","core-js/modules/es6.regexp.split":"../../node_modules/core-js/modules/es6.regexp.split.js","core-js/modules/es6.regexp.search":"../../node_modules/core-js/modules/es6.regexp.search.js","core-js/modules/es6.regexp.to-string":"../../node_modules/core-js/modules/es6.regexp.to-string.js","core-js/modules/es6.set":"../../node_modules/core-js/modules/es6.set.js","core-js/modules/es6.symbol":"../../node_modules/core-js/modules/es6.symbol.js","core-js/modules/es7.symbol.async-iterator":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es6.string.anchor":"../../node_modules/core-js/modules/es6.string.anchor.js","core-js/modules/es6.string.big":"../../node_modules/core-js/modules/es6.string.big.js","core-js/modules/es6.string.blink":"../../node_modules/core-js/modules/es6.string.blink.js","core-js/modules/es6.string.bold":"../../node_modules/core-js/modules/es6.string.bold.js","core-js/modules/es6.string.code-point-at":"../../node_modules/core-js/modules/es6.string.code-point-at.js","core-js/modules/es6.string.ends-with":"../../node_modules/core-js/modules/es6.string.ends-with.js","core-js/modules/es6.string.fixed":"../../node_modules/core-js/modules/es6.string.fixed.js","core-js/modules/es6.string.fontcolor":"../../node_modules/core-js/modules/es6.string.fontcolor.js","core-js/modules/es6.string.fontsize":"../../node_modules/core-js/modules/es6.string.fontsize.js","core-js/modules/es6.string.from-code-point":"../../node_modules/core-js/modules/es6.string.from-code-point.js","core-js/modules/es6.string.includes":"../../node_modules/core-js/modules/es6.string.includes.js","core-js/modules/es6.string.italics":"../../node_modules/core-js/modules/es6.string.italics.js","core-js/modules/es6.string.iterator":"../../node_modules/core-js/modules/es6.string.iterator.js","core-js/modules/es6.string.link":"../../node_modules/core-js/modules/es6.string.link.js","core-js/modules/es7.string.pad-start":"../../node_modules/core-js/modules/es7.string.pad-start.js","core-js/modules/es7.string.pad-end":"../../node_modules/core-js/modules/es7.string.pad-end.js","core-js/modules/es6.string.raw":"../../node_modules/core-js/modules/es6.string.raw.js","core-js/modules/es6.string.repeat":"../../node_modules/core-js/modules/es6.string.repeat.js","core-js/modules/es6.string.small":"../../node_modules/core-js/modules/es6.string.small.js","core-js/modules/es6.string.starts-with":"../../node_modules/core-js/modules/es6.string.starts-with.js","core-js/modules/es6.string.strike":"../../node_modules/core-js/modules/es6.string.strike.js","core-js/modules/es6.string.sub":"../../node_modules/core-js/modules/es6.string.sub.js","core-js/modules/es6.string.sup":"../../node_modules/core-js/modules/es6.string.sup.js","core-js/modules/es6.typed.array-buffer":"../../node_modules/core-js/modules/es6.typed.array-buffer.js","core-js/modules/es6.typed.int8-array":"../../node_modules/core-js/modules/es6.typed.int8-array.js","core-js/modules/es6.typed.uint8-array":"../../node_modules/core-js/modules/es6.typed.uint8-array.js","core-js/modules/es6.typed.uint8-clamped-array":"../../node_modules/core-js/modules/es6.typed.uint8-clamped-array.js","core-js/modules/es6.typed.int16-array":"../../node_modules/core-js/modules/es6.typed.int16-array.js","core-js/modules/es6.typed.uint16-array":"../../node_modules/core-js/modules/es6.typed.uint16-array.js","core-js/modules/es6.typed.int32-array":"../../node_modules/core-js/modules/es6.typed.int32-array.js","core-js/modules/es6.typed.uint32-array":"../../node_modules/core-js/modules/es6.typed.uint32-array.js","core-js/modules/es6.typed.float32-array":"../../node_modules/core-js/modules/es6.typed.float32-array.js","core-js/modules/es6.typed.float64-array":"../../node_modules/core-js/modules/es6.typed.float64-array.js","core-js/modules/es6.weak-map":"../../node_modules/core-js/modules/es6.weak-map.js","core-js/modules/es6.weak-set":"../../node_modules/core-js/modules/es6.weak-set.js","core-js/modules/es7.array.flat-map":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/web.timers":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable":"../../node_modules/core-js/modules/web.dom.iterable.js","regenerator-runtime/runtime":"../../node_modules/regenerator-runtime/runtime.js","../../config":"../config.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+},{"core-js/modules/es6.array.copy-within":"../../node_modules/core-js/modules/es6.array.copy-within.js","core-js/modules/es6.array.fill":"../../node_modules/core-js/modules/es6.array.fill.js","core-js/modules/es6.array.find":"../../node_modules/core-js/modules/es6.array.find.js","core-js/modules/es6.array.find-index":"../../node_modules/core-js/modules/es6.array.find-index.js","core-js/modules/es6.array.from":"../../node_modules/core-js/modules/es6.array.from.js","core-js/modules/es7.array.includes":"../../node_modules/core-js/modules/es7.array.includes.js","core-js/modules/es6.array.iterator":"../../node_modules/core-js/modules/es6.array.iterator.js","core-js/modules/es6.array.of":"../../node_modules/core-js/modules/es6.array.of.js","core-js/modules/es6.array.sort":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es6.array.species":"../../node_modules/core-js/modules/es6.array.species.js","core-js/modules/es6.date.to-primitive":"../../node_modules/core-js/modules/es6.date.to-primitive.js","core-js/modules/es6.function.has-instance":"../../node_modules/core-js/modules/es6.function.has-instance.js","core-js/modules/es6.function.name":"../../node_modules/core-js/modules/es6.function.name.js","core-js/modules/es6.map":"../../node_modules/core-js/modules/es6.map.js","core-js/modules/es6.math.acosh":"../../node_modules/core-js/modules/es6.math.acosh.js","core-js/modules/es6.math.asinh":"../../node_modules/core-js/modules/es6.math.asinh.js","core-js/modules/es6.math.atanh":"../../node_modules/core-js/modules/es6.math.atanh.js","core-js/modules/es6.math.cbrt":"../../node_modules/core-js/modules/es6.math.cbrt.js","core-js/modules/es6.math.clz32":"../../node_modules/core-js/modules/es6.math.clz32.js","core-js/modules/es6.math.cosh":"../../node_modules/core-js/modules/es6.math.cosh.js","core-js/modules/es6.math.expm1":"../../node_modules/core-js/modules/es6.math.expm1.js","core-js/modules/es6.math.fround":"../../node_modules/core-js/modules/es6.math.fround.js","core-js/modules/es6.math.hypot":"../../node_modules/core-js/modules/es6.math.hypot.js","core-js/modules/es6.math.imul":"../../node_modules/core-js/modules/es6.math.imul.js","core-js/modules/es6.math.log1p":"../../node_modules/core-js/modules/es6.math.log1p.js","core-js/modules/es6.math.log10":"../../node_modules/core-js/modules/es6.math.log10.js","core-js/modules/es6.math.log2":"../../node_modules/core-js/modules/es6.math.log2.js","core-js/modules/es6.math.sign":"../../node_modules/core-js/modules/es6.math.sign.js","core-js/modules/es6.math.sinh":"../../node_modules/core-js/modules/es6.math.sinh.js","core-js/modules/es6.math.tanh":"../../node_modules/core-js/modules/es6.math.tanh.js","core-js/modules/es6.math.trunc":"../../node_modules/core-js/modules/es6.math.trunc.js","core-js/modules/es6.number.constructor":"../../node_modules/core-js/modules/es6.number.constructor.js","core-js/modules/es6.number.epsilon":"../../node_modules/core-js/modules/es6.number.epsilon.js","core-js/modules/es6.number.is-finite":"../../node_modules/core-js/modules/es6.number.is-finite.js","core-js/modules/es6.number.is-integer":"../../node_modules/core-js/modules/es6.number.is-integer.js","core-js/modules/es6.number.is-nan":"../../node_modules/core-js/modules/es6.number.is-nan.js","core-js/modules/es6.number.is-safe-integer":"../../node_modules/core-js/modules/es6.number.is-safe-integer.js","core-js/modules/es6.number.max-safe-integer":"../../node_modules/core-js/modules/es6.number.max-safe-integer.js","core-js/modules/es6.number.min-safe-integer":"../../node_modules/core-js/modules/es6.number.min-safe-integer.js","core-js/modules/es6.number.parse-float":"../../node_modules/core-js/modules/es6.number.parse-float.js","core-js/modules/es6.number.parse-int":"../../node_modules/core-js/modules/es6.number.parse-int.js","core-js/modules/es6.object.assign":"../../node_modules/core-js/modules/es6.object.assign.js","core-js/modules/es7.object.define-getter":"../../node_modules/core-js/modules/es7.object.define-getter.js","core-js/modules/es7.object.define-setter":"../../node_modules/core-js/modules/es7.object.define-setter.js","core-js/modules/es7.object.entries":"../../node_modules/core-js/modules/es7.object.entries.js","core-js/modules/es6.object.freeze":"../../node_modules/core-js/modules/es6.object.freeze.js","core-js/modules/es6.object.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.object.get-own-property-descriptor.js","core-js/modules/es7.object.get-own-property-descriptors":"../../node_modules/core-js/modules/es7.object.get-own-property-descriptors.js","core-js/modules/es6.object.get-own-property-names":"../../node_modules/core-js/modules/es6.object.get-own-property-names.js","core-js/modules/es6.object.get-prototype-of":"../../node_modules/core-js/modules/es6.object.get-prototype-of.js","core-js/modules/es7.object.lookup-getter":"../../node_modules/core-js/modules/es7.object.lookup-getter.js","core-js/modules/es7.object.lookup-setter":"../../node_modules/core-js/modules/es7.object.lookup-setter.js","core-js/modules/es6.object.prevent-extensions":"../../node_modules/core-js/modules/es6.object.prevent-extensions.js","core-js/modules/es6.object.is":"../../node_modules/core-js/modules/es6.object.is.js","core-js/modules/es6.object.is-frozen":"../../node_modules/core-js/modules/es6.object.is-frozen.js","core-js/modules/es6.object.is-sealed":"../../node_modules/core-js/modules/es6.object.is-sealed.js","core-js/modules/es6.object.is-extensible":"../../node_modules/core-js/modules/es6.object.is-extensible.js","core-js/modules/es6.object.keys":"../../node_modules/core-js/modules/es6.object.keys.js","core-js/modules/es6.object.seal":"../../node_modules/core-js/modules/es6.object.seal.js","core-js/modules/es6.object.set-prototype-of":"../../node_modules/core-js/modules/es6.object.set-prototype-of.js","core-js/modules/es7.object.values":"../../node_modules/core-js/modules/es7.object.values.js","core-js/modules/es6.promise":"../../node_modules/core-js/modules/es6.promise.js","core-js/modules/es7.promise.finally":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es6.reflect.apply":"../../node_modules/core-js/modules/es6.reflect.apply.js","core-js/modules/es6.reflect.construct":"../../node_modules/core-js/modules/es6.reflect.construct.js","core-js/modules/es6.reflect.define-property":"../../node_modules/core-js/modules/es6.reflect.define-property.js","core-js/modules/es6.reflect.delete-property":"../../node_modules/core-js/modules/es6.reflect.delete-property.js","core-js/modules/es6.reflect.get":"../../node_modules/core-js/modules/es6.reflect.get.js","core-js/modules/es6.reflect.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.reflect.get-own-property-descriptor.js","core-js/modules/es6.reflect.get-prototype-of":"../../node_modules/core-js/modules/es6.reflect.get-prototype-of.js","core-js/modules/es6.reflect.has":"../../node_modules/core-js/modules/es6.reflect.has.js","core-js/modules/es6.reflect.is-extensible":"../../node_modules/core-js/modules/es6.reflect.is-extensible.js","core-js/modules/es6.reflect.own-keys":"../../node_modules/core-js/modules/es6.reflect.own-keys.js","core-js/modules/es6.reflect.prevent-extensions":"../../node_modules/core-js/modules/es6.reflect.prevent-extensions.js","core-js/modules/es6.reflect.set":"../../node_modules/core-js/modules/es6.reflect.set.js","core-js/modules/es6.reflect.set-prototype-of":"../../node_modules/core-js/modules/es6.reflect.set-prototype-of.js","core-js/modules/es6.regexp.constructor":"../../node_modules/core-js/modules/es6.regexp.constructor.js","core-js/modules/es6.regexp.flags":"../../node_modules/core-js/modules/es6.regexp.flags.js","core-js/modules/es6.regexp.match":"../../node_modules/core-js/modules/es6.regexp.match.js","core-js/modules/es6.regexp.replace":"../../node_modules/core-js/modules/es6.regexp.replace.js","core-js/modules/es6.regexp.split":"../../node_modules/core-js/modules/es6.regexp.split.js","core-js/modules/es6.regexp.search":"../../node_modules/core-js/modules/es6.regexp.search.js","core-js/modules/es6.regexp.to-string":"../../node_modules/core-js/modules/es6.regexp.to-string.js","core-js/modules/es6.set":"../../node_modules/core-js/modules/es6.set.js","core-js/modules/es6.symbol":"../../node_modules/core-js/modules/es6.symbol.js","core-js/modules/es7.symbol.async-iterator":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es6.string.anchor":"../../node_modules/core-js/modules/es6.string.anchor.js","core-js/modules/es6.string.big":"../../node_modules/core-js/modules/es6.string.big.js","core-js/modules/es6.string.blink":"../../node_modules/core-js/modules/es6.string.blink.js","core-js/modules/es6.string.bold":"../../node_modules/core-js/modules/es6.string.bold.js","core-js/modules/es6.string.code-point-at":"../../node_modules/core-js/modules/es6.string.code-point-at.js","core-js/modules/es6.string.ends-with":"../../node_modules/core-js/modules/es6.string.ends-with.js","core-js/modules/es6.string.fixed":"../../node_modules/core-js/modules/es6.string.fixed.js","core-js/modules/es6.string.fontcolor":"../../node_modules/core-js/modules/es6.string.fontcolor.js","core-js/modules/es6.string.fontsize":"../../node_modules/core-js/modules/es6.string.fontsize.js","core-js/modules/es6.string.from-code-point":"../../node_modules/core-js/modules/es6.string.from-code-point.js","core-js/modules/es6.string.includes":"../../node_modules/core-js/modules/es6.string.includes.js","core-js/modules/es6.string.italics":"../../node_modules/core-js/modules/es6.string.italics.js","core-js/modules/es6.string.iterator":"../../node_modules/core-js/modules/es6.string.iterator.js","core-js/modules/es6.string.link":"../../node_modules/core-js/modules/es6.string.link.js","core-js/modules/es7.string.pad-start":"../../node_modules/core-js/modules/es7.string.pad-start.js","core-js/modules/es7.string.pad-end":"../../node_modules/core-js/modules/es7.string.pad-end.js","core-js/modules/es6.string.raw":"../../node_modules/core-js/modules/es6.string.raw.js","core-js/modules/es6.string.repeat":"../../node_modules/core-js/modules/es6.string.repeat.js","core-js/modules/es6.string.small":"../../node_modules/core-js/modules/es6.string.small.js","core-js/modules/es6.string.starts-with":"../../node_modules/core-js/modules/es6.string.starts-with.js","core-js/modules/es6.string.strike":"../../node_modules/core-js/modules/es6.string.strike.js","core-js/modules/es6.string.sub":"../../node_modules/core-js/modules/es6.string.sub.js","core-js/modules/es6.string.sup":"../../node_modules/core-js/modules/es6.string.sup.js","core-js/modules/es6.typed.array-buffer":"../../node_modules/core-js/modules/es6.typed.array-buffer.js","core-js/modules/es6.typed.int8-array":"../../node_modules/core-js/modules/es6.typed.int8-array.js","core-js/modules/es6.typed.uint8-array":"../../node_modules/core-js/modules/es6.typed.uint8-array.js","core-js/modules/es6.typed.uint8-clamped-array":"../../node_modules/core-js/modules/es6.typed.uint8-clamped-array.js","core-js/modules/es6.typed.int16-array":"../../node_modules/core-js/modules/es6.typed.int16-array.js","core-js/modules/es6.typed.uint16-array":"../../node_modules/core-js/modules/es6.typed.uint16-array.js","core-js/modules/es6.typed.int32-array":"../../node_modules/core-js/modules/es6.typed.int32-array.js","core-js/modules/es6.typed.uint32-array":"../../node_modules/core-js/modules/es6.typed.uint32-array.js","core-js/modules/es6.typed.float32-array":"../../node_modules/core-js/modules/es6.typed.float32-array.js","core-js/modules/es6.typed.float64-array":"../../node_modules/core-js/modules/es6.typed.float64-array.js","core-js/modules/es6.weak-map":"../../node_modules/core-js/modules/es6.weak-map.js","core-js/modules/es6.weak-set":"../../node_modules/core-js/modules/es6.weak-set.js","core-js/modules/es7.array.flat-map":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/web.timers":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable":"../../node_modules/core-js/modules/web.dom.iterable.js","regenerator-runtime/runtime":"../../node_modules/regenerator-runtime/runtime.js","../../config":"../config.js","../../hosts":"../hosts.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
 function getBundleURLCached() {
@@ -37583,7 +37821,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.25",
+  "version": "0.9.51",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"
@@ -37623,19 +37861,21 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
+var _hosts = _interopRequireDefault(require("../hosts"));
+
 var _helperLogger = _interopRequireDefault(require("./helpers/helper-logger"));
 
 var _componentToolbar = _interopRequireDefault(require("./components/component-toolbar"));
 
 var _componentWidget = _interopRequireDefault(require("./components/component-widget"));
 
+var _slack = _interopRequireDefault(require("./modules/slack"));
+
 var _googleMail = _interopRequireDefault(require("./modules/placing/google-mail"));
 
 var _yahooMail = _interopRequireDefault(require("./modules/placing/yahoo-mail"));
 
 var _outlookMail = _interopRequireDefault(require("./modules/placing/outlook-mail"));
-
-var _slack = _interopRequireDefault(require("./modules/placing/slack"));
 
 var _googleMeet = _interopRequireDefault(require("./modules/placing/google-meet"));
 
@@ -37723,7 +37963,7 @@ function (_Component) {
 
         _this2.setState({
           enabled: generalSettings.enabled,
-          host: hostSettings.enabled,
+          hostEnabled: hostSettings.enabled,
           toolbar: generalSettings.consent === false ? true : generalSettings.toolbar
         }, function () {
           if (dev) console.log(_this2.state);
@@ -38046,7 +38286,9 @@ function (_Component) {
   }, {
     key: "getOverallState",
     value: function getOverallState() {
-      if (this.state.host === false) return false;
+      // Disabled for current host?
+      if (this.state.hostEnabled === false) return false; // Otherwise use general state
+
       return this.state.enabled;
     }
   }, {
@@ -38115,7 +38357,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./helpers/helper-logger":"../helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/slack":"modules/placing/slack.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"controller/storage.js","./components/component-button":"components/component-button.js","./index.css":"index.css","../manifest.json":"../manifest.json"}],"index.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../hosts":"../hosts.js","./helpers/helper-logger":"../helpers/helper-logger.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.js","./modules/slack":"modules/slack.js","./modules/placing/google-mail":"modules/placing/google-mail.js","./modules/placing/yahoo-mail":"modules/placing/yahoo-mail.js","./modules/placing/outlook-mail":"modules/placing/outlook-mail.js","./modules/placing/google-meet":"modules/placing/google-meet.js","./modules/placing/microsoft-teams":"modules/placing/microsoft-teams.js","./modules/placing/messenger":"modules/placing/messenger.js","./modules/placing/whatsapp":"modules/placing/whatsapp.js","./modules/placing/telegram":"modules/placing/telegram.js","./modules/placing/facebook":"modules/placing/facebook.js","./modules/placing/twitter":"modules/placing/twitter.js","./modules/placing/instagram":"modules/placing/instagram.js","./modules/placing/zalando":"modules/placing/zalando.js","./controller/storage":"controller/storage.js","./components/component-button":"components/component-button.js","./index.css":"index.css","../manifest.json":"../manifest.json"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -38223,7 +38465,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49442" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51366" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

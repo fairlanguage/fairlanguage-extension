@@ -1,10 +1,14 @@
-## (Updated 4/02/19)
+## (Updated 05/01/19)
 
 # 🎉 Compatibility Status
 
-|             Web App                             | widget | method  | textElement               | type | knownIssues  |
+|             Web App                             | widget | method  | inputElement              | type | knownIssues  |
 |-------------------------------------------------|:------:|:-------:|:-------------------------:|:----:|:------------:| 
-| Social Media                                    |        |         |                           |      |              |
+| [![slack]](https://slack.com)                                    |        |         |                           |      |              |
+| [slack.com](https://slack.com)                  | custom | cloning | Main                      | DIV  |              |
+| [slack.com](https://slack.com)                  | custom | cloning | Thread - Main             | DIV  |              |
+| [slack.com](https://slack.com)                  | custom | cloning | Thread - Sidebar          | DIV  |              |
+| [slack.com](https://slack.com)                  | custom | cloning | Reply                     | DIV  |              |
 | <b>twitter</b>                                  |        |         |                           |      |              |
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Tweet              | DIV  |              |
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Reply              | DIV  |              |
@@ -14,19 +18,13 @@
 | [instagram.com](https://instagram.com)          | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
 | <b>facebook</b>                                 |        |         |                           |     |              |
 | [facebook.com](https://facebook.com)                         | custom | cloning | Feed - Create Post        | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
-|                                                 |        |         |                           |     |              |
-|                                                 |        |         |                           |     |              |
-| Messenging                                      |        |         |                           |     |              |
 | <b>messenger</b>                                |        |         |                           |     |              |
 | [messenger.com](https://messenger.com)          | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 | [web.whatsapp.com](https://web.whatsapp.com)    | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 | [web.telegram.org](https://web.telegram.org)    | custom | cloning | Send Message              | DIV |              |
-| Mail                                            |        |         |                           |     |              |
 | [![badge4]](https://mail.google.com)            | custom | cloning |                           |     |              |
 | [![badge5]](https://mail.yahoo.com)             | custom | cloning |                           |     |              |
 | [![badge6]](https://outlook.live.com)           | custom | cloning |                           |     |              |
-| Work                                            |        |         |                           |     |              |
-| [![badge10]](https://slack.org)                 | custom | cloning |                           |     |              |
 | [![badge11]](https://meet.google.com)           | custom | cloning |                           |     |              |
 | [![badge111]](https://meet.google.com)          | custom | cloning |                           |     |              |
 
@@ -52,11 +50,7 @@
 
 [badge6]: https://img.shields.io/badge/outlook.live.com-supported-green.svg
 
-
-
-
-
-[badge10]: https://img.shields.io/badge/slack.com-supported-green.svg
+[slack]: https://img.shields.io/badge/slack.com-supported-green.svg
 
 [badge11]: https://img.shields.io/badge/meet.google.com-supported-green.svg
 
