@@ -1,15 +1,4 @@
-.hovered {
-  border-bottom-width: '2px';
-  border-bottom-style: 'solid';
-  border-color: 'red';
-  background: 'red';
-}
-.normal {
-  border-bottom-width: '0px';
-  border-bottom-style: 'solid';
-  border-color: 'red';
-  background: 'red';
-}@import url('https://fonts.googleapis.com/css?family=Montserrat');
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
 
 @font-face {
   font-family: 'Montserrat', sans-serif;

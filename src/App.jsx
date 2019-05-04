@@ -1,30 +1,15 @@
+/* eslint-disable import/first */
+// eslint-disable-next-line no-underscore-dangle
+const __DEV__ = false;
+
 import React, { Fragment, Component } from 'react';
-
-import hosts from '../hosts';
-
-import log from './helpers/helper-logger';
 
 import ComponentToolbar from './components/component-toolbar';
 import ComponentWidget from './components/component-widget';
 
-import ModulePlacingSlack from './modules/slack';
+import validateInputElement from './scripts/validateInputElement';
 
-import ModulePlacingGoogleMail from './modules/placing/google-mail';
-import ModulePlacingYahooMail from './modules/placing/yahoo-mail';
-import ModulePlacingOutlookMail from './modules/placing/outlook-mail';
-
-import ModulePlacingGoogleMeet from './modules/placing/google-meet';
-import ModulePlacingMicrosoftTeams from './modules/placing/microsoft-teams';
-
-import ModulePlacingMessenger from './modules/placing/messenger';
-import ModulePlacingWhatsapp from './modules/placing/whatsapp';
-import ModulePlacingTelegram from './modules/placing/telegram';
-
-import ModulePlacingFacebook from './modules/placing/facebook';
-import ModulePlacingTwitter from './modules/placing/twitter';
-import ModulePlacingInstagram from './modules/placing/instagram';
-
-import ModulePlacingZalando from './modules/placing/zalando';
+import customIdentifierSlack from './modules/slack';
 
 import StorageController from './controller/storage';
 
@@ -34,7 +19,9 @@ import './index.css';
 
 import * as manifest from '../manifest.json';
 
-const dev = true;
+import log from './helpers/helper-logger';
+
+const l = i => (__DEV__ ? log(i) : null); 
 
 const TEXT_PROMPT_ENABLE = 'Toll, dass du Fairlanguage verwenden möchtest! Bitte lies unsere Nutzungsbedingungen, um die Extension zu aktivieren.';
 const TEXT_ENABLE = 'Ja, damit bin ich einverstanden.';
@@ -49,7 +36,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      textFields: [],
+      inputElements: [],
     };
   }
 
@@ -71,7 +58,7 @@ export default class App extends Component {
           hostEnabled: hostSettings.enabled,
           toolbar: generalSettings.consent === false ? true : generalSettings.toolbar,
         }, () => {
-          if (dev)console.log(this.state);
+          l(this.state);
         });
       });
 
@@ -90,16 +77,14 @@ export default class App extends Component {
         log(JSON.stringify(message));
         switch (message.command) {
           case 'enabled':
-          
             StorageController.setEnabled()
               .then((settings) => {
                 this.setState({ enabled: settings.enabled });
-                chrome.runtime.sendMessage({ settings: settings });
+                chrome.runtime.sendMessage({ settings });
               });
 
             break;
           case 'toolbar':
-          
             StorageController.setToolbar()
               .then((state) => {
                 this.setState({ toolbar: state });
@@ -133,287 +118,132 @@ export default class App extends Component {
                 chrome.runtime.sendMessage({ host: settings });
               });
 
-            // Delete clones
+            // TODO: NOT GOOD!!! Delete clones
 
             const elements = document.querySelectorAll('[id=fl-clone]');
             for (const el of elements){
               if(el && el.style)
-              el.style.opacity = 0;
+                el.style.opacity = 0;
             }
 
             break;
 
           default:
-            log('Ain`t got nothing to say(it`s just language).');
+            log('Fairlanguage');
             break;
         }
       },
     );
 
+    window.addEventListener('focus', (event) => {
+      this.identifyInputElement(event);
+    });
+
     window.addEventListener('click', (event) => {
-
-      /*
-      * Are we live? That shit on?
-      * Are we actually allowed in here?
-      */
-      const enabled = this.getOverallState();
-
-      if (dev) console.log(this.state);
-      if (!enabled) return log('Extension disabled');
-      
-      /*
-      * So, Where did this actually go?
-      */
-      const elementClickedOn = event.target;
-
-      /*
-      *  First, check if it's ours.
-      */
-      let isAlreadyInjected = false;
-
-      let maxDepth = 10;
-      let depth = 0;
-      let el = elementClickedOn;
-      while (!isAlreadyInjected && depth <= maxDepth) {
-        if (el !== document && el !== document.body && el !== null) {
-          isAlreadyInjected = el.hasAttribute('fl');
-          el = el.parentNode !== null ? el.parentNode : el;
-        }
-        depth += 1;
-      }
-
-      log(`isAlreadyInjected: ${isAlreadyInjected}`);
-
-      if (isAlreadyInjected) return;
-
-      /*
-      *  Second, detect if the element is any kind of text field.
-      */
-
-      // Is the element itself a HTML TextArea element?
-      const isTextArea = elementClickedOn.type === 'textarea';
-      log(`isTextArea: ${isTextArea}`);
-
-      // Is the element an input element?
-      const isIn = elementClickedOn.tagName.toLowerCase() === 'input';
-      log(`isIn: ${isIn}`);
-
-      // Is the element's type input?
-      const isInput = elementClickedOn.type === 'input';
-      log(`isInput: ${isInput}`);
-
-      // Is the element's type search?
-      const isSearch = elementClickedOn.type === 'search';
-      log(`isSearch: ${isSearch}`);
-
-      // Is the element itself content editable?
-      const isContentEditable = elementClickedOn.hasAttribute('contenteditable');
-      log(`isContentIsEditable: ${isContentEditable}`);
-
-      // Is a parent element's content editable?
-      let isParentElementContentIsEditable;
-
-      maxDepth = 10;
-
-      depth = 0;
-      el = elementClickedOn;
-      while (!isParentElementContentIsEditable && depth <= maxDepth) {
-        if (el !== document && el !== document.body && el !== null) {
-          isParentElementContentIsEditable = el.hasAttribute('contenteditable');
-          el = el.parentNode !== null ? el.parentNode : el;
-        }
-        depth += 1;
-      }
-
-      log(`isParentElementContentIsEditable (${depth}): ${isParentElementContentIsEditable}`);
-
-      /**
-       * Decide, according to what wr got.
-       */
-
-      // If none of that is the case it just wasn't a txt field (sorry :/).
-      // if (isInput || isIn || isTextArea) return;
-      if (!isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) return;
-
-      /*
-      *  Third, we decide where to place the fucking widget!
-      */
-
-      const { textFields } = this.state;
-
-      let textElement;
-      let widgetContainer;
-
-      // Do we have a custom idea for the webapp?
-      let hasCustomPosition = false;
-      if (window.location.href.includes('slack.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingSlack(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else
-      if (window.location.href.includes('twitter.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingTwitter(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else
-      if (window.location.href.includes('outlook.live.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingOutlookMail(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else
-      if (window.location.href.includes('mail.yahoo.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingYahooMail(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else  
-      if (window.location.href.includes('mail.google.com')) {
-        hasCustomPosition = true;
-
-        const e = ModulePlacingGoogleMail(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else
-      if (window.location.href.includes('facebook.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingFacebook(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else       
-      if (window.location.href.includes('en.zalando.de')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingZalando(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else     
-      if (window.location.href.includes('messenger.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingMessenger(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else     
-      if (window.location.href.includes('meet.google.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingGoogleMeet(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else    
-      if (window.location.href.includes('instagram.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingInstagram(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else 
-      if (window.location.href.includes('teams.microsoft.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingMicrosoftTeams(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else    
-      if (window.location.href.includes('whatsapp.com')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingWhatsapp(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else      
-      if (window.location.href.includes('telegram.org')) {
-
-        hasCustomPosition = true;
-
-        const e = ModulePlacingTelegram(elementClickedOn);
-        textElement = e[0];
-        widgetContainer = e[1];
-
-      } else {
-
-        /*
-      * We don't have a custom position for this app, so just place it inside the parent node.
-      */
-
-        const parentElement = isParentElementContentIsEditable ? elementClickedOn.parentNode.parentNode : elementClickedOn.parentNode;
-        
-        textElement = elementClickedOn;
-        widgetContainer = parentElement;
-
-      }
-
-      log(`hasCustomPosition (MODULE): ${hasCustomPosition}`);
-
-      textFields.push([textElement, widgetContainer]);
-
-      this.setState({
-        textFields,
-      });
-
-      /*
-      * Mark the element, so we wont give it a widget again.
-      */
-
-      elementClickedOn.setAttribute('fl', 'lala');
-      elementClickedOn.parentElement.setAttribute('fl', 'lala');
-
-      log(`Set widget #${textFields.length}`);
-
+      this.identifyInputElement(event);
+    });
+
+    window.addEventListener('keydown', (event) => {
+      this.identifyInputElement(event);
     });
 
   }
 
   getOverallState() {
 
+    const { enabled, hostEnabled } = this.state;
+
     // Disabled for current host?
-    if (this.state.hostEnabled === false) return false;
+    if (hostEnabled === false) return false;
 
     // Otherwise use general state
-    return this.state.enabled;
+    return enabled;
 
   }
 
-  handleClickEnabled(mode) {
+  identifyInputElement(event) {
 
+    /*
+    * That shit on? Are we actually allowed in here?
+    */
+    const enabled = this.getOverallState();
+    if (!enabled) return log('Extension disabled');
+
+    /*
+    * So, what do we have?
+    */
+    const elementClickedOn = event.target;
+
+    // Validate potential inputElement
+    const isPotentialInputElement = validateInputElement(elementClickedOn);
+    if (!isPotentialInputElement) return log(`isPotentialInputElement: ${isPotentialInputElement}`);
+
+    /*
+    *  Identify inputElement, position widget
+    */
+
+    let inputElement;
+    let widgetContainer;
+
+    /**
+     * Custom identifier/positioner
+     */
+    
+    let customIdentifier;
+    if (window.location.href.includes('slack.com')) {
+
+      customIdentifier = 'Slack';
+      log(`hasCustomIdentifier: ${customIdentifier}`);
+
+      const elements = customIdentifierSlack(elementClickedOn);
+      
+      [inputElement, widgetContainer] = elements;
+
+    } else {
+
+      /**
+       * Default identifier/positioner
+       */
+
+      inputElement = elementClickedOn;
+      widgetContainer = elementClickedOn.parentNode;
+
+    }
+
+    /**
+    * If the textElement was set to null by the customModule it is not supposed
+    * to be enabled on the identified textElement.
+    */
+
+    if (customIdentifier && inputElement === null) {
+      return log('customIdentifier: disabled on this element');
+    }
+
+    const { inputElements } = this.state;
+
+    inputElements.push([inputElement, widgetContainer]);
+
+    this.setState({
+      inputElements,
+    });
+
+    /*
+    * Mark the element, so we wont give it a widget again.
+    * TODO: Move to identifier
+    */
+
+    inputElement.setAttribute('fl', inputElements.length);
+
+    return log(`Sucessfully identified inputElement and set widget #${inputElements.length}`);
+  }
+
+  handleClickEnabled(mode) {
     StorageController.setEnabled(mode)
       .then(() => {
         this.setState({
           enabled: mode,
         });
       });
-
   }
 
   _handleSetActive() {
@@ -472,7 +302,7 @@ export default class App extends Component {
         }
         {
           enabled
-            ? this.state.textFields.map((el, index) => (
+            ? this.state.inputElements.map((el, index) => (
               <ComponentWidget
                 key={index}
                 visible

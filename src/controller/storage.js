@@ -86,7 +86,7 @@ export default class StorageController {
           settings = storage.hosts.find(hostInStorage => hostInStorage.name === currentHost);
 
           if (settings) {
-            log(settings);
+            log(JSON.stringify(settings));
             resolve(settings);
           } else {
 

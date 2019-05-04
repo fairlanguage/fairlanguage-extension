@@ -1,17 +1,20 @@
+/* eslint-disable import/first */
+// eslint-disable-next-line no-underscore-dangle
+const __DEV__ = false;
+
 import config from '../../config';
 
 import formatMarkingElementForWhatsapp from '../modules/markingElement/whatsapp';
 import { formatMarkingElement as formatMarkingElementForSlack } from '../modules/slack';
 
-const _DEV_ = true;
-const l = i => {
-  if (_DEV_) return console.log(i);
-};
+import log from '../helpers/helper-logger';
+
+const l = i => (__DEV__ ? log(i) : null); 
 
 const UNDERLINE_COLOR = config.colors.primary[3];
 
 function dec2hex(dec) {
-  return ("0" + dec.toString(16)).substr(-2);
+  return ((`0${dec.toString(16)}`).substr(-2));
 }
 
 const generateRandomString = length => {
@@ -167,7 +170,7 @@ const underline = (data, element, onModified, onReplaced) => {
     if (isAlreadyModified(current)) return;
 
     const text = current.textContent;
-    // console.log(`Current DOM Node is: ${current}, with text: ${text}`);
+    // l(`Current DOM Node is: ${current}, with text: ${text}`);
     if (isChildlessTextNode(current) && isIncluded(word, text)) {      
 
       // l(`There is a "${word}" in this: "${text}"`);
@@ -246,7 +249,7 @@ const createRange = (node, chars, range = document.createRange()) => {
     }
   }
 
-  // console.log(range)
+  // l(range)
 
   return range;
 };
@@ -280,12 +283,12 @@ const setCursorAtPositionInDOMNode = (chars, node) => {
   // [DEPRECATED (but maybe useful in the future)]
   //l(`restored: ${chars}`);
 
-  //console.log('selection:');
+  //l('selection:');
   const selection = window.getSelection();
-  //console.log(selection);
+  //l(selection);
 
-  //console.log('node:');
-  //console.log(node.childNodes.length);
+  //l('node:');
+  //l(node.childNodes.length);
 
   const range = document.createRange();
   
@@ -300,14 +303,14 @@ const setCursorAtPositionInDOMNode = (chars, node) => {
   // Info: true = Select everything in range / false = Select nothing in range
   range.collapse(false);
 
-  //console.log('range:');
-  //console.log(range);
+  //l('range:');
+  //l(range);
 
   selection.removeAllRanges();
   selection.addRange(range);
 
-  //console.log('selection:');
-  //console.log(selection);
+  //l('selection:');
+  //l(selection);
 
 };
 

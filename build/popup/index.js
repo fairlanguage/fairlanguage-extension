@@ -109,7 +109,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.51",
+  "version": "0.9.62",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"
@@ -6988,7 +6988,7 @@ function () {
                       break;
                     }
 
-                    (0, _helperLogger.default)(settings);
+                    (0, _helperLogger.default)(JSON.stringify(settings));
                     resolve(settings);
                     _context.next = 18;
                     break;

@@ -14,8 +14,6 @@ import * as actionsText from '../actions/actions-text';
 
 import config from '../../config';
 
-import log from '../helpers/helper-logger';
-
 import underline, {
   getCurrentCursorPositionInDOMNode,
   setCursorAtPositionInDOMNode,
@@ -33,6 +31,8 @@ import {
   formatTextElements as formatForSlack, 
   onKeyDown as onKeyDownForSlack, 
 } from '../modules/slack';
+
+import log from '../helpers/helper-logger';
 
 const l = i => (__DEV__ ? log(i) : null); 
 
@@ -309,7 +309,7 @@ class ComponentWidget extends Component {
       height: '22px',
       borderRadius: '11px',
       color: 'white',
-      background: STRING_GRADIENT
+      background: STRING_GRADIENT,
     };
     
     const circleCaption = {

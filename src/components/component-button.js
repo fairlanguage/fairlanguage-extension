@@ -5,8 +5,6 @@ import PropTypes from 'prop-types';
 import config from '../../config';
 import log from '../helpers/helper-logger';
 
-import styles from './ComponentButton.module.css';
-
 import WebFont from 'webfontloader';
 
 WebFont.load({

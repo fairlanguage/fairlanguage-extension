@@ -1,0 +1,6 @@
+{
+  "vscode-custom-css.policy": true,
+  "vscode-custom-css.imports": [
+      "file:///Users/florian/synthwave.css"
+  ]
+}

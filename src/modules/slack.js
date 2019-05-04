@@ -1,16 +1,25 @@
+/* eslint-disable import/first */
+// eslint-disable-next-line no-underscore-dangle
+const __DEV__ = false;
+import log from '../helpers/helper-logger';
+
+const l = i => (__DEV__ ? log(i) : null); 
+
 let type;
 
 const identifyInputElement = (elementClickedOn) => {
 
   /*
-    Find message container element ( attribute: data-q="message_input")
+    Find message container/wrapper element ( attribute: data-q="message_input")
   */
   
   let i = 0;
   let container;
   let current = elementClickedOn.parentNode;
 
-  while (container === undefined && i < 50) {
+  const THRESHOLD = 25;
+
+  while (container === undefined && i < THRESHOLD) {
     if (current 
       && current.hasAttribute 
       && current.hasAttribute('data-qa')) {
@@ -20,11 +29,10 @@ const identifyInputElement = (elementClickedOn) => {
     i += 1; 
   }
 
-  console.log(container);
-
+  // log(container);
 
   /*
-    Identify elements position
+    Identify elements type
   */
 
   const attribute = container.getAttribute('data-qa');
@@ -39,15 +47,14 @@ const identifyInputElement = (elementClickedOn) => {
     && container.hasAttribute('data-view-context') 
     && container.getAttribute('data-view-context') === 'threads-view') {
     type = 'threads-view';
-  } else {
+  } else if (attribute === 'message_input') {
     type = 'main';
   }
 
-  // alert(type);
-  // console.log(type);
+  l(`[Slack] - identifiedInputElementType: ${type}`);
 
   /**
-   * Position widget according to type
+   * Position widget according to identified type
    */
 
   let textElement;
@@ -79,11 +86,11 @@ const identifyInputElement = (elementClickedOn) => {
       buttons.append(element);
 
       if (elementClickedOn.tagName === 'DIV') {
-      textElement = elementClickedOn;
+        textElement = elementClickedOn;
       }
 
       if (elementClickedOn.tagName === 'P') {
-      textElement = elementClickedOn.parentNode;
+        textElement = elementClickedOn.parentNode;
       }
 
       widgetContainer = element;
@@ -92,12 +99,12 @@ const identifyInputElement = (elementClickedOn) => {
     case 'threads-view':
       
       element = document.createElement('button');
-      element.className = "c-button-unstyled c-texty_input__button";
+      element.className = 'c-button-unstyled c-texty_input__button';
       // element.setAttribute("tabindex", 5)
 
       element.style.transform = 'scale(0.8)';
 
-      //element.style.transform = 'scale(0.8)';
+      // element.style.transform = 'scale(0.8)';
 
       //element.style.marginRight = '25px';
       element.style.marginTop = '-0.5px';    
@@ -182,9 +189,9 @@ const identifyInputElement = (elementClickedOn) => {
 
       buttons.style.border = '0px solid blue';
 
-      buttons.append(element)
+      buttons.append(element);
       
-      //return
+      // return
       // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
     
       if (elementClickedOn.tagName === 'DIV') {
@@ -199,10 +206,10 @@ const identifyInputElement = (elementClickedOn) => {
     
       return [textElement, widgetContainer];
 
-    default:
+    case 'main':
       
       element = document.createElement('div');
-      element.className = "btn_unstyle msg_mentions_button";
+      element.className = 'btn_unstyle msg_mentions_button';
 
       element.style.transform = 'scale(0.9)';
     
@@ -229,6 +236,12 @@ const identifyInputElement = (elementClickedOn) => {
       widgetContainer = element;
     
       return [textElement, widgetContainer];
+
+    default:
+
+      log(`[Slack] - disabled on this identifiedInputElementType: ${type}`);
+
+      return [null, null];
 
   }
 
