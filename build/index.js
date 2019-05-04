@@ -30439,7 +30439,7 @@ var validateInputElement = function validateInputElement(elementClickedOn) {
   // If none of that is the case it just wasn't a txt field (sorry :/).
   // if (isInput || isIn || isTextArea) return;
 
-  if (!isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) {
+  if (!isIn && !isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) {
     (0, _helperLogger.default)('no inputElement');
     return false;
   }

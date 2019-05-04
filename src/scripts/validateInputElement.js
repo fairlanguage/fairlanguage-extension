@@ -77,7 +77,7 @@ const validateInputElement = (elementClickedOn) => {
 
   // If none of that is the case it just wasn't a txt field (sorry :/).
   // if (isInput || isIn || isTextArea) return;
-  if (!isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) {
+  if (!isIn && !isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) {
     log('no inputElement');
     return false;
   }
