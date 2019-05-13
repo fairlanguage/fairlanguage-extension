@@ -10,7 +10,7 @@ let type;
 const identifyInputElement = (elementClickedOn) => {
 
   /*
-    Find message container/wrapper element ( attribute: data-q="message_input")
+    Find known container/wrapper element ( attribute: data-q="message_input")
   */
   
   let i = 0;
@@ -32,7 +32,7 @@ const identifyInputElement = (elementClickedOn) => {
   // log(container);
 
   /*
-    Identify elements type
+    Identify known container/wrapper type
   */
 
   const attribute = container.getAttribute('data-qa');
@@ -64,7 +64,8 @@ const identifyInputElement = (elementClickedOn) => {
   let buttons;
 
   switch (type) {
-    case 'editor':
+
+    case 'editor': {
       
       element = document.createElement('button');
       element.className = 'c-button-unstyled c-texty_input__button';
@@ -96,7 +97,9 @@ const identifyInputElement = (elementClickedOn) => {
       widgetContainer = element;
 
       return [textElement, widgetContainer];
-    case 'threads-view':
+    }
+
+    case 'threads-view': {
       
       element = document.createElement('button');
       element.className = 'c-button-unstyled c-texty_input__button';
@@ -155,8 +158,10 @@ const identifyInputElement = (elementClickedOn) => {
       widgetContainer = element;
 
       return [textElement, widgetContainer];
+
+    }
       
-    case 'threads-sidebar':
+    case 'threads-sidebar': {
       
       element = document.createElement('div');
       //element.className = "c-button-unstyled c-texty_input__button";
@@ -206,7 +211,9 @@ const identifyInputElement = (elementClickedOn) => {
     
       return [textElement, widgetContainer];
 
-    case 'main':
+    }
+
+    case 'main': {
       
       element = document.createElement('div');
       element.className = 'btn_unstyle msg_mentions_button';
@@ -214,7 +221,7 @@ const identifyInputElement = (elementClickedOn) => {
       element.style.transform = 'scale(0.9)';
     
       element.style.right = '70px';
-      element.style.paddingTop = '-1px';    
+      element.style.paddingTop = '-2px';    
       element.style.marginLeft = '5px';    
       element.style.display = 'flex';
       element.style.justifyContent = 'center';    
@@ -236,6 +243,8 @@ const identifyInputElement = (elementClickedOn) => {
       widgetContainer = element;
     
       return [textElement, widgetContainer];
+    
+    }
 
     default:
 

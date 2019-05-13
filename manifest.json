@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.62",
+  "version": "0.9.75",
 
   "browser_action": {
     "default_icon": "flam.png",

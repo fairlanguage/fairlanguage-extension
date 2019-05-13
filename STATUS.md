@@ -1,18 +1,19 @@
-## (Updated 05/01/19)
+## (Updated 05/13/19)
 
 # 🎉 Compatibility Status
 
 |             Web App                             | widget | method  | inputElement              | type | knownIssues  |
 |-------------------------------------------------|:------:|:-------:|:-------------------------:|:----:|:------------:| 
-| [![slack]](https://slack.com)                                    |        |         |                           |      |              |
+| <b>slack</b>                                    |        |         |                           |      | [![slack]](https://slack.com)             |
 | [slack.com](https://slack.com)                  | custom | cloning | Main                      | DIV  |              |
 | [slack.com](https://slack.com)                  | custom | cloning | Thread - Main             | DIV  |              |
 | [slack.com](https://slack.com)                  | custom | cloning | Thread - Sidebar          | DIV  |              |
 | [slack.com](https://slack.com)                  | custom | cloning | Reply                     | DIV  |              |
-| <b>twitter</b>                                  |        |         |                           |      |              |
+| <b>twitter</b>                                  |        |         |                           |      | [![twitter]](https://twitter.com)             |
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Tweet              | DIV  |              |
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Reply              | DIV  |              |
-| [twitter.com](https://twitter.com)              | custom | cloning | Status - Reply            | DIV  |              |
+| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Retweet            | DIV  |              |
+| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Direct message     | DIV  |              |
 | <b>instagram</b>                                |        |         |                           |      |              |
 | [instagram.com](https://instagram.com)          | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
 | [instagram.com](https://instagram.com)          | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
@@ -28,7 +29,11 @@
 | [![badge11]](https://meet.google.com)           | custom | cloning |                           |     |              |
 | [![badge111]](https://meet.google.com)          | custom | cloning |                           |     |              |
 
-[badge8]: https://img.shields.io/badge/twitter.com-supported-green.svg
+[slack]: https://img.shields.io/badge/slack.com-supported-green.svg
+
+[twitter]: https://img.shields.io/badge/twitter.com-supported-green.svg
+
+
 [badge9]: https://img.shields.io/badge/instagram.com-supported-green.svg
 [badge7]: https://img.shields.io/badge/facebook.com-in%20progress-red.svg
 
@@ -50,7 +55,6 @@
 
 [badge6]: https://img.shields.io/badge/outlook.live.com-supported-green.svg
 
-[slack]: https://img.shields.io/badge/slack.com-supported-green.svg
 
 [badge11]: https://img.shields.io/badge/meet.google.com-supported-green.svg
 

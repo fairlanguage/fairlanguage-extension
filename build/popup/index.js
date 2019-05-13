@@ -109,7 +109,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.62",
+  "version": "0.9.75",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"
@@ -184,6 +184,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var hosts = [{
   host: 'slack.com',
+  support: 'full'
+}, {
+  host: 'twitter.com',
   support: 'full'
 }];
 var _default = hosts;

@@ -9,14 +9,14 @@ import App from './App';
 
 import log from './helpers/helper-logger';
 
-import {twitter} from './modules/placing/twitter';
+import { twitter } from './modules/placing/twitter';
 
 window.onload = () => {
 
   // Create container element
   const containerElement = document.createElement('div');
   containerElement.id = 'fairlanguage-container';
-/*     containerElement.style.position = 'absolute';
+  /*     containerElement.style.position = 'absolute';
   containerElement.style.width = '100%';
   containerElement.style.zIndex = '1';
 */
@@ -29,27 +29,27 @@ window.onload = () => {
     twitter
   */
 
-  if (document.getElementById('tweet-box-home-timeline'))
+  /*   if (document.getElementById('tweet-box-home-timeline'))
   document.getElementById('tweet-box-home-timeline').addEventListener('focus', () => {
     document.getElementById('tweet-box-home-timeline').click()
     //document.getElementById('fl-original').focus()
     
-  });
+  }); */
 
-  if (document.getElementById('tweet-box-home-timeline'))
-  document.getElementById('tweet-box-home-timeline').addEventListener('focus', () => {
-    document.getElementById('tweet-box-home-timeline').click()
-    //document.getElementById('fl-original').focus()
-    
-  });
+  if (document.getElementById('tweet-box-home-timeline')) {
+    document.getElementById('tweet-box-home-timeline').addEventListener('focus', () => {
+      if (document.getElementById('tweet-box-home-timeline')) {
+        document.getElementById('tweet-box-home-timeline').click();
+      }
+    });
+  }
 
 
   /*   
    facebook
   */
 
-  if(document.querySelectorAll('textarea[name="xhpc_message"]').length>0)
-  document.querySelectorAll('textarea[name="xhpc_message"]')[0].addEventListener('focus', () => {
+  if (document.querySelectorAll('textarea[name="xhpc_message"]').length > 0) {document.querySelectorAll('textarea[name="xhpc_message"]')[0].addEventListener('focus', () => {
     
     let found = false;
     const timer = setInterval(() => {
@@ -62,10 +62,10 @@ window.onload = () => {
       }
     }, 50)
     
-  })
+  })};
   
 
-    /*
+  /*
        setTimeout(()=>{
       document.querySelectorAll('div[role="textbox"]')[0].click()
     }, 500)
@@ -91,4 +91,3 @@ window.onload = () => {
   );
 
 };
-

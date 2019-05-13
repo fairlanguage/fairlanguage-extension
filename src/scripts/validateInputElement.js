@@ -20,7 +20,7 @@ const validateInputElement = (elementClickedOn) => {
   while (!isAlreadyInjected && depth <= maxDepth) {
     if (el && el !== document && el !== document.body && el !== null) {
       isAlreadyInjected = el.hasAttribute && el.hasAttribute('fl') ? el.hasAttribute('fl') : isAlreadyInjected;
-      el = el.parentNode !== null ? el.parentNode : el;
+      el = el.parentNode && el.parentNode !== null ? el.parentNode : el;
     }
     depth += 1;
   }
@@ -63,8 +63,8 @@ const validateInputElement = (elementClickedOn) => {
   el = elementClickedOn;
   while (!isParentElementContentIsEditable && depth <= maxDepth) {
     if (el !== document && el !== document.body && el !== null) {
-      isParentElementContentIsEditable = el.hasAttribute && el.hasAttribute('contenteditable');
-      el = el.parentNode !== null ? el.parentNode : el;
+      isParentElementContentIsEditable = el && el.hasAttribute && el.hasAttribute('contenteditable');
+      el = el.parentNode && el.parentNode !== null ? el.parentNode : el;
     }
     depth += 1;
   }

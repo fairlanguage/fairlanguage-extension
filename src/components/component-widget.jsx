@@ -20,17 +20,19 @@ import underline, {
 } from '../scripts/underline';
 
 import formatForGoogleMail from '../modules/textElements/google-mail';
-import formatForTwitter from '../modules/textElements/twitter';
 import formatForOutlook from '../modules/textElements/outlook';
 import formatForTelegram from '../modules/textElements/telegram';
 import formatForInstagram from '../modules/textElements/instagram';
-
-import onKeyDownForTwitter from '../modules/onKeyDown/twitter';
 
 import {
   formatTextElements as formatForSlack, 
   onKeyDown as onKeyDownForSlack, 
 } from '../modules/slack';
+
+import {
+  formatTextElements as formatForTwitter, 
+  onKeyDown as onKeyDownForTwitter, 
+} from '../modules/twitter';
 
 import log from '../helpers/helper-logger';
 
@@ -137,7 +139,7 @@ class ComponentWidget extends Component {
     originalTextElement.style.boxSizing = 'border-box';
     originalTextElement.style.background = 'transparent';
     originalTextElement.style.border = '0px solid rgba(0,0,255,0)';
-    originalTextElement.style.color = '#000000';
+    // originalTextElement.style.color = '#000000';
     if (__DEV__) {
       originalTextElement.style.border = '2px solid rgba(0,0,255,0.5)';
       originalTextElement.style.color = '#0000FF';

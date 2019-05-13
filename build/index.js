@@ -29360,7 +29360,7 @@ var type;
 
 var identifyInputElement = function identifyInputElement(elementClickedOn) {
   /*
-    Find message container/wrapper element ( attribute: data-q="message_input")
+    Find known container/wrapper element ( attribute: data-q="message_input")
   */
   var i = 0;
   var container;
@@ -29377,7 +29377,7 @@ var identifyInputElement = function identifyInputElement(elementClickedOn) {
   } // log(container);
 
   /*
-    Identify elements type
+    Identify known container/wrapper type
   */
 
 
@@ -29405,160 +29405,168 @@ var identifyInputElement = function identifyInputElement(elementClickedOn) {
 
   switch (type) {
     case 'editor':
-      element = document.createElement('button');
-      element.className = 'c-button-unstyled c-texty_input__button';
-      element.style.position = 'absolute';
-      element.style.top = '9px';
-      element.style.right = '38px';
-      element.style.transform = 'scale(0.8)';
-      element.style.display = 'flex';
-      element.style.justifyContent = 'center';
-      element.addEventListener('click', function () {
-        alert('I am flamingo.');
-      }); // Find Buttons element
+      {
+        element = document.createElement('button');
+        element.className = 'c-button-unstyled c-texty_input__button';
+        element.style.position = 'absolute';
+        element.style.top = '9px';
+        element.style.right = '38px';
+        element.style.transform = 'scale(0.8)';
+        element.style.display = 'flex';
+        element.style.justifyContent = 'center';
+        element.addEventListener('click', function () {
+          alert('I am flamingo.');
+        }); // Find Buttons element
 
-      buttons = container.querySelector("div[class='c-message__editor__input_container']");
-      buttons.append(element);
+        buttons = container.querySelector("div[class='c-message__editor__input_container']");
+        buttons.append(element);
 
-      if (elementClickedOn.tagName === 'DIV') {
-        textElement = elementClickedOn;
+        if (elementClickedOn.tagName === 'DIV') {
+          textElement = elementClickedOn;
+        }
+
+        if (elementClickedOn.tagName === 'P') {
+          textElement = elementClickedOn.parentNode;
+        }
+
+        widgetContainer = element;
+        return [textElement, widgetContainer];
       }
-
-      if (elementClickedOn.tagName === 'P') {
-        textElement = elementClickedOn.parentNode;
-      }
-
-      widgetContainer = element;
-      return [textElement, widgetContainer];
 
     case 'threads-view':
-      element = document.createElement('button');
-      element.className = 'c-button-unstyled c-texty_input__button'; // element.setAttribute("tabindex", 5)
+      {
+        element = document.createElement('button');
+        element.className = 'c-button-unstyled c-texty_input__button'; // element.setAttribute("tabindex", 5)
 
-      element.style.transform = 'scale(0.8)'; // element.style.transform = 'scale(0.8)';
-      //element.style.marginRight = '25px';
+        element.style.transform = 'scale(0.8)'; // element.style.transform = 'scale(0.8)';
+        //element.style.marginRight = '25px';
 
-      element.style.marginTop = '-0.5px'; //element.style.marginLeft = '5px';    
-      // element.style.marginRight = '25px';
-      //element.style.top = '-4px';
+        element.style.marginTop = '-0.5px'; //element.style.marginLeft = '5px';    
+        // element.style.marginRight = '25px';
+        //element.style.top = '-4px';
 
-      element.style.display = 'flex'; // element.style.position = 'relative';
+        element.style.display = 'flex'; // element.style.position = 'relative';
 
-      element.style.justifyContent = 'center';
-      element.addEventListener('click', function () {
-        alert('I am flamingo.');
-      }); // Find Buttons element
+        element.style.justifyContent = 'center';
+        element.addEventListener('click', function () {
+          alert('I am flamingo.');
+        }); // Find Buttons element
 
-      buttons = container.childNodes[container.childNodes.length - 3];
-      /* buttons.style.display = 'flex';
-      buttons.style.flexDirection = 'column';
-      buttons.style.alignItems = 'center';
-      buttons.style.justifyContent = 'flex-end';
-       buttons.style.height = '100%';
-      //buttons.style.width = '100px';
-       buttons.style.bottom = '6px';
-       buttons.style.border = '0px solid blue'; */
+        buttons = container.childNodes[container.childNodes.length - 3];
+        /* buttons.style.display = 'flex';
+        buttons.style.flexDirection = 'column';
+        buttons.style.alignItems = 'center';
+        buttons.style.justifyContent = 'flex-end';
+         buttons.style.height = '100%';
+        //buttons.style.width = '100px';
+         buttons.style.bottom = '6px';
+         buttons.style.border = '0px solid blue'; */
 
-      buttons.append(element);
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+        buttons.append(element);
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
-      try {
-        for (var _iterator = buttons.childNodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var child = _step.value;
-        } //child.style.position = 'relative';
-        //return
-        // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
-
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
+          for (var _iterator = buttons.childNodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var child = _step.value;
+          } //child.style.position = 'relative';
+          //return
+          // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
+
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
           }
         }
-      }
 
-      if (elementClickedOn.tagName === 'DIV') {
-        textElement = elementClickedOn;
-      }
+        if (elementClickedOn.tagName === 'DIV') {
+          textElement = elementClickedOn;
+        }
 
-      if (elementClickedOn.tagName === 'P') {
-        textElement = elementClickedOn.parentNode;
-      }
+        if (elementClickedOn.tagName === 'P') {
+          textElement = elementClickedOn.parentNode;
+        }
 
-      widgetContainer = element;
-      return [textElement, widgetContainer];
+        widgetContainer = element;
+        return [textElement, widgetContainer];
+      }
 
     case 'threads-sidebar':
-      element = document.createElement('div'); //element.className = "c-button-unstyled c-texty_input__button";
+      {
+        element = document.createElement('div'); //element.className = "c-button-unstyled c-texty_input__button";
 
-      element.setAttribute("tabindex", 5);
-      element.style.transform = 'scale(0.8)'; //element.style.marginRight = '25px';
-      //element.style.marginTop = 'px';    
-      //element.style.marginLeft = '5px';    
+        element.setAttribute("tabindex", 5);
+        element.style.transform = 'scale(0.8)'; //element.style.marginRight = '25px';
+        //element.style.marginTop = 'px';    
+        //element.style.marginLeft = '5px';    
 
-      element.style.marginRight = '25px';
-      element.style.top = '-4px';
-      element.style.display = 'flex';
-      element.style.justifyContent = 'center';
-      element.addEventListener('click', function () {
-        alert('I am flamingo.');
-      }); // Find Buttons element
+        element.style.marginRight = '25px';
+        element.style.top = '-4px';
+        element.style.display = 'flex';
+        element.style.justifyContent = 'center';
+        element.addEventListener('click', function () {
+          alert('I am flamingo.');
+        }); // Find Buttons element
 
-      buttons = container.childNodes[container.childNodes.length - 3];
-      buttons.style.display = 'flex';
-      buttons.style.flexDirection = 'row';
-      buttons.style.alignItems = 'center';
-      buttons.style.justifyContent = 'flex-end';
-      buttons.style.height = '25px';
-      buttons.style.width = '100px';
-      buttons.style.border = '0px solid blue';
-      buttons.append(element); // return
-      // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
+        buttons = container.childNodes[container.childNodes.length - 3];
+        buttons.style.display = 'flex';
+        buttons.style.flexDirection = 'row';
+        buttons.style.alignItems = 'center';
+        buttons.style.justifyContent = 'flex-end';
+        buttons.style.height = '25px';
+        buttons.style.width = '100px';
+        buttons.style.border = '0px solid blue';
+        buttons.append(element); // return
+        // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
 
-      if (elementClickedOn.tagName === 'DIV') {
-        textElement = elementClickedOn;
+        if (elementClickedOn.tagName === 'DIV') {
+          textElement = elementClickedOn;
+        }
+
+        if (elementClickedOn.tagName === 'P') {
+          textElement = elementClickedOn.parentNode;
+        }
+
+        widgetContainer = element;
+        return [textElement, widgetContainer];
       }
-
-      if (elementClickedOn.tagName === 'P') {
-        textElement = elementClickedOn.parentNode;
-      }
-
-      widgetContainer = element;
-      return [textElement, widgetContainer];
 
     case 'main':
-      element = document.createElement('div');
-      element.className = 'btn_unstyle msg_mentions_button';
-      element.style.transform = 'scale(0.9)';
-      element.style.right = '70px';
-      element.style.paddingTop = '-1px';
-      element.style.marginLeft = '5px';
-      element.style.display = 'flex';
-      element.style.justifyContent = 'center';
-      element.addEventListener('click', function () {
-        alert('I am flamingo.');
-      });
-      container.parentNode.insertBefore(element, container.querySelector('[aria-label="Insert mention"]'));
+      {
+        element = document.createElement('div');
+        element.className = 'btn_unstyle msg_mentions_button';
+        element.style.transform = 'scale(0.9)';
+        element.style.right = '70px';
+        element.style.paddingTop = '-2px';
+        element.style.marginLeft = '5px';
+        element.style.display = 'flex';
+        element.style.justifyContent = 'center';
+        element.addEventListener('click', function () {
+          alert('I am flamingo.');
+        });
+        container.parentNode.insertBefore(element, container.querySelector('[aria-label="Insert mention"]'));
 
-      if (elementClickedOn.tagName === 'DIV') {
-        textElement = elementClickedOn;
+        if (elementClickedOn.tagName === 'DIV') {
+          textElement = elementClickedOn;
+        }
+
+        if (elementClickedOn.tagName === 'P') {
+          textElement = elementClickedOn.parentNode;
+        }
+
+        widgetContainer = element;
+        return [textElement, widgetContainer];
       }
-
-      if (elementClickedOn.tagName === 'P') {
-        textElement = elementClickedOn.parentNode;
-      }
-
-      widgetContainer = element;
-      return [textElement, widgetContainer];
 
     default:
       (0, _helperLogger.default)("[Slack] - disabled on this identifiedInputElementType: ".concat(type));
@@ -29874,30 +29882,6 @@ var formatTextElements = function formatTextElements(originalTextElement, cloned
 
 var _default = formatTextElements;
 exports.default = _default;
-},{}],"modules/textElements/twitter.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var formatTextElements = function formatTextElements(originalTextElement, clonedTextElement) {
-  originalTextElement.style.top = '0px';
-  clonedTextElement.addEventListener('click', function () {
-    originalTextElement.focus();
-  });
-  clonedTextElement.addEventListener('focus', function () {
-    originalTextElement.focus();
-  });
-  originalTextElement.setAttribute('data-placeholder-default', '');
-  clonedTextElement.setAttribute('data-placeholder-default', '');
-  originalTextElement.setAttribute('data-placeholder-reply', '');
-  clonedTextElement.setAttribute('data-placeholder-reply', '');
-};
-
-var _default = formatTextElements;
-exports.default = _default;
 },{}],"modules/textElements/outlook.js":[function(require,module,exports) {
 "use strict";
 
@@ -29976,24 +29960,203 @@ var formatTextElements = function formatTextElements(originalTextElement, cloned
 
 var _default = formatTextElements;
 exports.default = _default;
-},{}],"modules/onKeyDown/twitter.js":[function(require,module,exports) {
+},{}],"modules/twitter.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.onKeyDown = exports.formatTextElements = exports.formatMarkingElement = exports.default = void 0;
 
-var onKeyDown = function onKeyDown(originalTextElement, clonedTextElement) {
-  clonedTextElement.setAttribute('data-placeholder-default', '');
-  clonedTextElement.setAttribute('data-placeholder-reply', '');
-  originalTextElement.setAttribute('data-placeholder-default', '');
-  originalTextElement.setAttribute('data-placeholder-reply', '');
+var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable import/first */
+// eslint-disable-next-line no-underscore-dangle
+var __DEV__ = true;
+
+var l = function l(i) {
+  return __DEV__ ? (0, _helperLogger.default)(i) : null;
+};
+/**
+ * Identify known container/wrapper type
+ * 
+ * There are three input elements on twitter's web app:
+ * 
+ * 1. 'main': The main tweet box in the timeline
+ * (attribute: class="timeline-tweetbox")
+ * 2. 'reply': Modal popping up when clicking 'reply' on a tweet in the timeline 
+ * (attribute: class="modal-tweet-form-container")
+ * 3. 'retweet': Modal popping up when clicking 'retweet' on a tweet in the timeline 
+ * (attribute: class="RetweetDialog-commentBox")
+ * 4. 'message' : Modal popping up when clicking 'Direct message' on a tweet in the timeline 
+ * (attribute: class="DMActivity-container")
+ */
+
+
+var identifyInputElement = function identifyInputElement(elementClickedOn) {
+  var type;
+  /*
+    Find known container/wrapper element
+  */
+
+  var i = 0;
+  var container;
+  var current = elementClickedOn;
+  var THRESHOLD = 25;
+
+  while (container === undefined && i < THRESHOLD) {
+    l(i);
+
+    if (current.className) {
+      switch (current.className) {
+        case 'timeline-tweet-box':
+          container = current;
+          type = 'main';
+          break;
+
+        case 'modal-tweet-form-container':
+          container = current;
+          type = 'reply';
+          break;
+
+        case 'RetweetDialog-commentBox':
+          container = current;
+          type = 'retweet';
+          break;
+
+        case 'DMActivity-container':
+          container = current;
+          type = 'message';
+          break;
+
+        default:
+          type = undefined;
+      }
+    }
+
+    if (!current.parentNode) container = null;
+    current = current.parentNode;
+    i += 1;
+  }
+
+  l("container: ".concat(container));
+
+  switch (type) {
+    case 'message':
+      {
+        var widgetContainer = document.createElement('span');
+        widgetContainer.className = 'TweetBoxExtras-item'; // widgetContainer.style.position = 'absolute';
+        // widgetContainer.style.right = '0px';
+
+        widgetContainer.style.marginRight = '15px';
+        widgetContainer.style.marginLeft = '7.5px';
+        widgetContainer.style.display = 'inline-flex';
+        widgetContainer.style.alignItems = 'center';
+        widgetContainer.style.justifyContent = 'center';
+        var tweetBoxExtrasElement = container.querySelectorAll('div[class="TweetBoxExtras"]')[0];
+        tweetBoxExtrasElement.style.display = 'flex';
+        tweetBoxExtrasElement.style.alignItems = 'center';
+        tweetBoxExtrasElement.style.justifyContent = 'center';
+        tweetBoxExtrasElement.insertBefore(widgetContainer, tweetBoxExtrasElement.childNodes[0]);
+        var inputElement = container.querySelectorAll('div[id="tweet-box-dm-conversation"]')[0];
+        return [inputElement, widgetContainer];
+      }
+
+    case 'retweet':
+      {
+        var _widgetContainer = document.createElement('span');
+
+        _widgetContainer.className = 'TweetBoxExtras-item';
+        _widgetContainer.style.left = '6px';
+        _widgetContainer.style.marginRight = '15px';
+        _widgetContainer.style.marginTop = '3.5px';
+        _widgetContainer.style.display = 'inline-flex';
+        _widgetContainer.style.alignItems = 'center';
+        _widgetContainer.style.justifyContent = 'center';
+        /* const tweetBoxExtrasElement = container.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0];
+        tweetBoxExtrasElement.insertBefore(widgetContainer, tweetBoxExtrasElement.childNodes[0]); */
+
+        container.append(_widgetContainer);
+        var _inputElement = container.querySelectorAll('div[id="retweet-with-comment"]')[0];
+        return [_inputElement, _widgetContainer];
+      }
+
+    case 'reply':
+      {
+        var _widgetContainer2 = document.createElement('span');
+
+        _widgetContainer2.className = 'TweetBoxExtras-item';
+        _widgetContainer2.style.left = '6px';
+        _widgetContainer2.style.marginRight = '15px';
+        _widgetContainer2.style.top = '-5px';
+        _widgetContainer2.style.display = 'inline-flex';
+        _widgetContainer2.style.alignItems = 'center';
+        _widgetContainer2.style.justifyContent = 'center';
+        var _tweetBoxExtrasElement = container.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0];
+
+        _tweetBoxExtrasElement.insertBefore(_widgetContainer2, _tweetBoxExtrasElement.childNodes[0]);
+
+        var _inputElement2 = container.querySelectorAll('div[id="tweet-box-global"]')[0];
+        return [_inputElement2, _widgetContainer2];
+      }
+
+    case 'main':
+      {
+        var _widgetContainer3 = document.createElement('span');
+
+        _widgetContainer3.className = 'TweetBoxExtras-item';
+        _widgetContainer3.style.left = '6px';
+        _widgetContainer3.style.marginRight = '15px';
+        _widgetContainer3.style.top = '-6px';
+        _widgetContainer3.style.display = 'inline-flex';
+        _widgetContainer3.style.alignItems = 'center';
+        _widgetContainer3.style.justifyContent = 'center';
+        /**
+         * Find input element inside this element (attribute: id="tweet-box-home-timeline")
+         */
+
+        var _tweetBoxExtrasElement2 = container.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0];
+
+        _tweetBoxExtrasElement2.insertBefore(_widgetContainer3, _tweetBoxExtrasElement2.childNodes[1]);
+
+        var _inputElement3 = container.querySelectorAll('div[id="tweet-box-home-timeline"]')[0];
+        return [_inputElement3, _widgetContainer3];
+      }
+
+    default:
+      (0, _helperLogger.default)("[Twitter] - disabled on this identifiedInputElementType: ".concat(type));
+      return [null, null];
+  }
 };
 
-var _default = onKeyDown;
+var formatTextElements = function formatTextElements(originalTextElement, clonedTextElement) {
+  originalTextElement.style.top = '0px';
+  originalTextElement.style.minWidth = '100px';
+  clonedTextElement.addEventListener('click', function () {
+    originalTextElement.focus();
+  });
+  clonedTextElement.addEventListener('focus', function () {
+    originalTextElement.focus();
+  });
+  clonedTextElement.setAttribute('data-attachment-placeholder', '');
+};
+
+exports.formatTextElements = formatTextElements;
+
+var onKeyDown = function onKeyDown(originalTextElement, clonedTextElement) {
+  clonedTextElement.setAttribute('data-attachment-placeholder', '');
+};
+
+exports.onKeyDown = onKeyDown;
+
+var formatMarkingElement = function formatMarkingElement(markingElement) {};
+
+exports.formatMarkingElement = formatMarkingElement;
+var _default = identifyInputElement;
 exports.default = _default;
-},{}],"components/component-widget.jsx":[function(require,module,exports) {
+},{"../helpers/helper-logger":"../helpers/helper-logger.js"}],"components/component-widget.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30019,17 +30182,15 @@ var _underline = _interopRequireWildcard(require("../scripts/underline"));
 
 var _googleMail = _interopRequireDefault(require("../modules/textElements/google-mail"));
 
-var _twitter = _interopRequireDefault(require("../modules/textElements/twitter"));
-
 var _outlook = _interopRequireDefault(require("../modules/textElements/outlook"));
 
 var _telegram = _interopRequireDefault(require("../modules/textElements/telegram"));
 
 var _instagram = _interopRequireDefault(require("../modules/textElements/instagram"));
 
-var _twitter2 = _interopRequireDefault(require("../modules/onKeyDown/twitter"));
-
 var _slack = require("../modules/slack");
+
+var _twitter = require("../modules/twitter");
 
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
 
@@ -30157,8 +30318,7 @@ function (_Component) {
       originalTextElement.setAttribute('fl', 'original');
       originalTextElement.style.boxSizing = 'border-box';
       originalTextElement.style.background = 'transparent';
-      originalTextElement.style.border = '0px solid rgba(0,0,255,0)';
-      originalTextElement.style.color = '#000000';
+      originalTextElement.style.border = '0px solid rgba(0,0,255,0)'; // originalTextElement.style.color = '#000000';
 
       if (__DEV__) {
         originalTextElement.style.border = '2px solid rgba(0,0,255,0.5)';
@@ -30194,7 +30354,7 @@ function (_Component) {
       if (window.location.href.includes('mail.google.com')) {
         (0, _googleMail.default)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('twitter.com')) {
-        (0, _twitter.default)(originalTextElement, clonedTextElement);
+        (0, _twitter.formatTextElements)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('instagram.com')) {
         (0, _instagram.default)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('web.telegram.org')) {
@@ -30229,7 +30389,7 @@ function (_Component) {
         */
 
         if (window.location.href.includes('mail.google.com')) {} else if (window.location.href.includes('twitter.com')) {
-          (0, _twitter2.default)(originalTextElement, clonedTextElement);
+          (0, _twitter.onKeyDown)(originalTextElement, clonedTextElement);
         } else if (window.location.href.includes('slack.com')) {
           (0, _slack.onKeyDown)(originalTextElement, clonedTextElement);
         } else if (window.location.href.includes('outlook.live.com')) {} else {} // TODO: Try to get the last word only
@@ -30355,7 +30515,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/twitter":"modules/textElements/twitter.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/textElements/telegram":"modules/textElements/telegram.js","../modules/textElements/instagram":"modules/textElements/instagram.js","../modules/onKeyDown/twitter":"modules/onKeyDown/twitter.js","../modules/slack":"modules/slack.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"scripts/validateInputElement.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/textElements/telegram":"modules/textElements/telegram.js","../modules/textElements/instagram":"modules/textElements/instagram.js","../modules/slack":"modules/slack.js","../modules/twitter":"modules/twitter.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"scripts/validateInputElement.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30387,7 +30547,7 @@ var validateInputElement = function validateInputElement(elementClickedOn) {
   while (!isAlreadyInjected && depth <= maxDepth) {
     if (el && el !== document && el !== document.body && el !== null) {
       isAlreadyInjected = el.hasAttribute && el.hasAttribute('fl') ? el.hasAttribute('fl') : isAlreadyInjected;
-      el = el.parentNode !== null ? el.parentNode : el;
+      el = el.parentNode && el.parentNode !== null ? el.parentNode : el;
     }
 
     depth += 1;
@@ -30425,8 +30585,8 @@ var validateInputElement = function validateInputElement(elementClickedOn) {
 
   while (!isParentElementContentIsEditable && depth <= maxDepth) {
     if (el !== document && el !== document.body && el !== null) {
-      isParentElementContentIsEditable = el.hasAttribute && el.hasAttribute('contenteditable');
-      el = el.parentNode !== null ? el.parentNode : el;
+      isParentElementContentIsEditable = el && el.hasAttribute && el.hasAttribute('contenteditable');
+      el = el.parentNode && el.parentNode !== null ? el.parentNode : el;
     }
 
     depth += 1;
@@ -36853,7 +37013,7 @@ var global = arguments[3];
   (function() { return this })() || Function("return this")()
 );
 
-},{}],"../../hosts.js":[function(require,module,exports) {
+},{}],"../hosts.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -36862,6 +37022,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var hosts = [{
   host: 'slack.com',
+  support: 'full'
+}, {
+  host: 'twitter.com',
   support: 'full'
 }];
 var _default = hosts;
@@ -37396,7 +37559,7 @@ function () {
 }();
 
 exports.default = StorageController;
-},{"core-js/modules/es6.array.copy-within":"../../node_modules/core-js/modules/es6.array.copy-within.js","core-js/modules/es6.array.fill":"../../node_modules/core-js/modules/es6.array.fill.js","core-js/modules/es6.array.find":"../../node_modules/core-js/modules/es6.array.find.js","core-js/modules/es6.array.find-index":"../../node_modules/core-js/modules/es6.array.find-index.js","core-js/modules/es6.array.from":"../../node_modules/core-js/modules/es6.array.from.js","core-js/modules/es7.array.includes":"../../node_modules/core-js/modules/es7.array.includes.js","core-js/modules/es6.array.iterator":"../../node_modules/core-js/modules/es6.array.iterator.js","core-js/modules/es6.array.of":"../../node_modules/core-js/modules/es6.array.of.js","core-js/modules/es6.array.sort":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es6.array.species":"../../node_modules/core-js/modules/es6.array.species.js","core-js/modules/es6.date.to-primitive":"../../node_modules/core-js/modules/es6.date.to-primitive.js","core-js/modules/es6.function.has-instance":"../../node_modules/core-js/modules/es6.function.has-instance.js","core-js/modules/es6.function.name":"../../node_modules/core-js/modules/es6.function.name.js","core-js/modules/es6.map":"../../node_modules/core-js/modules/es6.map.js","core-js/modules/es6.math.acosh":"../../node_modules/core-js/modules/es6.math.acosh.js","core-js/modules/es6.math.asinh":"../../node_modules/core-js/modules/es6.math.asinh.js","core-js/modules/es6.math.atanh":"../../node_modules/core-js/modules/es6.math.atanh.js","core-js/modules/es6.math.cbrt":"../../node_modules/core-js/modules/es6.math.cbrt.js","core-js/modules/es6.math.clz32":"../../node_modules/core-js/modules/es6.math.clz32.js","core-js/modules/es6.math.cosh":"../../node_modules/core-js/modules/es6.math.cosh.js","core-js/modules/es6.math.expm1":"../../node_modules/core-js/modules/es6.math.expm1.js","core-js/modules/es6.math.fround":"../../node_modules/core-js/modules/es6.math.fround.js","core-js/modules/es6.math.hypot":"../../node_modules/core-js/modules/es6.math.hypot.js","core-js/modules/es6.math.imul":"../../node_modules/core-js/modules/es6.math.imul.js","core-js/modules/es6.math.log1p":"../../node_modules/core-js/modules/es6.math.log1p.js","core-js/modules/es6.math.log10":"../../node_modules/core-js/modules/es6.math.log10.js","core-js/modules/es6.math.log2":"../../node_modules/core-js/modules/es6.math.log2.js","core-js/modules/es6.math.sign":"../../node_modules/core-js/modules/es6.math.sign.js","core-js/modules/es6.math.sinh":"../../node_modules/core-js/modules/es6.math.sinh.js","core-js/modules/es6.math.tanh":"../../node_modules/core-js/modules/es6.math.tanh.js","core-js/modules/es6.math.trunc":"../../node_modules/core-js/modules/es6.math.trunc.js","core-js/modules/es6.number.constructor":"../../node_modules/core-js/modules/es6.number.constructor.js","core-js/modules/es6.number.epsilon":"../../node_modules/core-js/modules/es6.number.epsilon.js","core-js/modules/es6.number.is-finite":"../../node_modules/core-js/modules/es6.number.is-finite.js","core-js/modules/es6.number.is-integer":"../../node_modules/core-js/modules/es6.number.is-integer.js","core-js/modules/es6.number.is-nan":"../../node_modules/core-js/modules/es6.number.is-nan.js","core-js/modules/es6.number.is-safe-integer":"../../node_modules/core-js/modules/es6.number.is-safe-integer.js","core-js/modules/es6.number.max-safe-integer":"../../node_modules/core-js/modules/es6.number.max-safe-integer.js","core-js/modules/es6.number.min-safe-integer":"../../node_modules/core-js/modules/es6.number.min-safe-integer.js","core-js/modules/es6.number.parse-float":"../../node_modules/core-js/modules/es6.number.parse-float.js","core-js/modules/es6.number.parse-int":"../../node_modules/core-js/modules/es6.number.parse-int.js","core-js/modules/es6.object.assign":"../../node_modules/core-js/modules/es6.object.assign.js","core-js/modules/es7.object.define-getter":"../../node_modules/core-js/modules/es7.object.define-getter.js","core-js/modules/es7.object.define-setter":"../../node_modules/core-js/modules/es7.object.define-setter.js","core-js/modules/es7.object.entries":"../../node_modules/core-js/modules/es7.object.entries.js","core-js/modules/es6.object.freeze":"../../node_modules/core-js/modules/es6.object.freeze.js","core-js/modules/es6.object.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.object.get-own-property-descriptor.js","core-js/modules/es7.object.get-own-property-descriptors":"../../node_modules/core-js/modules/es7.object.get-own-property-descriptors.js","core-js/modules/es6.object.get-own-property-names":"../../node_modules/core-js/modules/es6.object.get-own-property-names.js","core-js/modules/es6.object.get-prototype-of":"../../node_modules/core-js/modules/es6.object.get-prototype-of.js","core-js/modules/es7.object.lookup-getter":"../../node_modules/core-js/modules/es7.object.lookup-getter.js","core-js/modules/es7.object.lookup-setter":"../../node_modules/core-js/modules/es7.object.lookup-setter.js","core-js/modules/es6.object.prevent-extensions":"../../node_modules/core-js/modules/es6.object.prevent-extensions.js","core-js/modules/es6.object.is":"../../node_modules/core-js/modules/es6.object.is.js","core-js/modules/es6.object.is-frozen":"../../node_modules/core-js/modules/es6.object.is-frozen.js","core-js/modules/es6.object.is-sealed":"../../node_modules/core-js/modules/es6.object.is-sealed.js","core-js/modules/es6.object.is-extensible":"../../node_modules/core-js/modules/es6.object.is-extensible.js","core-js/modules/es6.object.keys":"../../node_modules/core-js/modules/es6.object.keys.js","core-js/modules/es6.object.seal":"../../node_modules/core-js/modules/es6.object.seal.js","core-js/modules/es6.object.set-prototype-of":"../../node_modules/core-js/modules/es6.object.set-prototype-of.js","core-js/modules/es7.object.values":"../../node_modules/core-js/modules/es7.object.values.js","core-js/modules/es6.promise":"../../node_modules/core-js/modules/es6.promise.js","core-js/modules/es7.promise.finally":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es6.reflect.apply":"../../node_modules/core-js/modules/es6.reflect.apply.js","core-js/modules/es6.reflect.construct":"../../node_modules/core-js/modules/es6.reflect.construct.js","core-js/modules/es6.reflect.define-property":"../../node_modules/core-js/modules/es6.reflect.define-property.js","core-js/modules/es6.reflect.delete-property":"../../node_modules/core-js/modules/es6.reflect.delete-property.js","core-js/modules/es6.reflect.get":"../../node_modules/core-js/modules/es6.reflect.get.js","core-js/modules/es6.reflect.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.reflect.get-own-property-descriptor.js","core-js/modules/es6.reflect.get-prototype-of":"../../node_modules/core-js/modules/es6.reflect.get-prototype-of.js","core-js/modules/es6.reflect.has":"../../node_modules/core-js/modules/es6.reflect.has.js","core-js/modules/es6.reflect.is-extensible":"../../node_modules/core-js/modules/es6.reflect.is-extensible.js","core-js/modules/es6.reflect.own-keys":"../../node_modules/core-js/modules/es6.reflect.own-keys.js","core-js/modules/es6.reflect.prevent-extensions":"../../node_modules/core-js/modules/es6.reflect.prevent-extensions.js","core-js/modules/es6.reflect.set":"../../node_modules/core-js/modules/es6.reflect.set.js","core-js/modules/es6.reflect.set-prototype-of":"../../node_modules/core-js/modules/es6.reflect.set-prototype-of.js","core-js/modules/es6.regexp.constructor":"../../node_modules/core-js/modules/es6.regexp.constructor.js","core-js/modules/es6.regexp.flags":"../../node_modules/core-js/modules/es6.regexp.flags.js","core-js/modules/es6.regexp.match":"../../node_modules/core-js/modules/es6.regexp.match.js","core-js/modules/es6.regexp.replace":"../../node_modules/core-js/modules/es6.regexp.replace.js","core-js/modules/es6.regexp.split":"../../node_modules/core-js/modules/es6.regexp.split.js","core-js/modules/es6.regexp.search":"../../node_modules/core-js/modules/es6.regexp.search.js","core-js/modules/es6.regexp.to-string":"../../node_modules/core-js/modules/es6.regexp.to-string.js","core-js/modules/es6.set":"../../node_modules/core-js/modules/es6.set.js","core-js/modules/es6.symbol":"../../node_modules/core-js/modules/es6.symbol.js","core-js/modules/es7.symbol.async-iterator":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es6.string.anchor":"../../node_modules/core-js/modules/es6.string.anchor.js","core-js/modules/es6.string.big":"../../node_modules/core-js/modules/es6.string.big.js","core-js/modules/es6.string.blink":"../../node_modules/core-js/modules/es6.string.blink.js","core-js/modules/es6.string.bold":"../../node_modules/core-js/modules/es6.string.bold.js","core-js/modules/es6.string.code-point-at":"../../node_modules/core-js/modules/es6.string.code-point-at.js","core-js/modules/es6.string.ends-with":"../../node_modules/core-js/modules/es6.string.ends-with.js","core-js/modules/es6.string.fixed":"../../node_modules/core-js/modules/es6.string.fixed.js","core-js/modules/es6.string.fontcolor":"../../node_modules/core-js/modules/es6.string.fontcolor.js","core-js/modules/es6.string.fontsize":"../../node_modules/core-js/modules/es6.string.fontsize.js","core-js/modules/es6.string.from-code-point":"../../node_modules/core-js/modules/es6.string.from-code-point.js","core-js/modules/es6.string.includes":"../../node_modules/core-js/modules/es6.string.includes.js","core-js/modules/es6.string.italics":"../../node_modules/core-js/modules/es6.string.italics.js","core-js/modules/es6.string.iterator":"../../node_modules/core-js/modules/es6.string.iterator.js","core-js/modules/es6.string.link":"../../node_modules/core-js/modules/es6.string.link.js","core-js/modules/es7.string.pad-start":"../../node_modules/core-js/modules/es7.string.pad-start.js","core-js/modules/es7.string.pad-end":"../../node_modules/core-js/modules/es7.string.pad-end.js","core-js/modules/es6.string.raw":"../../node_modules/core-js/modules/es6.string.raw.js","core-js/modules/es6.string.repeat":"../../node_modules/core-js/modules/es6.string.repeat.js","core-js/modules/es6.string.small":"../../node_modules/core-js/modules/es6.string.small.js","core-js/modules/es6.string.starts-with":"../../node_modules/core-js/modules/es6.string.starts-with.js","core-js/modules/es6.string.strike":"../../node_modules/core-js/modules/es6.string.strike.js","core-js/modules/es6.string.sub":"../../node_modules/core-js/modules/es6.string.sub.js","core-js/modules/es6.string.sup":"../../node_modules/core-js/modules/es6.string.sup.js","core-js/modules/es6.typed.array-buffer":"../../node_modules/core-js/modules/es6.typed.array-buffer.js","core-js/modules/es6.typed.int8-array":"../../node_modules/core-js/modules/es6.typed.int8-array.js","core-js/modules/es6.typed.uint8-array":"../../node_modules/core-js/modules/es6.typed.uint8-array.js","core-js/modules/es6.typed.uint8-clamped-array":"../../node_modules/core-js/modules/es6.typed.uint8-clamped-array.js","core-js/modules/es6.typed.int16-array":"../../node_modules/core-js/modules/es6.typed.int16-array.js","core-js/modules/es6.typed.uint16-array":"../../node_modules/core-js/modules/es6.typed.uint16-array.js","core-js/modules/es6.typed.int32-array":"../../node_modules/core-js/modules/es6.typed.int32-array.js","core-js/modules/es6.typed.uint32-array":"../../node_modules/core-js/modules/es6.typed.uint32-array.js","core-js/modules/es6.typed.float32-array":"../../node_modules/core-js/modules/es6.typed.float32-array.js","core-js/modules/es6.typed.float64-array":"../../node_modules/core-js/modules/es6.typed.float64-array.js","core-js/modules/es6.weak-map":"../../node_modules/core-js/modules/es6.weak-map.js","core-js/modules/es6.weak-set":"../../node_modules/core-js/modules/es6.weak-set.js","core-js/modules/es7.array.flat-map":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/web.timers":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable":"../../node_modules/core-js/modules/web.dom.iterable.js","regenerator-runtime/runtime":"../../node_modules/regenerator-runtime/runtime.js","../../config":"../config.js","../../hosts":"../../hosts.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"components/component-button.js":[function(require,module,exports) {
+},{"core-js/modules/es6.array.copy-within":"../../node_modules/core-js/modules/es6.array.copy-within.js","core-js/modules/es6.array.fill":"../../node_modules/core-js/modules/es6.array.fill.js","core-js/modules/es6.array.find":"../../node_modules/core-js/modules/es6.array.find.js","core-js/modules/es6.array.find-index":"../../node_modules/core-js/modules/es6.array.find-index.js","core-js/modules/es6.array.from":"../../node_modules/core-js/modules/es6.array.from.js","core-js/modules/es7.array.includes":"../../node_modules/core-js/modules/es7.array.includes.js","core-js/modules/es6.array.iterator":"../../node_modules/core-js/modules/es6.array.iterator.js","core-js/modules/es6.array.of":"../../node_modules/core-js/modules/es6.array.of.js","core-js/modules/es6.array.sort":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es6.array.species":"../../node_modules/core-js/modules/es6.array.species.js","core-js/modules/es6.date.to-primitive":"../../node_modules/core-js/modules/es6.date.to-primitive.js","core-js/modules/es6.function.has-instance":"../../node_modules/core-js/modules/es6.function.has-instance.js","core-js/modules/es6.function.name":"../../node_modules/core-js/modules/es6.function.name.js","core-js/modules/es6.map":"../../node_modules/core-js/modules/es6.map.js","core-js/modules/es6.math.acosh":"../../node_modules/core-js/modules/es6.math.acosh.js","core-js/modules/es6.math.asinh":"../../node_modules/core-js/modules/es6.math.asinh.js","core-js/modules/es6.math.atanh":"../../node_modules/core-js/modules/es6.math.atanh.js","core-js/modules/es6.math.cbrt":"../../node_modules/core-js/modules/es6.math.cbrt.js","core-js/modules/es6.math.clz32":"../../node_modules/core-js/modules/es6.math.clz32.js","core-js/modules/es6.math.cosh":"../../node_modules/core-js/modules/es6.math.cosh.js","core-js/modules/es6.math.expm1":"../../node_modules/core-js/modules/es6.math.expm1.js","core-js/modules/es6.math.fround":"../../node_modules/core-js/modules/es6.math.fround.js","core-js/modules/es6.math.hypot":"../../node_modules/core-js/modules/es6.math.hypot.js","core-js/modules/es6.math.imul":"../../node_modules/core-js/modules/es6.math.imul.js","core-js/modules/es6.math.log1p":"../../node_modules/core-js/modules/es6.math.log1p.js","core-js/modules/es6.math.log10":"../../node_modules/core-js/modules/es6.math.log10.js","core-js/modules/es6.math.log2":"../../node_modules/core-js/modules/es6.math.log2.js","core-js/modules/es6.math.sign":"../../node_modules/core-js/modules/es6.math.sign.js","core-js/modules/es6.math.sinh":"../../node_modules/core-js/modules/es6.math.sinh.js","core-js/modules/es6.math.tanh":"../../node_modules/core-js/modules/es6.math.tanh.js","core-js/modules/es6.math.trunc":"../../node_modules/core-js/modules/es6.math.trunc.js","core-js/modules/es6.number.constructor":"../../node_modules/core-js/modules/es6.number.constructor.js","core-js/modules/es6.number.epsilon":"../../node_modules/core-js/modules/es6.number.epsilon.js","core-js/modules/es6.number.is-finite":"../../node_modules/core-js/modules/es6.number.is-finite.js","core-js/modules/es6.number.is-integer":"../../node_modules/core-js/modules/es6.number.is-integer.js","core-js/modules/es6.number.is-nan":"../../node_modules/core-js/modules/es6.number.is-nan.js","core-js/modules/es6.number.is-safe-integer":"../../node_modules/core-js/modules/es6.number.is-safe-integer.js","core-js/modules/es6.number.max-safe-integer":"../../node_modules/core-js/modules/es6.number.max-safe-integer.js","core-js/modules/es6.number.min-safe-integer":"../../node_modules/core-js/modules/es6.number.min-safe-integer.js","core-js/modules/es6.number.parse-float":"../../node_modules/core-js/modules/es6.number.parse-float.js","core-js/modules/es6.number.parse-int":"../../node_modules/core-js/modules/es6.number.parse-int.js","core-js/modules/es6.object.assign":"../../node_modules/core-js/modules/es6.object.assign.js","core-js/modules/es7.object.define-getter":"../../node_modules/core-js/modules/es7.object.define-getter.js","core-js/modules/es7.object.define-setter":"../../node_modules/core-js/modules/es7.object.define-setter.js","core-js/modules/es7.object.entries":"../../node_modules/core-js/modules/es7.object.entries.js","core-js/modules/es6.object.freeze":"../../node_modules/core-js/modules/es6.object.freeze.js","core-js/modules/es6.object.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.object.get-own-property-descriptor.js","core-js/modules/es7.object.get-own-property-descriptors":"../../node_modules/core-js/modules/es7.object.get-own-property-descriptors.js","core-js/modules/es6.object.get-own-property-names":"../../node_modules/core-js/modules/es6.object.get-own-property-names.js","core-js/modules/es6.object.get-prototype-of":"../../node_modules/core-js/modules/es6.object.get-prototype-of.js","core-js/modules/es7.object.lookup-getter":"../../node_modules/core-js/modules/es7.object.lookup-getter.js","core-js/modules/es7.object.lookup-setter":"../../node_modules/core-js/modules/es7.object.lookup-setter.js","core-js/modules/es6.object.prevent-extensions":"../../node_modules/core-js/modules/es6.object.prevent-extensions.js","core-js/modules/es6.object.is":"../../node_modules/core-js/modules/es6.object.is.js","core-js/modules/es6.object.is-frozen":"../../node_modules/core-js/modules/es6.object.is-frozen.js","core-js/modules/es6.object.is-sealed":"../../node_modules/core-js/modules/es6.object.is-sealed.js","core-js/modules/es6.object.is-extensible":"../../node_modules/core-js/modules/es6.object.is-extensible.js","core-js/modules/es6.object.keys":"../../node_modules/core-js/modules/es6.object.keys.js","core-js/modules/es6.object.seal":"../../node_modules/core-js/modules/es6.object.seal.js","core-js/modules/es6.object.set-prototype-of":"../../node_modules/core-js/modules/es6.object.set-prototype-of.js","core-js/modules/es7.object.values":"../../node_modules/core-js/modules/es7.object.values.js","core-js/modules/es6.promise":"../../node_modules/core-js/modules/es6.promise.js","core-js/modules/es7.promise.finally":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es6.reflect.apply":"../../node_modules/core-js/modules/es6.reflect.apply.js","core-js/modules/es6.reflect.construct":"../../node_modules/core-js/modules/es6.reflect.construct.js","core-js/modules/es6.reflect.define-property":"../../node_modules/core-js/modules/es6.reflect.define-property.js","core-js/modules/es6.reflect.delete-property":"../../node_modules/core-js/modules/es6.reflect.delete-property.js","core-js/modules/es6.reflect.get":"../../node_modules/core-js/modules/es6.reflect.get.js","core-js/modules/es6.reflect.get-own-property-descriptor":"../../node_modules/core-js/modules/es6.reflect.get-own-property-descriptor.js","core-js/modules/es6.reflect.get-prototype-of":"../../node_modules/core-js/modules/es6.reflect.get-prototype-of.js","core-js/modules/es6.reflect.has":"../../node_modules/core-js/modules/es6.reflect.has.js","core-js/modules/es6.reflect.is-extensible":"../../node_modules/core-js/modules/es6.reflect.is-extensible.js","core-js/modules/es6.reflect.own-keys":"../../node_modules/core-js/modules/es6.reflect.own-keys.js","core-js/modules/es6.reflect.prevent-extensions":"../../node_modules/core-js/modules/es6.reflect.prevent-extensions.js","core-js/modules/es6.reflect.set":"../../node_modules/core-js/modules/es6.reflect.set.js","core-js/modules/es6.reflect.set-prototype-of":"../../node_modules/core-js/modules/es6.reflect.set-prototype-of.js","core-js/modules/es6.regexp.constructor":"../../node_modules/core-js/modules/es6.regexp.constructor.js","core-js/modules/es6.regexp.flags":"../../node_modules/core-js/modules/es6.regexp.flags.js","core-js/modules/es6.regexp.match":"../../node_modules/core-js/modules/es6.regexp.match.js","core-js/modules/es6.regexp.replace":"../../node_modules/core-js/modules/es6.regexp.replace.js","core-js/modules/es6.regexp.split":"../../node_modules/core-js/modules/es6.regexp.split.js","core-js/modules/es6.regexp.search":"../../node_modules/core-js/modules/es6.regexp.search.js","core-js/modules/es6.regexp.to-string":"../../node_modules/core-js/modules/es6.regexp.to-string.js","core-js/modules/es6.set":"../../node_modules/core-js/modules/es6.set.js","core-js/modules/es6.symbol":"../../node_modules/core-js/modules/es6.symbol.js","core-js/modules/es7.symbol.async-iterator":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es6.string.anchor":"../../node_modules/core-js/modules/es6.string.anchor.js","core-js/modules/es6.string.big":"../../node_modules/core-js/modules/es6.string.big.js","core-js/modules/es6.string.blink":"../../node_modules/core-js/modules/es6.string.blink.js","core-js/modules/es6.string.bold":"../../node_modules/core-js/modules/es6.string.bold.js","core-js/modules/es6.string.code-point-at":"../../node_modules/core-js/modules/es6.string.code-point-at.js","core-js/modules/es6.string.ends-with":"../../node_modules/core-js/modules/es6.string.ends-with.js","core-js/modules/es6.string.fixed":"../../node_modules/core-js/modules/es6.string.fixed.js","core-js/modules/es6.string.fontcolor":"../../node_modules/core-js/modules/es6.string.fontcolor.js","core-js/modules/es6.string.fontsize":"../../node_modules/core-js/modules/es6.string.fontsize.js","core-js/modules/es6.string.from-code-point":"../../node_modules/core-js/modules/es6.string.from-code-point.js","core-js/modules/es6.string.includes":"../../node_modules/core-js/modules/es6.string.includes.js","core-js/modules/es6.string.italics":"../../node_modules/core-js/modules/es6.string.italics.js","core-js/modules/es6.string.iterator":"../../node_modules/core-js/modules/es6.string.iterator.js","core-js/modules/es6.string.link":"../../node_modules/core-js/modules/es6.string.link.js","core-js/modules/es7.string.pad-start":"../../node_modules/core-js/modules/es7.string.pad-start.js","core-js/modules/es7.string.pad-end":"../../node_modules/core-js/modules/es7.string.pad-end.js","core-js/modules/es6.string.raw":"../../node_modules/core-js/modules/es6.string.raw.js","core-js/modules/es6.string.repeat":"../../node_modules/core-js/modules/es6.string.repeat.js","core-js/modules/es6.string.small":"../../node_modules/core-js/modules/es6.string.small.js","core-js/modules/es6.string.starts-with":"../../node_modules/core-js/modules/es6.string.starts-with.js","core-js/modules/es6.string.strike":"../../node_modules/core-js/modules/es6.string.strike.js","core-js/modules/es6.string.sub":"../../node_modules/core-js/modules/es6.string.sub.js","core-js/modules/es6.string.sup":"../../node_modules/core-js/modules/es6.string.sup.js","core-js/modules/es6.typed.array-buffer":"../../node_modules/core-js/modules/es6.typed.array-buffer.js","core-js/modules/es6.typed.int8-array":"../../node_modules/core-js/modules/es6.typed.int8-array.js","core-js/modules/es6.typed.uint8-array":"../../node_modules/core-js/modules/es6.typed.uint8-array.js","core-js/modules/es6.typed.uint8-clamped-array":"../../node_modules/core-js/modules/es6.typed.uint8-clamped-array.js","core-js/modules/es6.typed.int16-array":"../../node_modules/core-js/modules/es6.typed.int16-array.js","core-js/modules/es6.typed.uint16-array":"../../node_modules/core-js/modules/es6.typed.uint16-array.js","core-js/modules/es6.typed.int32-array":"../../node_modules/core-js/modules/es6.typed.int32-array.js","core-js/modules/es6.typed.uint32-array":"../../node_modules/core-js/modules/es6.typed.uint32-array.js","core-js/modules/es6.typed.float32-array":"../../node_modules/core-js/modules/es6.typed.float32-array.js","core-js/modules/es6.typed.float64-array":"../../node_modules/core-js/modules/es6.typed.float64-array.js","core-js/modules/es6.weak-map":"../../node_modules/core-js/modules/es6.weak-map.js","core-js/modules/es6.weak-set":"../../node_modules/core-js/modules/es6.weak-set.js","core-js/modules/es7.array.flat-map":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/web.timers":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable":"../../node_modules/core-js/modules/web.dom.iterable.js","regenerator-runtime/runtime":"../../node_modules/regenerator-runtime/runtime.js","../../config":"../config.js","../../hosts":"../hosts.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"components/component-button.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37600,7 +37763,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.62",
+  "version": "0.9.75",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"
@@ -37647,6 +37810,8 @@ var _componentWidget = _interopRequireDefault(require("./components/component-wi
 var _validateInputElement = _interopRequireDefault(require("./scripts/validateInputElement"));
 
 var _slack = _interopRequireDefault(require("./modules/slack"));
+
+var _twitter = _interopRequireDefault(require("./modules/twitter"));
 
 var _storage = _interopRequireDefault(require("./controller/storage"));
 
@@ -37911,6 +38076,16 @@ function (_Component) {
 
         inputElement = _elements[0];
         widgetContainer = _elements[1];
+      } else if (window.location.href.includes('twitter.com')) {
+        customIdentifier = 'Twitter';
+        (0, _helperLogger.default)("hasCustomIdentifier: ".concat(customIdentifier));
+
+        var _elements2 = (0, _twitter.default)(elementClickedOn);
+
+        var _elements3 = _slicedToArray(_elements2, 2);
+
+        inputElement = _elements3[0];
+        widgetContainer = _elements3[1];
       } else {
         /**
          * Default identifier/positioner
@@ -38007,7 +38182,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.jsx","./scripts/validateInputElement":"scripts/validateInputElement.js","./modules/slack":"modules/slack.js","./controller/storage":"controller/storage.js","./components/component-button":"components/component-button.js","./index.css":"index.css","../manifest.json":"../manifest.json","./helpers/helper-logger":"../helpers/helper-logger.js"}],"modules/placing/twitter.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.jsx","./scripts/validateInputElement":"scripts/validateInputElement.js","./modules/slack":"modules/slack.js","./modules/twitter":"modules/twitter.js","./controller/storage":"controller/storage.js","./components/component-button":"components/component-button.js","./index.css":"index.css","../manifest.json":"../manifest.json","./helpers/helper-logger":"../helpers/helper-logger.js"}],"modules/placing/twitter.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38069,8 +38244,8 @@ window.onload = function () {
   var containerElement = document.createElement('div');
   containerElement.id = 'fairlanguage-container';
   /*     containerElement.style.position = 'absolute';
-    containerElement.style.width = '100%';
-    containerElement.style.zIndex = '1';
+  containerElement.style.width = '100%';
+  containerElement.style.zIndex = '1';
   */
 
   /**
@@ -38081,35 +38256,48 @@ window.onload = function () {
     twitter
   */
 
-  if (document.getElementById('tweet-box-home-timeline')) document.getElementById('tweet-box-home-timeline').addEventListener('focus', function () {
-    document.getElementById('tweet-box-home-timeline').click(); //document.getElementById('fl-original').focus()
-  });
-  if (document.getElementById('tweet-box-home-timeline')) document.getElementById('tweet-box-home-timeline').addEventListener('focus', function () {
-    document.getElementById('tweet-box-home-timeline').click(); //document.getElementById('fl-original').focus()
-  });
+  /*   if (document.getElementById('tweet-box-home-timeline'))
+  document.getElementById('tweet-box-home-timeline').addEventListener('focus', () => {
+    document.getElementById('tweet-box-home-timeline').click()
+    //document.getElementById('fl-original').focus()
+    
+  }); */
+
+  if (document.getElementById('tweet-box-home-timeline')) {
+    document.getElementById('tweet-box-home-timeline').addEventListener('focus', function () {
+      if (document.getElementById('tweet-box-home-timeline')) {
+        document.getElementById('tweet-box-home-timeline').click();
+      }
+    });
+  }
   /*   
    facebook
   */
 
-  if (document.querySelectorAll('textarea[name="xhpc_message"]').length > 0) document.querySelectorAll('textarea[name="xhpc_message"]')[0].addEventListener('focus', function () {
-    var found = false;
-    var timer = setInterval(function () {
-      if (found) {
-        return clearInterval(timer);
-      }
 
-      ;
+  if (document.querySelectorAll('textarea[name="xhpc_message"]').length > 0) {
+    document.querySelectorAll('textarea[name="xhpc_message"]')[0].addEventListener('focus', function () {
+      var found = false;
+      var timer = setInterval(function () {
+        if (found) {
+          return clearInterval(timer);
+        }
 
-      if (document.querySelectorAll('div[role="textbox"]')) {
-        document.querySelectorAll('div[role="textbox"]')[0].click();
-        found = true;
-      }
-    }, 50);
-  });
+        ;
+
+        if (document.querySelectorAll('div[role="textbox"]')) {
+          document.querySelectorAll('div[role="textbox"]')[0].click();
+          found = true;
+        }
+      }, 50);
+    });
+  }
+
+  ;
   /*
-     setTimeout(()=>{
-    document.querySelectorAll('div[role="textbox"]')[0].click()
-  }, 500)
+       setTimeout(()=>{
+      document.querySelectorAll('div[role="textbox"]')[0].click()
+    }, 500)
   */
   // Append container element to parent element
   // document.body.appendChild(containerElement);

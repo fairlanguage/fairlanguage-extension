@@ -10,6 +10,7 @@ import ComponentWidget from './components/component-widget';
 import validateInputElement from './scripts/validateInputElement';
 
 import customIdentifierSlack from './modules/slack';
+import customIdentifierTwitter from './modules/twitter';
 
 import StorageController from './controller/storage';
 
@@ -199,7 +200,18 @@ export default class App extends Component {
       
       [inputElement, widgetContainer] = elements;
 
+    } else
+    if (window.location.href.includes('twitter.com')) {
+
+      customIdentifier = 'Twitter';
+      log(`hasCustomIdentifier: ${customIdentifier}`);
+
+      const elements = customIdentifierTwitter(elementClickedOn);
+      
+      [inputElement, widgetContainer] = elements;
+
     } else {
+  
 
       /**
        * Default identifier/positioner
