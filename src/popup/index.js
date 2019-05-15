@@ -145,7 +145,7 @@ const getCurrentHostSettings = () => {
 
         const currentHostSupport = getCurrentHostSupportFromHosts(currentHost);
 
-        buttonHostEnable.textContent = settings.enabled === true || settings.enabled === null ? STRING_DISABLE_HOST : STRING_ENABLE_HOST ;
+        buttonHostEnable.textContent = settings.enabled === true || settings.enabled === null ? STRING_DISABLE_HOST : STRING_ENABLE_HOST;
         buttonHostEnable.style.color = settings.enabled === true || settings.enabled === null ? 'grey' : 'black';
         buttonHostEnable.style.borderColor = settings.enabled === true || settings.enabled === null ? 'grey' : 'black';
 

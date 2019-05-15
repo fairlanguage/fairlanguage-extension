@@ -29928,21 +29928,6 @@ var formatTextElements = function formatTextElements(originalTextElement, cloned
 
 var _default = formatTextElements;
 exports.default = _default;
-},{}],"modules/textElements/telegram.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var formatTextElements = function formatTextElements(originalTextElement, clonedtextElement) {
-  originalTextElement.style.top = '0px';
-  originalTextElement.style.width = '100%';
-};
-
-var _default = formatTextElements;
-exports.default = _default;
 },{}],"modules/textElements/instagram.js":[function(require,module,exports) {
 "use strict";
 
@@ -30156,6 +30141,126 @@ var formatMarkingElement = function formatMarkingElement(markingElement) {};
 exports.formatMarkingElement = formatMarkingElement;
 var _default = identifyInputElement;
 exports.default = _default;
+},{"../helpers/helper-logger":"../helpers/helper-logger.js"}],"modules/telegram.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.onKeyDown = exports.formatTextElements = exports.formatMarkingElement = exports.default = void 0;
+
+var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable import/first */
+// eslint-disable-next-line no-underscore-dangle
+var __DEV__ = true;
+
+var l = function l(i) {
+  return __DEV__ ? (0, _helperLogger.default)(i) : null;
+};
+/**
+ * Identify known container/wrapper type
+ * 
+ * There are three input elements on telegrams's web app:
+ * 
+ * 1. 'main': The main tweet box in the timeline
+ * (attribute: class="timeline-tweetbox")
+ * 2. 'reply': Modal popping up when clicking 'reply' on a tweet in the timeline 
+ * (attribute: class="modal-tweet-form-container")
+ * 3. 'retweet': Modal popping up when clicking 'retweet' on a tweet in the timeline 
+ * (attribute: class="RetweetDialog-commentBox")
+ * 4. 'message' : Modal popping up when clicking 'Direct message' on a tweet in the timeline 
+ * (attribute: class="DMActivity-container")
+ */
+
+
+var identifyInputElement = function identifyInputElement(elementClickedOn) {
+  var type;
+  /*
+    Find known container/wrapper element
+  */
+
+  var i = 0;
+  var container;
+  var current = elementClickedOn;
+  var THRESHOLD = 25;
+
+  while (container === undefined && i < THRESHOLD) {
+    l(i);
+
+    if (current.className) {
+      switch (current.className) {
+        case 'im_send_form_wrap1':
+          container = current;
+          type = 'main';
+          break;
+
+        default:
+          type = undefined;
+      }
+    }
+
+    if (!current.parentNode) container = null;
+    current = current.parentNode;
+    i += 1;
+  }
+
+  l("container: ".concat(container));
+
+  switch (type) {
+    case 'main':
+      {
+        var con = document.getElementsByClassName('im_send_buttons_wrap clearfix')[0];
+        var widgetElement = document.createElement('div');
+        widgetElement.style.width = '26px';
+        widgetElement.style.height = '24px';
+        widgetElement.style.display = 'flex';
+        widgetElement.style.alignItems = 'center';
+        widgetElement.style.justifyContent = 'center';
+        widgetElement.style.marginTop = '2px';
+        con.append(widgetElement);
+        document.getElementsByClassName('composer_emoji_panel')[0].remove();
+        /**
+         * Find input element
+         */
+
+        var inputElement = container.querySelectorAll('div[class="composer_rich_textarea"]')[0];
+        return [inputElement, widgetElement];
+      }
+
+    default:
+      (0, _helperLogger.default)("[Telegram] - disabled on this identifiedInputElementType: ".concat(type));
+      return [null, null];
+  }
+};
+
+var formatTextElements = function formatTextElements(originalTextElement, clonedTextElement) {
+  originalTextElement.style.top = '0px';
+  originalTextElement.style.width = '100%';
+  clonedTextElement.addEventListener('click', function () {
+    originalTextElement.focus();
+  });
+  clonedTextElement.addEventListener('focus', function () {
+    originalTextElement.focus();
+  });
+  clonedTextElement.setAttribute('data-attachment-placeholder', '');
+};
+
+exports.formatTextElements = formatTextElements;
+
+var onKeyDown = function onKeyDown(originalTextElement, clonedTextElement) {
+  clonedTextElement.setAttribute('data-attachment-placeholder', '');
+};
+
+exports.onKeyDown = onKeyDown;
+
+var formatMarkingElement = function formatMarkingElement(markingElement) {};
+
+exports.formatMarkingElement = formatMarkingElement;
+var _default = identifyInputElement;
+exports.default = _default;
 },{"../helpers/helper-logger":"../helpers/helper-logger.js"}],"components/component-widget.jsx":[function(require,module,exports) {
 "use strict";
 
@@ -30184,13 +30289,13 @@ var _googleMail = _interopRequireDefault(require("../modules/textElements/google
 
 var _outlook = _interopRequireDefault(require("../modules/textElements/outlook"));
 
-var _telegram = _interopRequireDefault(require("../modules/textElements/telegram"));
-
 var _instagram = _interopRequireDefault(require("../modules/textElements/instagram"));
 
 var _slack = require("../modules/slack");
 
 var _twitter = require("../modules/twitter");
+
+var _telegram = require("../modules/telegram");
 
 var _helperLogger = _interopRequireDefault(require("../helpers/helper-logger"));
 
@@ -30351,18 +30456,12 @@ function (_Component) {
       */
 
 
-      if (window.location.href.includes('mail.google.com')) {
-        (0, _googleMail.default)(originalTextElement, clonedTextElement);
-      } else if (window.location.href.includes('twitter.com')) {
+      if (window.location.href.includes('twitter.com')) {
         (0, _twitter.formatTextElements)(originalTextElement, clonedTextElement);
-      } else if (window.location.href.includes('instagram.com')) {
-        (0, _instagram.default)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('web.telegram.org')) {
-        (0, _telegram.default)(originalTextElement, clonedTextElement);
+        (0, _telegram.formatTextElements)(originalTextElement, clonedTextElement);
       } else if (window.location.href.includes('slack.com')) {
         (0, _slack.formatTextElements)(originalTextElement, clonedTextElement);
-      } else if (window.location.href.includes('outlook.live.com')) {
-        (0, _outlook.default)(originalTextElement, clonedTextElement);
       } else {
         originalTextElement.style.top = '0px';
       }
@@ -30515,7 +30614,7 @@ var logo = {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentWidget);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/textElements/telegram":"modules/textElements/telegram.js","../modules/textElements/instagram":"modules/textElements/instagram.js","../modules/slack":"modules/slack.js","../modules/twitter":"modules/twitter.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"scripts/validateInputElement.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","axios":"../node_modules/axios/index.js","../actions/actions-text":"actions/actions-text.js","../../config":"../config.js","../scripts/underline":"scripts/underline.js","../modules/textElements/google-mail":"modules/textElements/google-mail.js","../modules/textElements/outlook":"modules/textElements/outlook.js","../modules/textElements/instagram":"modules/textElements/instagram.js","../modules/slack":"modules/slack.js","../modules/twitter":"modules/twitter.js","../modules/telegram":"modules/telegram.js","../helpers/helper-logger":"../helpers/helper-logger.js"}],"scripts/validateInputElement.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37026,6 +37125,9 @@ var hosts = [{
 }, {
   host: 'twitter.com',
   support: 'full'
+}, {
+  host: 'web.telegram.org',
+  support: 'full'
 }];
 var _default = hosts;
 exports.default = _default;
@@ -37813,6 +37915,8 @@ var _slack = _interopRequireDefault(require("./modules/slack"));
 
 var _twitter = _interopRequireDefault(require("./modules/twitter"));
 
+var _telegram = _interopRequireDefault(require("./modules/telegram"));
+
 var _storage = _interopRequireDefault(require("./controller/storage"));
 
 var _componentButton = _interopRequireDefault(require("./components/component-button"));
@@ -38086,6 +38190,16 @@ function (_Component) {
 
         inputElement = _elements3[0];
         widgetContainer = _elements3[1];
+      } else if (window.location.href.includes('telegram.org')) {
+        customIdentifier = 'Telegram';
+        (0, _helperLogger.default)("hasCustomIdentifier: ".concat(customIdentifier));
+
+        var _elements4 = (0, _telegram.default)(elementClickedOn);
+
+        var _elements5 = _slicedToArray(_elements4, 2);
+
+        inputElement = _elements5[0];
+        widgetContainer = _elements5[1];
       } else {
         /**
          * Default identifier/positioner
@@ -38182,7 +38296,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.jsx","./scripts/validateInputElement":"scripts/validateInputElement.js","./modules/slack":"modules/slack.js","./modules/twitter":"modules/twitter.js","./controller/storage":"controller/storage.js","./components/component-button":"components/component-button.js","./index.css":"index.css","../manifest.json":"../manifest.json","./helpers/helper-logger":"../helpers/helper-logger.js"}],"modules/placing/twitter.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./components/component-toolbar":"components/component-toolbar.js","./components/component-widget":"components/component-widget.jsx","./scripts/validateInputElement":"scripts/validateInputElement.js","./modules/slack":"modules/slack.js","./modules/twitter":"modules/twitter.js","./modules/telegram":"modules/telegram.js","./controller/storage":"controller/storage.js","./components/component-button":"components/component-button.js","./index.css":"index.css","../manifest.json":"../manifest.json","./helpers/helper-logger":"../helpers/helper-logger.js"}],"modules/placing/twitter.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

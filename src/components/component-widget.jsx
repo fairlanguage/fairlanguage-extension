@@ -21,7 +21,6 @@ import underline, {
 
 import formatForGoogleMail from '../modules/textElements/google-mail';
 import formatForOutlook from '../modules/textElements/outlook';
-import formatForTelegram from '../modules/textElements/telegram';
 import formatForInstagram from '../modules/textElements/instagram';
 
 import {
@@ -33,6 +32,11 @@ import {
   formatTextElements as formatForTwitter, 
   onKeyDown as onKeyDownForTwitter, 
 } from '../modules/twitter';
+
+import {
+  formatTextElements as formatForTelegram, 
+  onKeyDown as onKeyDownForTelegram, 
+} from '../modules/telegram';
 
 import log from '../helpers/helper-logger';
 
@@ -174,23 +178,14 @@ class ComponentWidget extends Component {
       [CUSTOM] Final Formatting
     */
 
-    if (window.location.href.includes('mail.google.com')) {
-      formatForGoogleMail(originalTextElement, clonedTextElement);
-    } else 
     if (window.location.href.includes('twitter.com')) {
       formatForTwitter(originalTextElement, clonedTextElement);
-    } else 
-    if (window.location.href.includes('instagram.com')) {
-      formatForInstagram(originalTextElement, clonedTextElement);
-    } else 
+    } else
     if (window.location.href.includes('web.telegram.org')) {
       formatForTelegram(originalTextElement, clonedTextElement);
     } else 
     if (window.location.href.includes('slack.com')) {
       formatForSlack(originalTextElement, clonedTextElement);
-    } else 
-    if (window.location.href.includes('outlook.live.com')) {
-      formatForOutlook(originalTextElement, clonedTextElement);
     } else {
       originalTextElement.style.top = '0px';
     }

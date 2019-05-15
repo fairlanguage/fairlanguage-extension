@@ -4,5 +4,8 @@ const hosts = [{
 }, {
   host: 'twitter.com',
   support: 'full',
+}, {
+  host: 'web.telegram.org',
+  support: 'full',
 }];
 export default hosts;

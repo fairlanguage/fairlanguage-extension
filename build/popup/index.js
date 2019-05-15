@@ -188,6 +188,9 @@ var hosts = [{
 }, {
   host: 'twitter.com',
   support: 'full'
+}, {
+  host: 'web.telegram.org',
+  support: 'full'
 }];
 var _default = hosts;
 exports.default = _default;
