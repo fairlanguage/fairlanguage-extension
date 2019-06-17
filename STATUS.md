@@ -2,7 +2,7 @@
 
 # 🎉 Compatibility Status
 
-|             Web App                             | widget | method  | inputElement              | type | knownIssues  |
+|             webApp                              | widget | method  | inputElement              | type | knownIssues  |
 |-------------------------------------------------|:------:|:-------:|:-------------------------:|:----:|:------------:| 
 | <b>slack</b>                                    |        |         |                           |      | [![slack]](https://slack.com)             |
 | [slack.com](https://slack.com)                  | custom | cloning | Main                      | DIV  |              |
@@ -24,6 +24,7 @@
 | [facebook.com](https://facebook.com)                         | custom | cloning | Feed - Create Post        | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 | <b>messenger</b>                                |        |         |                           |     |              |
 | [messenger.com](https://messenger.com)          | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
+| <b>whatsapp</b>                                |        |         |                           |     |              |
 | [web.whatsapp.com](https://web.whatsapp.com)    | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 
 [slack]: https://img.shields.io/badge/slack.com-supported-green.svg
