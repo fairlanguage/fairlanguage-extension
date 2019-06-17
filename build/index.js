@@ -48564,7 +48564,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.75",
+  "version": "0.9.81",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"

@@ -104,12 +104,12 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"../manifest.json":[function(require,module,exports) {
+})({"../../manifest.json":[function(require,module,exports) {
 module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.75",
+  "version": "0.9.81",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"
@@ -7435,7 +7435,7 @@ buttonResetHosts.addEventListener('click', function () {
  */
 
 displayVersion.textContent = "v".concat(manifest.version);
-},{"../../manifest.json":"../manifest.json","../../config":"../config.js","../../hosts":"../hosts.js","../controller/storage":"controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../../manifest.json":"../../manifest.json","../../config":"../config.js","../../hosts":"../hosts.js","../controller/storage":"controller/storage.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
