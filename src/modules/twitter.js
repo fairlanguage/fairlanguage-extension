@@ -8,9 +8,9 @@ const l = i => (__DEV__ ? log(i) : null);
 /**
  * Identify known container/wrapper type
  * 
- * There are three input elements on twitter's web app:
+ * The following input elements twitter's web app are supported:
  * 
- * 1. 'main': The main tweet box in the timeline
+ * 1. 'tweet': The main tweet box in the timeline
  * (attribute: class="timeline-tweetbox")
  * 2. 'reply': Modal popping up when clicking 'reply' on a tweet in the timeline 
  * (attribute: class="modal-tweet-form-container")
@@ -18,6 +18,8 @@ const l = i => (__DEV__ ? log(i) : null);
  * (attribute: class="RetweetDialog-commentBox")
  * 4. 'message' : Modal popping up when clicking 'Direct message' on a tweet in the timeline 
  * (attribute: class="DMActivity-container")
+ * 5. 'compose' : Modal popping up when clicking 'tweet' on the upper right 
+ * (attribute: class="modal-content TweetstormDialog-content")
  */
 
 const identifyInputElement = (elementClickedOn) => {
@@ -35,12 +37,16 @@ const identifyInputElement = (elementClickedOn) => {
   const THRESHOLD = 25;
 
   while (container === undefined && i < THRESHOLD) {
-    l(i);
+    // l(i);
     if (current.className) {
       switch (current.className) {
-        case 'timeline-tweet-box':
+        case 'tweet-box-content': 
           container = current;
-          type = 'main';
+          type = 'tweet';
+          break;
+        case 'timeline-tweet-box':         
+          container = current;
+          type = 'tweet';
           break;
         case 'modal-tweet-form-container':
           container = current;
@@ -54,6 +60,10 @@ const identifyInputElement = (elementClickedOn) => {
           container = current;
           type = 'message';        
           break;
+        case 'modal-content TweetstormDialog-content':
+          container = current;
+          type = 'compose';   
+          break;
         default:
           type = undefined;
       }
@@ -65,9 +75,41 @@ const identifyInputElement = (elementClickedOn) => {
     i += 1;
   }
 
+  // alert(type);
+  l(`type: ${type}`);
+
   l(`container: ${container}`);
 
   switch (type) {
+
+    case 'compose': {
+
+      const widgetContainer = document.createElement('span');
+
+      widgetContainer.className = 'TweetBoxExtras-item';
+
+      // widgetContainer.style.position = 'absolute';
+      // widgetContainer.style.right = '0px';
+      widgetContainer.style.marginRight = '15px';
+      widgetContainer.style.marginLeft = '7.5px';
+
+      widgetContainer.style.display = 'inline-flex';
+      widgetContainer.style.alignItems = 'center';
+      widgetContainer.style.justifyContent = 'center';
+
+      const tweetBoxExtrasElement = container.parentNode.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0];
+
+      tweetBoxExtrasElement.style.display = 'flex';
+      tweetBoxExtrasElement.style.alignItems = 'center';
+      tweetBoxExtrasElement.style.justifyContent = 'center';
+      
+      tweetBoxExtrasElement.insertBefore(widgetContainer, tweetBoxExtrasElement.childNodes[0]);
+
+      const inputElement = container.querySelectorAll('div[name="tweet"]')[0];
+
+      return [inputElement, widgetContainer];
+
+    }
 
     case 'message': {
 
@@ -144,7 +186,8 @@ const identifyInputElement = (elementClickedOn) => {
       return [inputElement, widgetContainer];
 
     }
-    case 'main': {
+
+    case 'tweet': {
 
       const widgetContainer = document.createElement('span');
 
@@ -165,9 +208,28 @@ const identifyInputElement = (elementClickedOn) => {
       const tweetBoxExtrasElement = container.querySelectorAll('div[class="TweetBoxExtras tweet-box-extras"]')[0];
       tweetBoxExtrasElement.insertBefore(widgetContainer, tweetBoxExtrasElement.childNodes[1]);
 
-      const inputElement = container.querySelectorAll('div[id="tweet-box-home-timeline"]')[0];
+      // Find input element
+      const inputElement = container.querySelectorAll('div[contenteditable="true"]')[0];
 
-    
+      /**
+       * Hiding ghost element
+       * (Since the input model closes after submitting the tweet)
+       */
+
+      // Find button
+      const submitButton = container.querySelectorAll('div[class="TweetBoxToolbar-tweetButton tweet-button"]')[0];
+
+      // Add click event handler
+      if (submitButton) {
+        submitButton.addEventListener('click', () => {
+
+          const ghost = container.querySelectorAll('div[id="fl-clone"]')[0];
+
+          ghost.style.opacity = 0;
+
+        });
+      }
+
       return [inputElement, widgetContainer];
     
     }
@@ -198,7 +260,29 @@ const formatTextElements = (originalTextElement, clonedTextElement) => {
 };
 
 const onKeyDown = (originalTextElement, clonedTextElement) => {
+
+  clonedTextElement.style.opacity = 1;
+
+  // TODO: well... 
+
   clonedTextElement.setAttribute('data-attachment-placeholder', '');
+  clonedTextElement.setAttribute('data-placeholder-default', '');
+
+  originalTextElement.setAttribute('data-attachment-placeholder', '');
+  originalTextElement.setAttribute('data-placeholder-default', '');
+
+  clonedTextElement.setAttribute('data-attachment-reply', '');
+  clonedTextElement.setAttribute('data-placeholder-reply', '');
+
+  originalTextElement.setAttribute('data-attachment-reply', '');
+  originalTextElement.setAttribute('data-placeholder-reply', '');
+
+  clonedTextElement.setAttribute('data-placeholder-add-another-tweet', '');
+  clonedTextElement.setAttribute('data-placeholder-add-another-tweet', '');
+
+  originalTextElement.setAttribute('data-placeholder-add-another-tweet', '');
+  originalTextElement.setAttribute('data-placeholder-add-another-tweet', '');
+  
 };
 
 const formatMarkingElement = (markingElement) => {

@@ -1,4 +1,4 @@
-## (Updated 05/13/19)
+## Updated: 06/17/19
 
 # 🎉 Compatibility Status
 
@@ -10,9 +10,10 @@
 | [slack.com](https://slack.com)                  | custom | cloning | Thread - Sidebar          | DIV  |              |
 | [slack.com](https://slack.com)                  | custom | cloning | Reply                     | DIV  |              |
 | <b>twitter</b>                                  |        |         |                           |      | [![twitter]](https://twitter.com)             |
-| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Tweet              | DIV  |              |
-| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Reply              | DIV  |              |
-| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Retweet            | DIV  |              |
+| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Tweet (compose) + Add | DIV  |              |
+| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Tweet (feed) + Add | DIV  |              |
+| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Reply (feed)       | DIV  |              |
+| [twitter.com](https://twitter.com)              | custom | cloning | Feed - Retweet (feed)     | DIV  |              |
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Direct message     | DIV  |              |
 | <b>instagram</b>                                |        |         |                           |      |              |
 | [instagram.com](https://instagram.com)          | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |

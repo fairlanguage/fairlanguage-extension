@@ -12,6 +12,7 @@ import validateInputElement from './scripts/validateInputElement';
 import customIdentifierSlack from './modules/slack';
 import customIdentifierTwitter from './modules/twitter';
 import customIdentifierTelegram from './modules/telegram';
+import customIdentifierMessenger from './modules/messenger';
 
 import StorageController from './controller/storage';
 
@@ -200,6 +201,16 @@ export default class App extends Component {
       const elements = customIdentifierSlack(elementClickedOn);
       
       [inputElement, widgetContainer] = elements;
+    } else
+    if (window.location.href.includes('messenger.com')) {
+
+      customIdentifier = 'Messenger';
+      log(`hasCustomIdentifier: ${customIdentifier}`);
+
+      const elements = customIdentifierMessenger(elementClickedOn);
+      
+      [inputElement, widgetContainer] = elements;
+
     } else
     if (window.location.href.includes('twitter.com')) {
 

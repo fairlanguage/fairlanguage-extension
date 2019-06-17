@@ -19,10 +19,6 @@ import underline, {
   setCursorAtPositionInDOMNode,
 } from '../scripts/underline';
 
-import formatForGoogleMail from '../modules/textElements/google-mail';
-import formatForOutlook from '../modules/textElements/outlook';
-import formatForInstagram from '../modules/textElements/instagram';
-
 import {
   formatTextElements as formatForSlack, 
   onKeyDown as onKeyDownForSlack, 
@@ -32,6 +28,11 @@ import {
   formatTextElements as formatForTwitter, 
   onKeyDown as onKeyDownForTwitter, 
 } from '../modules/twitter';
+
+import {
+  formatTextElements as formatForMessenger, 
+  onKeyDown as onKeyDownForMessenger, 
+} from '../modules/messenger';
 
 import {
   formatTextElements as formatForTelegram, 
@@ -129,7 +130,7 @@ class ComponentWidget extends Component {
     const originalTextElement = this.props.textElement;
 
     let clonedTextElement;
-    if (originalTextElement.nodeName === 'DIV') {
+    if (originalTextElement.nodeName && originalTextElement.nodeName === 'DIV') {
       clonedTextElement = originalTextElement.cloneNode(true);
     } else {
       this.textElementType = 'TEXTAREA';
@@ -214,7 +215,8 @@ class ComponentWidget extends Component {
         [CUSTOM] onKeyUp
       */
 
-      if (window.location.href.includes('mail.google.com')) {
+      if (window.location.href.includes('messenger.com')) {
+        onKeyDownForMessenger(originalTextElement, clonedTextElement);
       } else 
       if (window.location.href.includes('twitter.com')) {
         onKeyDownForTwitter(originalTextElement, clonedTextElement);
@@ -259,13 +261,18 @@ class ComponentWidget extends Component {
                   originalTextElement.focus() */
                 }, () => {
                   // *onReplaced* 
-                  originalTextElement.innerText = clonedTextElement.innerText;
-
+             
                   /**
                    * IMPORTANT! Otherwise we use the cursor position after replacing
                    */
+                  copyTextFromElementToElement(clonedTextElement, originalTextElement);
+                  
+                  /**
+                   * IMPORTANT! Copy back
+                   */
                   setCursorAtPositionInDOMNode(this.state.currentCursorPosition, originalTextElement);
                   originalTextElement.focus();
+
                   this.props.checkText(originalTextElement.textContent, this.state.id);
 
 
@@ -278,7 +285,8 @@ class ComponentWidget extends Component {
           }
         })
         .catch((err) => {
-          //dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
+          l(err);
+          // dispatch({type: "RECEIVE_BLOCKS_ERROR", payload: err})
         });
 
 
@@ -322,12 +330,12 @@ class ComponentWidget extends Component {
       marginTop: '-1px',
     };
 
-    const { amount } = this.state;
+    const { id, amount } = this.state;
 
     return ReactDOM.createPortal(
       <div
-        id={'fairlanguage-widget-'+this.state.id}
-        fl={this.state.id}
+        id={'fairlanguage-widget-'+id}
+        fl={id}
         style={{
 
           display: this.props.visible?'flex':'none',
@@ -364,12 +372,6 @@ class ComponentWidget extends Component {
     );
   }
 }
-
-const logo = {
-  width: '22px',
-  height: '22px',
-  marginRight: '11px',
-};
 
 export default connect(
   mapStateToProps,

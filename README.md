@@ -1,14 +1,6 @@
 
 # <p align="center">Fairlanguage - Browser Extension</p>
 
-<p align="center">
-<img src="https://img.shields.io/badge/Google%20Mail-25%25-green.svg"></img> <img src="https://img.shields.io/badge/Outlook%20Live-25%25-green.svg"></img> <img src="https://img.shields.io/badge/Yahoo%20Mail-25%25-green.svg"></img>
-</p>
-
-<p align="center">
-<img src="https://img.shields.io/badge/Slack-12%25-orange.svg"></img>
-</p>
-
 # Compatibility
 
 [STATUS.md](STATUS.md).
