@@ -15,6 +15,8 @@
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Reply (feed)       | DIV  |              |
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Retweet (feed)     | DIV  |              |
 | [twitter.com](https://twitter.com)              | custom | cloning | Feed - Direct message     | DIV  |              |
+| <b>telegram</b>                                 |        |         |                           |      |[![telegram]](https://web.telegram.org)|
+| [web.telegram.org](https://web.telegram.org)    | custom | cloning | Send Message              | DIV  |              |
 | <b>instagram</b>                                |        |         |                           |      |              |
 | [instagram.com](https://instagram.com)          | custom | cloning | Feed - Add Comment        | TXTAA | focus ghosting required, improve widget placing |
 | [instagram.com](https://instagram.com)          | custom | cloning | Post - Add Comment        | TXTAA | focus ghosting required,improve widget placing |
@@ -23,7 +25,6 @@
 | <b>messenger</b>                                |        |         |                           |     |              |
 | [messenger.com](https://messenger.com)          | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
 | [web.whatsapp.com](https://web.whatsapp.com)    | custom | cloning | Send Message              | DIV | unknown script prevents backspace after replacing (removing keyDown eventListener), still posts the original text (set text in originaTextElement by simulate typing?)               |
-| [web.telegram.org](https://web.telegram.org)    | custom | cloning | Send Message              | DIV |              |
 | [![badge4]](https://mail.google.com)            | custom | cloning |                           |     |              |
 | [![badge5]](https://mail.yahoo.com)             | custom | cloning |                           |     |              |
 | [![badge6]](https://outlook.live.com)           | custom | cloning |                           |     |              |
@@ -34,6 +35,7 @@
 
 [twitter]: https://img.shields.io/badge/twitter.com-supported-green.svg
 
+[telegram]: https://img.shields.io/badge/web.telegram.org-supported-green.svg
 
 [badge9]: https://img.shields.io/badge/instagram.com-supported-green.svg
 [badge7]: https://img.shields.io/badge/facebook.com-in%20progress-red.svg
