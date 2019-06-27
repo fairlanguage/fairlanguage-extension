@@ -17,7 +17,7 @@
 ### Chrome:
 
 ```
-chrome://extension
+chrome://extensions
 ```
 
 -> Load unpacked -> Select directory 
@@ -42,7 +42,7 @@ npm run build
 ### In Chrome:
 
 ```
-chrome://extension
+chrome://extensions
 ```
 
 -> Load unpacked -> Select directory 
