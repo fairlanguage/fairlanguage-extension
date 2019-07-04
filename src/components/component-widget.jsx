@@ -358,7 +358,6 @@ class ComponentWidget extends Component {
       
           textAlign: 'center',
 
-          cursor: 'pointer',
           userSelect: 'none',
         }}
       >

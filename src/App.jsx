@@ -26,7 +26,7 @@ import log from './helpers/helper-logger';
 
 const l = i => (__DEV__ ? log(i) : null); 
 
-const TEXT_PROMPT_ENABLE = 'Toll, dass du Fairlanguage verwenden möchtest! Bitte lies unsere Nutzungsbedingungen, um die Extension zu aktivieren.';
+const TEXT_PROMPT_ENABLE = 'Um dir Feedback und Empfehlungen zu deinen Texten geben zu können, müssen wir diese an einen Server senden und dort analysieren. Mit der Nutzung unserer Extension stimmst du der Verarbeitung deiner Daten und unserer Datenschutzerklärung (zu finden unter: https://www.fairlanguage.com/impressum) ausdrücklich zu.';
 const TEXT_ENABLE = 'Ja, damit bin ich einverstanden.';
 const TEXT_DISABLE = 'Nein, ich bin nicht einverstanden.';
 

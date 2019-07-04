@@ -1,6 +1,6 @@
 {
   "name": "fairlanguage",
-  "version": "0.9.12",
+  "version": "0.9.85",
   "description": "I am flamingo.",
   "main": "src/index.js",
   "scripts": {

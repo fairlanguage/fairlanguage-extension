@@ -1,3 +1,5 @@
+const __DEV__ = true;
+
 const styles = [
   'background: linear-gradient(#53bbfd, #FF02E0)',
   // , 'border: 1px solid #3E0E02'
@@ -11,6 +13,10 @@ const styles = [
 ].join(';');
 
 export default (msg) => {
-  console.error(`%c * Fairlanguage - ${msg}`, styles);
+  if (__DEV__) {
+    console.error(`%c * Fairlanguage - ${msg}`, styles);
+  } else {
+    console.log(`%c * Fairlanguage - ${msg}`, styles);
+  }
 };
 

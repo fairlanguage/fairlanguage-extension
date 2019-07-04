@@ -9,7 +9,9 @@
 
     "rules" : {
         "padded-blocks" : "off",
-        "no-trailing-spaces": "off"
+        "no-trailing-spaces": "off",
+        "no-underscore-dangle": "off",
+        "import/first": "off"
     },
 
       "globals": {

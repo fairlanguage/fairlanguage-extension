@@ -1,76 +1,98 @@
-/* eslint-disable import/first */
-// eslint-disable-next-line no-underscore-dangle
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-unused-vars */
+/* eslint-disable arrow-body-style */
+/* eslint-disable max-len */
+
 const __DEV__ = true;
+const THRESHOLD = 25;
+
 import log from '../helpers/helper-logger';
 
 const l = i => (__DEV__ ? log(i) : null); 
 
-let type;
-
-const identifyInputElement = (elementClickedOn) => {
+const findContainerElement = (elementClickedOn) => {
 
   /*
-    Find known container/wrapper element ( attribute: data-q="message_input")
+    Find container element (identified by attribute: data-qa="xxx")
   */
+  let containerElement;
   
   let i = 0;
-  let container;
+
   let current = elementClickedOn.parentNode;
 
-  const THRESHOLD = 25;
-
-  while (container === undefined && i < THRESHOLD) {
+  while (containerElement === undefined && i < THRESHOLD) {
     if (current 
       && current.hasAttribute 
       && current.hasAttribute('data-qa')) {
-        // alert(current.getAttribute('data-qa'));
-      container = current;
+      l(`identifyInputElement - [Slack] - getAttribute('data-qa'): ${current.getAttribute('data-qa')}`);
+      containerElement = current;
     } 
     current = current.parentNode;
     i += 1; 
   }
 
-  // log(container);
+  // l('[Slack] - identifiedContainerElement:');
+  // l(containerElement);
 
-  /*
-    Identify known container/wrapper type
-  */
+  return containerElement;
 
-  const attribute = container.getAttribute('data-qa');
+};
+
+const identifyContainerElement = (containerElement) => {
+
+  let containerElementType;
+
+  const attribute = containerElement.getAttribute('data-qa');
 
   if (attribute === 'message_editor') {
-    type = 'editor';
-  } else if (container.hasAttribute
-      && container.hasAttribute('data-view-context') 
-      && container.getAttribute('data-view-context') === 'threads-flexpane') {
-    type = 'threads-sidebar';
-  } else if (container.hasAttribute
-    && container.hasAttribute('data-view-context') 
-    && container.getAttribute('data-view-context') === 'threads-view') {
-    type = 'threads-view';
+    containerElementType = 'editor';
+  } else if (containerElement.hasAttribute
+      && containerElement.hasAttribute('data-view-context') 
+      && containerElement.getAttribute('data-view-context') === 'threads-flexpane') {
+    containerElementType = 'threads-sidebar';
+  } else if (containerElement.hasAttribute
+    && containerElement.hasAttribute('data-view-context') 
+    && containerElement.getAttribute('data-view-context') === 'threads-view') {
+    containerElementType = 'threads-view';
   } else if (attribute === 'message_input') {
-    type = 'main';
+    containerElementType = 'main';
   } else if (attribute === 'legacy_search_header') {
-    type = 'search';
+    containerElementType = 'search';
+  } else if (attribute === 'custom_status_input_text_input') {
+    containerElementType = 'status';
   }
 
-  l(`[Slack] - identifiedInputElementType: ${type}`);
+  l(`identifyInputElement - [Slack] - identifiedContainerElementType: ${containerElementType}`);
 
-  /**
-   * Position widget according to identified type
-   */
+  return containerElementType;
+};
 
-  let textElement;
-  let widgetContainer;
-  let element;
+const findInputElement = (elementClickedOn) => {
+  return elementClickedOn.tagName === 'DIV' ? elementClickedOn : elementClickedOn.parentNode;
+};
 
-  let buttons;
+/**
+ * handleInputElement (Slack).
+ *
+ * Handles detected input element on Slack.
+ * @param {DOMNode} elementClickedOn The detected element of input action.
+ * @return {[inputElement, widgetContainerElement]}
+ */
+const handleInputElement = (elementClickedOn) => {
 
-  switch (type) {
+  // (1/3) Find container element (identified by: must have attribute [data-qa="xxx"])
+  const containerElement = findContainerElement(elementClickedOn);
 
+  // (2/3) Identify found container element
+  const containerElementType = identifyContainerElement(containerElement);
+
+  // (3/3) Handle according to identified containerElementType
+  switch (containerElementType) {
+  
     case 'editor': {
-      
-      element = document.createElement('button');
+        
+      const element = document.createElement('button');
       element.className = 'c-button-unstyled c-texty_input__button';
 
       element.style.position = 'absolute';
@@ -81,111 +103,51 @@ const identifyInputElement = (elementClickedOn) => {
       element.style.display = 'flex';
       element.style.justifyContent = 'center';    
 
-      element.addEventListener('click', () => {
-        alert('I am flamingo.');
-      });
-
       // Find Buttons element
-      buttons = container.querySelector("div[class='c-message__editor__input_container']");
+      const buttons = containerElement.querySelector("div[class='c-message__editor__input_container']");
       buttons.append(element);
 
-      if (elementClickedOn.tagName === 'DIV') {
-        textElement = elementClickedOn;
-      }
+      const widgetContainer = element;
 
-      if (elementClickedOn.tagName === 'P') {
-        textElement = elementClickedOn.parentNode;
-      }
+      const inputElement = findInputElement(elementClickedOn);
 
-      widgetContainer = element;
-
-      return [textElement, widgetContainer];
+      return [inputElement, widgetContainer];
     }
 
     case 'threads-view': {
       
-      element = document.createElement('button');
+      const element = document.createElement('button');
       element.className = 'c-button-unstyled c-texty_input__button';
-      // element.setAttribute("tabindex", 5)
-
       element.style.transform = 'scale(0.8)';
-
-      // element.style.transform = 'scale(0.8)';
-
-      //element.style.marginRight = '25px';
       element.style.marginTop = '-0.5px';    
-      //element.style.marginLeft = '5px';    
-      // element.style.marginRight = '25px';
-      //element.style.top = '-4px';
       element.style.display = 'flex';
-      // element.style.position = 'relative';
-
       element.style.justifyContent = 'center';    
 
-      element.addEventListener('click', () => {
-        alert('I am flamingo.');
-      });
-
       // Find Buttons element
-      buttons = container.childNodes[container.childNodes.length-3]
+      const buttons = containerElement.childNodes[containerElement.childNodes.length - 3];
       
-      /* buttons.style.display = 'flex';
-      buttons.style.flexDirection = 'column';
-      buttons.style.alignItems = 'center';
-      buttons.style.justifyContent = 'flex-end';
+      // Append
+      buttons.append(element);
 
-      buttons.style.height = '100%';
-      //buttons.style.width = '100px';
+      const widgetContainer = element;
 
-      buttons.style.bottom = '6px';
+      const inputElement = findInputElement(elementClickedOn);
 
-      buttons.style.border = '0px solid blue'; */
-
-      buttons.append(element)
-
-      for(const child of buttons.childNodes) {
-        //child.style.position = 'relative';
-      }
-      
-      //return
-      // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
-
-      if (elementClickedOn.tagName === 'DIV') {
-      textElement = elementClickedOn;
-      }
-
-      if (elementClickedOn.tagName === 'P') {
-      textElement = elementClickedOn.parentNode;
-      }
-
-      widgetContainer = element;
-
-      return [textElement, widgetContainer];
+      return [inputElement, widgetContainer];
 
     }
-      
+    
     case 'threads-sidebar': {
       
-      element = document.createElement('div');
-      //element.className = "c-button-unstyled c-texty_input__button";
-      element.setAttribute("tabindex", 5)
-
-      element.style.transform = 'scale(0.8)';
-    
-      //element.style.marginRight = '25px';
-      //element.style.marginTop = 'px';    
-      //element.style.marginLeft = '5px';    
+      const element = document.createElement('div');
+      element.setAttribute('tabindex', 5);
+      element.style.transform = 'scale(0.8)';  
       element.style.marginRight = '25px';
       element.style.top = '-4px';
       element.style.display = 'flex';
       element.style.justifyContent = 'center';    
     
-      element.addEventListener('click', () => {
-        alert('I am flamingo.');
-      });
-
-      // Find Buttons element
-      buttons = container.childNodes[container.childNodes.length-3]
+      const buttons = containerElement.childNodes[containerElement.childNodes.length - 3];
       
       buttons.style.display = 'flex';
       buttons.style.flexDirection = 'row';
@@ -199,26 +161,17 @@ const identifyInputElement = (elementClickedOn) => {
 
       buttons.append(element);
       
-      // return
-      // .insertBefore(element, container.parentNode.querySelector('[class="ql-button"]').querySelector('[aria-label="Emoji menu"]'))
+      const widgetContainer = element;
     
-      if (elementClickedOn.tagName === 'DIV') {
-        textElement = elementClickedOn;
-      }
-    
-      if (elementClickedOn.tagName === 'P') {
-        textElement = elementClickedOn.parentNode;
-      }
-    
-      widgetContainer = element;
-    
-      return [textElement, widgetContainer];
+      const inputElement = findInputElement(elementClickedOn);
+
+      return [inputElement, widgetContainer];
 
     }
 
     case 'main': {
       
-      element = document.createElement('div');
+      const element = document.createElement('div');
       element.className = 'btn_unstyle msg_mentions_button';
 
       element.style.transform = 'scale(0.9)';
@@ -228,36 +181,26 @@ const identifyInputElement = (elementClickedOn) => {
       element.style.marginLeft = '5px';    
       element.style.display = 'flex';
       element.style.justifyContent = 'center';    
-    
-      element.addEventListener('click', () => {
-        alert('I am flamingo.');
-      });
         
-      container.parentNode.insertBefore(element, container.querySelector('[aria-label="Insert mention"]'));
+      containerElement.parentNode.insertBefore(element, containerElement.querySelector('[aria-label="Insert mention"]'));
     
-      if (elementClickedOn.tagName === 'DIV') {
-        textElement = elementClickedOn;
-      }
+      const widgetContainer = element;
     
-      if (elementClickedOn.tagName === 'P') {
-        textElement = elementClickedOn.parentNode;
-      }
-    
-      widgetContainer = element;
-    
-      return [textElement, widgetContainer];
+      const inputElement = findInputElement(elementClickedOn);
+
+      return [inputElement, widgetContainer];
     
     }
 
-    default:
+    default: {
 
-      log(`[Slack] - disabled on this identifiedInputElementType: ${type}`);
+      l(`[Slack] - disabled on this ContainerElementType: ${containerElementType}`);
 
       return [null, null];
-
+    }
+  
   }
-
-
+  
 };
 
 const formatTextElements = (originalTextElement, clonedTextElement) => {
@@ -284,5 +227,5 @@ const formatMarkingElement = (markingElement) => {
   markingElement.style.borderWidth = '1.5px'; 
 };
 
-export default identifyInputElement;
+export default handleInputElement;
 export { formatMarkingElement, formatTextElements, onKeyDown };
