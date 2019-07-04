@@ -1,6 +1,6 @@
 /* eslint-disable import/first */
 // eslint-disable-next-line no-underscore-dangle
-const __DEV__ = false;
+const __DEV__ = true;
 import log from '../helpers/helper-logger';
 
 const l = i => (__DEV__ ? log(i) : null); 
@@ -23,6 +23,7 @@ const identifyInputElement = (elementClickedOn) => {
     if (current 
       && current.hasAttribute 
       && current.hasAttribute('data-qa')) {
+        // alert(current.getAttribute('data-qa'));
       container = current;
     } 
     current = current.parentNode;
@@ -49,6 +50,8 @@ const identifyInputElement = (elementClickedOn) => {
     type = 'threads-view';
   } else if (attribute === 'message_input') {
     type = 'main';
+  } else if (attribute === 'legacy_search_header') {
+    type = 'search';
   }
 
   l(`[Slack] - identifiedInputElementType: ${type}`);

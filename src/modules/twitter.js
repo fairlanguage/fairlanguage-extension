@@ -263,7 +263,7 @@ const onKeyDown = (originalTextElement, clonedTextElement) => {
 
   clonedTextElement.style.opacity = 1;
 
-  // TODO: well... 
+  // TODO: well... this could be improved buddy 
 
   clonedTextElement.setAttribute('data-attachment-placeholder', '');
   clonedTextElement.setAttribute('data-placeholder-default', '');

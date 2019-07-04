@@ -36,23 +36,23 @@ const validateInputElement = (elementClickedOn) => {
 
   // Is the element itself a HTML TextArea element?
   const isTextArea = elementClickedOn.type === 'textarea';
-  log(`isTextArea: ${isTextArea}`);
+  l(`isTextArea: ${isTextArea}`);
 
   // Is the element an input element?
   const isIn = elementClickedOn.tagName && elementClickedOn.tagName.toLowerCase() === 'input';
-  log(`isIn: ${isIn}`);
+  l(`isIn: ${isIn}`);
 
   // Is the element's type input?
   const isInput = elementClickedOn.type === 'input';
-  log(`isInput: ${isInput}`);
+  l(`isInput: ${isInput}`);
 
   // Is the element's type search?
   const isSearch = elementClickedOn.type === 'search';
-  log(`isSearch: ${isSearch}`);
+  l(`isSearch: ${isSearch}`);
 
   // Is the element itself content editable?
   const isContentEditable = elementClickedOn.hasAttribute && elementClickedOn.hasAttribute('contenteditable');
-  log(`isContentIsEditable: ${isContentEditable}`);
+  l(`isContentIsEditable: ${isContentEditable}`);
 
   // Is a parent element's content editable?
   let isParentElementContentIsEditable;
@@ -69,7 +69,7 @@ const validateInputElement = (elementClickedOn) => {
     depth += 1;
   }
 
-  log(`isParentElementContentIsEditable (${depth}): ${isParentElementContentIsEditable}`);
+  l(`isParentElementContentIsEditable (${depth}): ${isParentElementContentIsEditable}`);
 
   /**
    * Decide, according to what wr got.
@@ -78,7 +78,7 @@ const validateInputElement = (elementClickedOn) => {
   // If none of that is the case it just wasn't a txt field (sorry :/).
   // if (isInput || isIn || isTextArea) return;
   if (!isIn && !isTextArea && !isSearch && !isContentEditable && !isParentElementContentIsEditable) {
-    log('no inputElement');
+    l('no inputElement');
     return false;
   }
    

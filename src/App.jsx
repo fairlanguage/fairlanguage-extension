@@ -170,7 +170,7 @@ export default class App extends Component {
     * That shit on? Are we actually allowed in here?
     */
     const enabled = this.getOverallState();
-    if (!enabled) return log('Extension disabled');
+    if (!enabled) return l('Extension disabled');
 
     /*
     * So, what do we have?
@@ -179,7 +179,7 @@ export default class App extends Component {
 
     // Validate potential inputElement
     const isPotentialInputElement = validateInputElement(elementClickedOn);
-    if (!isPotentialInputElement) return log(`isPotentialInputElement: ${isPotentialInputElement}`);
+    if (!isPotentialInputElement) return l(`isPotentialInputElement: ${isPotentialInputElement}`);
 
     /*
     *  Identify inputElement, position widget
@@ -196,7 +196,7 @@ export default class App extends Component {
     if (window.location.href.includes('slack.com')) {
 
       customIdentifier = 'Slack';
-      log(`hasCustomIdentifier: ${customIdentifier}`);
+      l(`hasCustomIdentifier: ${customIdentifier}`);
 
       const elements = customIdentifierSlack(elementClickedOn);
       
@@ -205,7 +205,7 @@ export default class App extends Component {
     if (window.location.href.includes('messenger.com')) {
 
       customIdentifier = 'Messenger';
-      log(`hasCustomIdentifier: ${customIdentifier}`);
+      l(`hasCustomIdentifier: ${customIdentifier}`);
 
       const elements = customIdentifierMessenger(elementClickedOn);
       
@@ -215,7 +215,7 @@ export default class App extends Component {
     if (window.location.href.includes('twitter.com')) {
 
       customIdentifier = 'Twitter';
-      log(`hasCustomIdentifier: ${customIdentifier}`);
+      l(`hasCustomIdentifier: ${customIdentifier}`);
 
       const elements = customIdentifierTwitter(elementClickedOn);
       
@@ -225,7 +225,7 @@ export default class App extends Component {
     if (window.location.href.includes('telegram.org')) {
 
       customIdentifier = 'Telegram';
-      log(`hasCustomIdentifier: ${customIdentifier}`);
+      l(`hasCustomIdentifier: ${customIdentifier}`);
 
       const elements = customIdentifierTelegram(elementClickedOn);
       
@@ -248,7 +248,7 @@ export default class App extends Component {
     */
 
     if (customIdentifier && inputElement === null) {
-      return log('customIdentifier: disabled on this element');
+      return l('customIdentifier: disabled on this element');
     }
 
     const { inputElements } = this.state;
@@ -266,7 +266,7 @@ export default class App extends Component {
 
     inputElement.setAttribute('fl', inputElements.length);
 
-    return log(`Sucessfully identified inputElement and set widget #${inputElements.length}`);
+    return l(`Sucessfully identified inputElement and set widget #${inputElements.length}`);
   }
 
   handleClickEnabled(mode) {
