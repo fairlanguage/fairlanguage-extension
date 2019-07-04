@@ -17,7 +17,7 @@
 ### Chrome:
 
 ```
-chrome://extension
+chrome://extensions
 ```
 
 -> Load unpacked -> Select directory 
@@ -33,8 +33,8 @@ about:debugging
 ## Custom
 
 ```
-git clone https://github.com/fairlanguage/fairlanguage-extension-chrome
-cd fairlanguage-extension-chrome
+git clone https://github.com/fairlanguage/fairlanguage-extension
+cd fairlanguage-extension
 npm install
 npm run build
 ```
@@ -42,7 +42,7 @@ npm run build
 ### In Chrome:
 
 ```
-chrome://extension
+chrome://extensions
 ```
 
 -> Load unpacked -> Select directory 
