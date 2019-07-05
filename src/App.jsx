@@ -16,7 +16,8 @@ import customIdentifierMessenger from './modules/messenger';
 
 import StorageController from './controller/storage';
 
-import Button from './components/component-button';
+import Button from 'react-bootstrap/Button';
+// import Button from './components/component-button';
 
 import './index.css';
 
@@ -124,9 +125,8 @@ export default class App extends Component {
             // TODO: NOT GOOD!!! Delete clones
 
             const elements = document.querySelectorAll('[id=fl-clone]');
-            for (const el of elements){
-              if(el && el.style)
-                el.style.opacity = 0;
+            for (const el of elements) {
+              if (el && el.style) { el.style.opacity = 0; }
             }
 
             break;
@@ -295,7 +295,7 @@ export default class App extends Component {
           
             ? (
               <ComponentToolbar
-                open={this.state.enabled === null ? true : false}
+                open={this.state.enabled === null}
               >
                 <div
                   style={{
@@ -317,19 +317,18 @@ export default class App extends Component {
                     }}
                   >
                     <Button
-                      caption={TEXT_ENABLE}
+                      variant="primary"      
                       onClick={() => this.handleClickEnabled(true)}
-                    />
+                    >{TEXT_ENABLE}</Button>
                     <Button
-                      caption={TEXT_DISABLE}
+                      variant="primary"
                       onClick={() => this.handleClickEnabled(false)}
-                    />
+                    >{TEXT_DISABLE}</Button>
                   </div>
                 </div>
 
               </ComponentToolbar>
             )
-
             : null
         }
         {

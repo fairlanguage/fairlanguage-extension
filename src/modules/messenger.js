@@ -18,8 +18,6 @@ const l = i => (__DEV__ ? log(i) : null);
 
 const identifyInputElement = (elementClickedOn) => {
 
-  
-  
   let type;
 
   /*

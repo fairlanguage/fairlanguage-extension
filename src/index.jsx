@@ -11,6 +11,8 @@ import log from './helpers/helper-logger';
 
 import { twitter } from './modules/placing/twitter';
 
+import 'bootstrap/dist/css/bootstrap.css';
+
 window.onload = () => {
 
   // Create container element

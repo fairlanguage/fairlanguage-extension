@@ -11,8 +11,8 @@ import WebFont from 'webfontloader';
 
 WebFont.load({
   google: {
-    families: ['Montserrat', 'Roboto']
-  }
+    families: ['Montserrat', 'Roboto'],
+  },
 });
 
 const STRING_GRADIENT = config.colors.gradient;
