@@ -176,16 +176,20 @@ const handleInputElement = (elementClickedOn) => {
 
       element.style.transform = 'scale(0.9)';
     
-      element.style.right = '70px';
+      element.style.marginTop = '-1px';
+      element.style.marginRight = '58px';
+
+      //element.style.right = '170px';
       element.style.paddingTop = '-2px';    
       element.style.marginLeft = '5px';    
       element.style.display = 'flex';
       element.style.justifyContent = 'center';    
-        
-      containerElement.parentNode.insertBefore(element, containerElement.querySelector('[aria-label="Insert mention"]'));
+
+      // Find buttons container element and append
+      const buttons = containerElement.querySelector("div[class='ql-buttons']");
+      buttons.append(element);
     
-      const widgetContainer = element;
-    
+      const widgetContainer = element;  
       const inputElement = findInputElement(elementClickedOn);
 
       return [inputElement, widgetContainer];
@@ -193,9 +197,8 @@ const handleInputElement = (elementClickedOn) => {
     }
 
     default: {
-
       l(`[Slack] - disabled on this ContainerElementType: ${containerElementType}`);
-
+      
       return [null, null];
     }
   

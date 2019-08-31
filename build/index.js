@@ -28914,17 +28914,18 @@ var _default = {
     enabled: null
   },
   options: {
+    heading: false,
+    subHeading: false,
     settingsString: false,
-    settingsEnabled: false,
+    settings: true,
+    settingsCaption: false,
     hostSettingsString: false,
     hostSettingsCaption: false,
     hostSettingsDisplay: false,
     buttonHostEnable: true,
-    buttonHostDisable: false,
+    buttonHostDisable: true,
     buttonReadMore: true,
-    consent: false,
-    toolbar: false,
-    version: true,
+    displayVersion: true,
     dev: false
   },
   colors: {
@@ -31124,12 +31125,18 @@ var handleInputElement = function handleInputElement(elementClickedOn) {
 
         _element3.className = 'btn_unstyle msg_mentions_button';
         _element3.style.transform = 'scale(0.9)';
-        _element3.style.right = '70px';
+        _element3.style.marginTop = '-1px';
+        _element3.style.marginRight = '58px'; //element.style.right = '170px';
+
         _element3.style.paddingTop = '-2px';
         _element3.style.marginLeft = '5px';
         _element3.style.display = 'flex';
-        _element3.style.justifyContent = 'center';
-        containerElement.parentNode.insertBefore(_element3, containerElement.querySelector('[aria-label="Insert mention"]'));
+        _element3.style.justifyContent = 'center'; // Find buttons container element and append
+
+        var _buttons3 = containerElement.querySelector("div[class='ql-buttons']");
+
+        _buttons3.append(_element3);
+
         var _widgetContainer3 = _element3;
 
         var _inputElement3 = findInputElement(elementClickedOn);
@@ -31288,13 +31295,88 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   var wordToReplace = word;
   var wordReplacement = suggestions[index];
   replacement.addEventListener('mouseup', function (event) {
-    l("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); // Change text
+    l("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
 
-    replacement.textContent = wordReplacement;
+    var previousContainer = document.getElementById('fl-list-container');
+
+    if (previousContainer) {
+      document.body.removeChild(previousContainer);
+    }
+
+    var listContainer = document.createElement('div');
+    listContainer.id = 'fl-list-container';
+    listContainer.style.position = 'absolute';
+    listContainer.style.zIndex = '9999';
+    listContainer.style.left = '50vw';
+    listContainer.style.top = '50vh';
+    listContainer.style.borderRadius = '10px';
+    listContainer.style.boxShadow = '0 0 10 rgba(0,0,0, 0.25)';
+    listContainer.style.transform = 'translateX(-50%) translateY(-50%)';
+    listContainer.style.minWidth = '250px';
+    listContainer.style.maxWidth = '300px';
+    listContainer.style.minHeight = '300px';
+    listContainer.style.background = '#39113E';
+    listContainer.style.color = 'white';
+    listContainer.style.fontFamily = 'Avenir';
+    listContainer.style.fontWeight = 'bold';
+    listContainer.style.paddingBottom = '35px'; // Close 
+
+    var img = document.createElement('img');
+    img.src = chrome.extension.getURL("close.png");
+    img.style.width = '15px';
+    img.style.height = '15px';
+    img.style.position = 'absolute';
+    img.style.right = '0';
+    img.style.cursor = 'pointer';
+    img.style.margin = '25px';
+    listContainer.appendChild(img);
+    img.addEventListener('mouseup', function (event) {
+      document.body.removeChild(listContainer);
+    }); // hover background
+
+    document.body.appendChild(listContainer);
+    suggestions.forEach(function (suggestion, i) {
+      var itemContainer = document.createElement('div');
+
+      if (i === 0) {
+        itemContainer.innerText = "M\xF6chtest du anstatt des Wortes \"".concat(suggestion, "\" lieber eine der folgenden Alternativen verwenden?");
+        itemContainer.style.marginTop = '60px';
+        itemContainer.style.marginBottom = '15px';
+      }
+
+      if (i !== 0) {
+        itemContainer.style.paddingTop = '5px';
+        itemContainer.style.paddingBottom = '5px';
+        itemContainer.style.color = 'white';
+        itemContainer.style.cursor = 'pointer';
+        itemContainer.innerText = suggestion;
+        itemContainer.addEventListener('mouseover', function (event) {
+          itemContainer.style.background = '#301034';
+        });
+        itemContainer.addEventListener('mouseout', function (event) {
+          itemContainer.style.background = '#39113E';
+        });
+        itemContainer.addEventListener('mouseup', function (event) {
+          replacement.textContent = suggestion;
+          onReplaced(); // IMPORTANT:
+
+          document.body.removeChild(listContainer);
+        });
+      }
+
+      itemContainer.style.paddingLeft = '25px';
+      itemContainer.style.paddingRight = '25px';
+      listContainer.appendChild(itemContainer);
+    });
+    MicroModal.init(); ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
+    // Change text
+    // replacement.textContent = wordReplacement;
+
     wordToReplace = wordReplacement;
     index = suggestions.length - 1 > index ? index += 1 : 0;
-    wordReplacement = suggestions[index];
-    onReplaced();
+    wordReplacement = suggestions[index]; //onReplaced();
   });
   return replacement;
 };
@@ -50443,7 +50525,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.85",
+  "version": "0.9.86",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"
@@ -50458,7 +50540,7 @@ module.exports = {
     "scripts": ["background.js"],
     "persistent": false
   },
-  "web_accessible_resources": ["flam.png", "flam.png", "flam.png", "close.png"],
+  "web_accessible_resources": ["flam.png", "flam.png", "flam.png", "close.png", "src/terms/*"],
   "icons": {
     "16": "flam.png",
     "32": "flam.png",
@@ -50471,7 +50553,8 @@ module.exports = {
         "default": "Ctrl+Shift+Y"
       }
     }
-  }
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 };
 },{}],"App.jsx":[function(require,module,exports) {
 "use strict";
@@ -51056,7 +51139,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59189" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60217" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

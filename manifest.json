@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.85",
+  "version": "0.9.86",
 
   "browser_action": {
     "default_icon": "flam.png",
@@ -34,7 +34,8 @@
     "flam.png",
     "flam.png",
     "flam.png",
-    "close.png"
+    "close.png",
+    "src/terms/*"
   ],
   "icons": {
     "16": "flam.png",
@@ -48,5 +49,6 @@
               "default": "Ctrl+Shift+Y"
             }
     }
-  }
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

@@ -7,8 +7,7 @@
         @import url('https://fonts.googleapis.com/css?family=Roboto');
         @import url('https://fonts.googleapis.com/css?family=Open+Sans');
         body {
-            margin: 10px;
-            white-space: nowrap;
+            margin: 0px;
             font-family: 'Open Sans', sans-serif;
         }
         #container {
@@ -17,30 +16,6 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            //padding: 10px;
-        }
-        .button {
-            width: 215px;
-            margin: 10px;
-            padding: 10px;
-            /* width: 100px; */
-            border: 1px solid #000;
-            border-radius: 3px;
-            padding: 5px 15px;
-            cursor: pointer;
-            user-select: none;
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            /* text-transform: uppercase; */
-            //margin: 10px 0px;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 100;
-            font-size: 12.5px;
-            //letter-spacing: 1px;
-            color: black;
-            outline: none;
         }
         .display {
             width: 100px;
@@ -81,72 +56,69 @@
             width: 10px;
             height: 10px;
             border-radius: 5px;
-            margin: 20px;
-            margin-right: 0;
+            margin: 15px;
+            margin-bottom: 22.5px;
         }
         #status-line{
             display: flex;
             flex-direction: row;
+            align-items: center;
+            justify-content: center;
             border: 0px solid red;
         }
-        #heading{
-            font-size: 15px;
-            text-align: center;
-        }
-        #subheading{
-            margin-top: 5px;
-            text-align: center;
+        #view-enabled{
+            display: flex;
+            flex-direction: column;
         }
     </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </head>
 <body>
-  <div id="container">
+  <div id="container" class="container" style="width: 325px;">
 
       <img id="logo"></img>
 
-      <div id="heading">
-        Fairlanguage
-      </div>
-      <div id="subheading">
-        Dein Tool f&uuml;r gendergerechte Sprache
-      </div>
+      <h5 id="heading" style="margin-bottom:20px;"></h5>
+      <h6 id="sub-heading"></h6>
 
-      <div id="status-line">
-        <div id="status-host" class="status"></div>
-        <div id="status-supported" class="label" style="width: auto;">host.com</div>
-      </div>
-      <div id="status-supported-string" class="label" style="margin:0;margin-top:-7.5px;color: grey;">what that means</div>
+    <div id="view-enabled">
 
-      <div id="caption-settings" class="caption">settings:</div>
-      <textarea id="string-settings" class="display"></textarea>
+        <!-- host settings -->
+        <div id="status-line" style="width: 275px;">
+            <div id="status-host" class="status"></div>
+            <h6 id="status-supported" style="width: auto;"/></h6>
+        </div>
+        <div id="status-supported-string" class="alert alert-warning" role="alert" style="width: 275px;"></div>
+        <textarea id="string-host" class="display"></textarea>        
+        <button id="active-button-enable"  type="button" class="btn btn-primary" style="width: 275px;margin-bottom: 12.5px;"></button>
+        
+        <!-- host settings -->       
+        <div id="caption-host" class="caption">host:</div>
+        <div id="active-status" class="label"></div>
 
-      <div id="caption-enabled" class="caption">enabled:</div>
-      <div id="status-enabled" class="label"></div>
-      <div id="button-enabled" class="button"></div>
+        <!-- dev/hosts --> 
+        <div id="caption-dev" class="caption">dev:</div>
+        <div id="status-hosts" class="label"></div>
+        <div id="button-reset-hosts" class="button">resets hosts</div>
+  
+    </div>
 
-      <div id="caption-consent" class="caption">consent:</div>
-      <div id="status-consent" class="label"></div>
-      <div id="button-consent" class="button">give</div>
+    <!-- general settings -->
+    <div id="status-enabled" class="alert alert-warning" role="alert" style="width: 275px;">
+    </div>
+    <textarea id="string-settings" class="display"></textarea>
+    <button type="button" class="btn btn-primary" id="button-enabled" style="width: 275px;"></button>
 
-      <div id="caption-host" class="caption">host:</div>
-      <textarea id="string-host" class="display"></textarea>
-      <div id="active-status" class="label"></div>
-      <button id="active-button-enable" class="button"></button>
-      <button id="active-button-disable" class="button"></button>
+    <!-- DEV! general settings --> 
+    <div id="caption-settings" class="caption">settings:</div>
+    <div id="caption-enabled" class="caption">enabled:</div>
 
-      <div id="caption-toolbar" class="caption">toolbar:</div>
-      <div id="status-toolbar" class="label"></div>
-      <div id="button-toolbar" class="button">hide</div>
-
-      <div id="caption-dev" class="caption">dev:</div>
-
-      <div id="status-hosts" class="label"></div>
-      <div id="button-reset-hosts" class="button">resets hosts</div>
-
-      <button id="button-read-more" class="button"></button>
-
-      <div id="caption-version" class="caption">version:</div>
-      <div id="display-version" class="label" style="margin:0px;"></div>
+    <!-- version --> 
+    <h6 id="display-version" class="label" style="margin:12.5px;color:grey;"></h6>
+      
   </div>
   <script src="build/popup/index.js"></script>
 </body>

@@ -130,9 +130,121 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
   replacement.addEventListener('mouseup', (event) => {
 
     l(`wordToReplace: ${wordToReplace} with wordReplacement: ${wordReplacement}`);
+
+    ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
+
+    const previousContainer = document.getElementById('fl-list-container');
+
+    if(previousContainer) {
+      document.body.removeChild(previousContainer);
+    }
+
+    const listContainer = document.createElement('div');
+    listContainer.id = 'fl-list-container'
+
+    listContainer.style.position = 'absolute';
+
+    listContainer.style.zIndex = '9999';
+
+    listContainer.style.left = '50vw';
+    listContainer.style.top = '50vh';
+
+    listContainer.style.borderRadius = '10px';
+    listContainer.style.boxShadow = '0 0 10 rgba(0,0,0, 0.25)';
+
+
+    listContainer.style.transform = 'translateX(-50%) translateY(-50%)';
+
+    listContainer.style.minWidth = '250px';
+    listContainer.style.maxWidth = '300px';
+
+    listContainer.style.minHeight = '300px';
+    listContainer.style.background = '#39113E';
+
+    listContainer.style.color = 'white';
+    listContainer.style.fontFamily = 'Avenir';
+    listContainer.style.fontWeight = 'bold';
+
+    listContainer.style.paddingBottom= '35px';
+
+    // Close 
+    const img = document.createElement('img');
+    img.src = chrome.extension.getURL("close.png");
+    img.style.width = '15px';
+    img.style.height = '15px';
+    img.style.position = 'absolute';
+    img.style.right = '0';
+
+    img.style.cursor = 'pointer';
+
+
+    img.style.margin = '25px';
+
+    listContainer.appendChild(img);
+
+    img.addEventListener('mouseup', (event) => {
+      document.body.removeChild(listContainer);
+    })
+    
+
+    // hover background
+
+
+    document.body.appendChild(listContainer);
+
+    suggestions.forEach((suggestion, i) => {
+
+      const itemContainer = document.createElement('div');
+
+      if(i === 0){
+        itemContainer.innerText = `Möchtest du anstatt des Wortes "${suggestion}" lieber eine der folgenden Alternativen verwenden?`;
+        itemContainer.style.marginTop = '60px';
+        itemContainer.style.marginBottom = '15px';
+
+      }
+
+      if(i !== 0) {
+
+        itemContainer.style.paddingTop = '5px';
+        itemContainer.style.paddingBottom = '5px';
+        
+        itemContainer.style.color = 'white';
+        itemContainer.style.cursor = 'pointer';
+
+        itemContainer.innerText = suggestion;
+        
+
+        itemContainer.addEventListener('mouseover', (event) => {
+          itemContainer.style.background = '#301034';
+        })
+
+        itemContainer.addEventListener('mouseout', (event) => {
+          itemContainer.style.background = '#39113E';
+        })
+
+        itemContainer.addEventListener('mouseup', (event) => {
+          replacement.textContent = suggestion;
+          onReplaced(); // IMPORTANT:
+          document.body.removeChild(listContainer);
+        });
+
+      }
+
+      itemContainer.style.paddingLeft= '25px';
+      itemContainer.style.paddingRight= '25px';
+
+
+      listContainer.appendChild(itemContainer);
+
+    });
+
+    MicroModal.init();
+    ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
     
     // Change text
-    replacement.textContent = wordReplacement;
+    // replacement.textContent = wordReplacement;
     
     wordToReplace = wordReplacement;
 
@@ -140,7 +252,7 @@ const createSpanElementWithUnderlinedClass = (word, suggestions, onReplaced) => 
 
     wordReplacement = suggestions[index];
 
-    onReplaced();
+    //onReplaced();
     
   });
 

@@ -3,17 +3,25 @@ export default {
     enabled: null,
   },
   options: {
+    heading: false,
+    subHeading: false,
+
     settingsString: false,
-    settingsEnabled: false,
+    settings: true,
+
+    settingsCaption: false,
+
     hostSettingsString: false,
+
     hostSettingsCaption: false,
     hostSettingsDisplay: false,
+
     buttonHostEnable: true,
-    buttonHostDisable: false,
+    buttonHostDisable: true,
+
     buttonReadMore: true,
-    consent: false,
-    toolbar: false,
-    version: true,
+    displayVersion: true,
+
     dev: false,
   },
   colors: {
