@@ -31125,12 +31125,18 @@ var handleInputElement = function handleInputElement(elementClickedOn) {
 
         _element3.className = 'btn_unstyle msg_mentions_button';
         _element3.style.transform = 'scale(0.9)';
-        _element3.style.right = '70px';
+        _element3.style.marginTop = '-1px';
+        _element3.style.marginRight = '58px'; //element.style.right = '170px';
+
         _element3.style.paddingTop = '-2px';
         _element3.style.marginLeft = '5px';
         _element3.style.display = 'flex';
-        _element3.style.justifyContent = 'center';
-        containerElement.parentNode.insertBefore(_element3, containerElement.querySelector('[aria-label="Insert mention"]'));
+        _element3.style.justifyContent = 'center'; // Find buttons container element and append
+
+        var _buttons3 = containerElement.querySelector("div[class='ql-buttons']");
+
+        _buttons3.append(_element3);
+
         var _widgetContainer3 = _element3;
 
         var _inputElement3 = findInputElement(elementClickedOn);
@@ -31289,13 +31295,88 @@ var createSpanElementWithUnderlinedClass = function createSpanElementWithUnderli
   var wordToReplace = word;
   var wordReplacement = suggestions[index];
   replacement.addEventListener('mouseup', function (event) {
-    l("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); // Change text
+    l("wordToReplace: ".concat(wordToReplace, " with wordReplacement: ").concat(wordReplacement)); ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
 
-    replacement.textContent = wordReplacement;
+    var previousContainer = document.getElementById('fl-list-container');
+
+    if (previousContainer) {
+      document.body.removeChild(previousContainer);
+    }
+
+    var listContainer = document.createElement('div');
+    listContainer.id = 'fl-list-container';
+    listContainer.style.position = 'absolute';
+    listContainer.style.zIndex = '9999';
+    listContainer.style.left = '50vw';
+    listContainer.style.top = '50vh';
+    listContainer.style.borderRadius = '10px';
+    listContainer.style.boxShadow = '0 0 10 rgba(0,0,0, 0.25)';
+    listContainer.style.transform = 'translateX(-50%) translateY(-50%)';
+    listContainer.style.minWidth = '250px';
+    listContainer.style.maxWidth = '300px';
+    listContainer.style.minHeight = '300px';
+    listContainer.style.background = '#39113E';
+    listContainer.style.color = 'white';
+    listContainer.style.fontFamily = 'Avenir';
+    listContainer.style.fontWeight = 'bold';
+    listContainer.style.paddingBottom = '35px'; // Close 
+
+    var img = document.createElement('img');
+    img.src = chrome.extension.getURL("close.png");
+    img.style.width = '15px';
+    img.style.height = '15px';
+    img.style.position = 'absolute';
+    img.style.right = '0';
+    img.style.cursor = 'pointer';
+    img.style.margin = '25px';
+    listContainer.appendChild(img);
+    img.addEventListener('mouseup', function (event) {
+      document.body.removeChild(listContainer);
+    }); // hover background
+
+    document.body.appendChild(listContainer);
+    suggestions.forEach(function (suggestion, i) {
+      var itemContainer = document.createElement('div');
+
+      if (i === 0) {
+        itemContainer.innerText = "M\xF6chtest du anstatt des Wortes \"".concat(suggestion, "\" lieber eine der folgenden Alternativen verwenden?");
+        itemContainer.style.marginTop = '60px';
+        itemContainer.style.marginBottom = '15px';
+      }
+
+      if (i !== 0) {
+        itemContainer.style.paddingTop = '5px';
+        itemContainer.style.paddingBottom = '5px';
+        itemContainer.style.color = 'white';
+        itemContainer.style.cursor = 'pointer';
+        itemContainer.innerText = suggestion;
+        itemContainer.addEventListener('mouseover', function (event) {
+          itemContainer.style.background = '#301034';
+        });
+        itemContainer.addEventListener('mouseout', function (event) {
+          itemContainer.style.background = '#39113E';
+        });
+        itemContainer.addEventListener('mouseup', function (event) {
+          replacement.textContent = suggestion;
+          onReplaced(); // IMPORTANT:
+
+          document.body.removeChild(listContainer);
+        });
+      }
+
+      itemContainer.style.paddingLeft = '25px';
+      itemContainer.style.paddingRight = '25px';
+      listContainer.appendChild(itemContainer);
+    });
+    MicroModal.init(); ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
+    // Change text
+    // replacement.textContent = wordReplacement;
+
     wordToReplace = wordReplacement;
     index = suggestions.length - 1 > index ? index += 1 : 0;
-    wordReplacement = suggestions[index];
-    onReplaced();
+    wordReplacement = suggestions[index]; //onReplaced();
   });
   return replacement;
 };
@@ -50078,14 +50159,6 @@ function _interopRequireWildcard(obj) {
 }
 
 module.exports = _interopRequireWildcard;
-},{}],"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/inheritsLoose.js":[function(require,module,exports) {
-function _inheritsLoose(subClass, superClass) {
-  subClass.prototype = Object.create(superClass.prototype);
-  subClass.prototype.constructor = subClass;
-  subClass.__proto__ = superClass;
-}
-
-module.exports = _inheritsLoose;
 },{}],"../node_modules/@restart/context/forwardRef.js":[function(require,module,exports) {
 "use strict";
 
@@ -50131,52 +50204,30 @@ exports.default = exports.ThemeConsumer = void 0;
 
 var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
 
-var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
-
 var _forwardRef = _interopRequireDefault(require("@restart/context/forwardRef"));
 
 var _react = _interopRequireWildcard(require("react"));
 
-var ThemeContext = _react.default.createContext(new Map());
+var ThemeContext = _react.default.createContext({});
 
 var Consumer = ThemeContext.Consumer,
     Provider = ThemeContext.Provider;
 exports.ThemeConsumer = Consumer;
 
-var ThemeProvider =
-/*#__PURE__*/
-function (_React$Component) {
-  (0, _inheritsLoose2.default)(ThemeProvider, _React$Component);
-
-  function ThemeProvider() {
-    var _this;
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
-    _this.prefixes = new Map();
-    Object.keys(_this.props.prefixes).forEach(function (key) {
-      _this.prefixes.set(key, _this.props.prefixes[key]);
-    });
-    return _this;
-  }
-
-  var _proto = ThemeProvider.prototype;
-
-  _proto.render = function render() {
-    return _react.default.createElement(Provider, {
-      value: this.prefixes
-    }, this.props.children);
-  };
-
-  return ThemeProvider;
-}(_react.default.Component);
+function ThemeProvider(_ref) {
+  var prefixes = _ref.prefixes,
+      children = _ref.children;
+  var copiedPrefixes = (0, _react.useMemo)(function () {
+    return (0, _extends2.default)({}, prefixes);
+  }, [prefixes]);
+  return _react.default.createElement(Provider, {
+    value: copiedPrefixes
+  }, children);
+}
 
 function useBootstrapPrefix(prefix, defaultPrefix) {
   var prefixes = (0, _react.useContext)(ThemeContext);
-  return prefix || prefixes.get(defaultPrefix) || defaultPrefix;
+  return prefix || prefixes[defaultPrefix] || defaultPrefix;
 }
 
 function createBootstrapComponent(Component, opts) {
@@ -50189,13 +50240,13 @@ function createBootstrapComponent(Component, opts) {
       prefix = _opts.prefix,
       _opts$forwardRefAs = _opts.forwardRefAs,
       forwardRefAs = _opts$forwardRefAs === void 0 ? isClassy ? 'ref' : 'innerRef' : _opts$forwardRefAs;
-  return (0, _forwardRef.default)(function (_ref, ref) {
-    var props = (0, _extends2.default)({}, _ref);
-    props[forwardRefAs] = ref;
-    var prefixes = (0, _react.useContext)(ThemeContext);
+  return (0, _forwardRef.default)(function (_ref2, ref) {
+    var props = (0, _extends2.default)({}, _ref2);
+    props[forwardRefAs] = ref; // eslint-disable-next-line react/prop-types
+
+    var bsPrefix = useBootstrapPrefix(props.bsPrefix, prefix);
     return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
-      // eslint-disable-next-line react/prop-types
-      bsPrefix: props.bsPrefix || prefixes.get(prefix) || prefix
+      bsPrefix: bsPrefix
     }));
   }, {
     displayName: "Bootstrap(" + (Component.displayName || Component.name) + ")"
@@ -50204,17 +50255,7 @@ function createBootstrapComponent(Component, opts) {
 
 var _default = ThemeProvider;
 exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireWildcard":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/interopRequireWildcard.js","@babel/runtime/helpers/interopRequireDefault":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/inheritsLoose":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/inheritsLoose.js","@restart/context/forwardRef":"../node_modules/@restart/context/forwardRef.js","react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/assertThisInitialized.js":[function(require,module,exports) {
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-module.exports = _assertThisInitialized;
-},{}],"../node_modules/react-bootstrap/utils/createChainedFunction.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireWildcard":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/interopRequireWildcard.js","@babel/runtime/helpers/interopRequireDefault":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/extends.js","@restart/context/forwardRef":"../node_modules/@restart/context/forwardRef.js","react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/utils/createChainedFunction.js":[function(require,module,exports) {
 "use strict";
 
 exports.__esModule = true;
@@ -50268,10 +50309,6 @@ var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends")
 
 var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
 
-var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
-
-var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
-
 var _react = _interopRequireDefault(require("react"));
 
 var _createChainedFunction = _interopRequireDefault(require("./utils/createChainedFunction"));
@@ -50288,27 +50325,16 @@ function isTrivialHref(href) {
  */
 
 
-var SafeAnchor =
-/*#__PURE__*/
-function (_React$Component) {
-  (0, _inheritsLoose2.default)(SafeAnchor, _React$Component);
+var SafeAnchor = _react.default.forwardRef(function (_ref, ref) {
+  var _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'a' : _ref$as,
+      disabled = _ref.disabled,
+      onKeyDown = _ref.onKeyDown,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["as", "disabled", "onKeyDown"]);
 
-  function SafeAnchor(props, context) {
-    var _this;
-
-    _this = _React$Component.call(this, props, context) || this;
-    _this.handleClick = _this.handleClick.bind((0, _assertThisInitialized2.default)(_this));
-    _this.handleKeyDown = _this.handleKeyDown.bind((0, _assertThisInitialized2.default)(_this));
-    return _this;
-  }
-
-  var _proto = SafeAnchor.prototype;
-
-  _proto.handleClick = function handleClick(event) {
-    var _this$props = this.props,
-        disabled = _this$props.disabled,
-        href = _this$props.href,
-        onClick = _this$props.onClick;
+  var handleClick = function handleClick(event) {
+    var href = props.href,
+        onClick = props.onClick;
 
     if (disabled || isTrivialHref(href)) {
       event.preventDefault();
@@ -50324,48 +50350,38 @@ function (_React$Component) {
     }
   };
 
-  _proto.handleKeyDown = function handleKeyDown(event) {
+  var handleKeyDown = function handleKeyDown(event) {
     if (event.key === ' ') {
       event.preventDefault();
-      this.handleClick(event);
+      handleClick(event);
     }
   };
 
-  _proto.render = function render() {
-    var _this$props2 = this.props,
-        _this$props2$as = _this$props2.as,
-        Component = _this$props2$as === void 0 ? 'a' : _this$props2$as,
-        disabled = _this$props2.disabled,
-        onKeyDown = _this$props2.onKeyDown,
-        innerRef = _this$props2.innerRef,
-        props = (0, _objectWithoutPropertiesLoose2.default)(_this$props2, ["as", "disabled", "onKeyDown", "innerRef"]);
+  if (isTrivialHref(props.href)) {
+    props.role = props.role || 'button'; // we want to make sure there is a href attribute on the node
+    // otherwise, the cursor incorrectly styled (except with role='button')
 
-    if (isTrivialHref(props.href)) {
-      props.role = props.role || 'button'; // we want to make sure there is a href attribute on the node
-      // otherwise, the cursor incorrectly styled (except with role='button')
+    props.href = props.href || '#';
+  }
 
-      props.href = props.href || '#';
-    }
+  if (disabled) {
+    props.tabIndex = -1;
+    props['aria-disabled'] = true;
+  }
 
-    if (disabled) {
-      props.tabIndex = -1;
-      props['aria-disabled'] = true;
-    }
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref
+  }, props, {
+    onClick: handleClick,
+    onKeyDown: (0, _createChainedFunction.default)(handleKeyDown, onKeyDown)
+  }));
+});
 
-    if (innerRef) props.ref = innerRef;
-    return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
-      onClick: this.handleClick,
-      onKeyDown: (0, _createChainedFunction.default)(this.handleKeyDown, onKeyDown)
-    }));
-  };
-
-  return SafeAnchor;
-}(_react.default.Component);
-
+SafeAnchor.displayName = 'SafeAnchor';
 var _default = SafeAnchor;
 exports.default = _default;
 module.exports = exports["default"];
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/objectWithoutPropertiesLoose":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js","@babel/runtime/helpers/assertThisInitialized":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/assertThisInitialized.js","@babel/runtime/helpers/inheritsLoose":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/inheritsLoose.js","react":"../node_modules/react/index.js","./utils/createChainedFunction":"../node_modules/react-bootstrap/utils/createChainedFunction.js"}],"../node_modules/react-bootstrap/Button.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/objectWithoutPropertiesLoose":"../node_modules/react-bootstrap/node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js","react":"../node_modules/react/index.js","./utils/createChainedFunction":"../node_modules/react-bootstrap/utils/createChainedFunction.js"}],"../node_modules/react-bootstrap/Button.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50408,15 +50424,21 @@ var Button = _react.default.forwardRef(function (_ref, ref) {
   if (props.href) {
     return _react.default.createElement(_SafeAnchor.default, (0, _extends2.default)({}, props, {
       as: as,
-      innerRef: ref,
+      ref: ref,
       className: (0, _classnames.default)(classes, props.disabled && 'disabled')
     }));
   }
 
+  if (ref) {
+    props.ref = ref;
+  }
+
+  if (!as) {
+    props.type = type;
+  }
+
   var Component = as || 'button';
-  if (ref) props.ref = ref;
   return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
-    type: type,
     className: classes
   }));
 });
@@ -50503,7 +50525,7 @@ module.exports = {
   "manifest_version": 2,
   "name": "Fairlanguage",
   "description": "I am flamingo.",
-  "version": "0.9.85",
+  "version": "0.9.86",
   "browser_action": {
     "default_icon": "flam.png",
     "default_popup": "popup.html"
@@ -51117,7 +51139,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58515" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59189" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
